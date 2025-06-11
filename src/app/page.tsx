@@ -1,103 +1,125 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [name, setName] = useState("");
+  const [roomIdToJoin, setRoomIdToJoin] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    const storedName = sessionStorage.getItem("username");
+    if (storedName) {
+      setName(storedName);
+    }
+  }, []);
+
+  const handleCreateRoom = async () => {
+    if (!name.trim()) {
+      alert("Please enter your name.");
+      return;
+    }
+
+    setIsLoading(true);
+    sessionStorage.setItem("username", name.trim());
+
+    try {
+      const res = await fetch("/api/rooms", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name }),
+      });
+
+      if (res.ok) {
+        const { roomId } = await res.json();
+        router.push(`/room/${roomId}`);
+      } else {
+        const error = await res.json();
+        alert(`Error creating room: ${error.error}`);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleJoinRoom = () => {
+    if (!name.trim()) {
+      alert("Please enter your name.");
+      return;
+    }
+    if (!roomIdToJoin.trim()) {
+      alert("Please enter a Room ID.");
+      return;
+    }
+    sessionStorage.setItem("username", name.trim());
+    router.push(`/room/${roomIdToJoin.trim()}`);
+  };
+
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <div className="flex flex-col items-center gap-8 w-full">
+        <div className="text-center">
+          <h1 className="text-5xl font-bold tracking-tight">
+            Planning Poker Online
+          </h1>
+          <p className="text-lg text-gray-400 mt-2">
+            Create a room and invite your team to estimate tasks together.
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        <div className="w-full max-w-sm">
+          <input
+            type="text"
+            placeholder="Enter your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full px-4 py-2 rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={isLoading}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row items-center gap-8 w-full max-w-4xl justify-center">
+          {/* Create Room */}
+          <div className="p-8 border border-gray-700 rounded-lg flex flex-col gap-4 items-center w-full max-w-sm">
+            <h2 className="text-2xl font-semibold">Create a New Room</h2>
+            <button
+              onClick={handleCreateRoom}
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:bg-blue-900 disabled:cursor-not-allowed"
+              disabled={isLoading || !name.trim()}
+            >
+              {isLoading ? "Creating..." : "Create Room"}
+            </button>
+          </div>
+
+          <div className="text-xl font-semibold">OR</div>
+
+          {/* Join Room */}
+          <div className="p-8 border border-gray-700 rounded-lg flex flex-col gap-4 items-center w-full max-w-sm">
+            <h2 className="text-2xl font-semibold">Join an Existing Room</h2>
+            <input
+              type="text"
+              placeholder="Enter Room ID"
+              value={roomIdToJoin}
+              onChange={(e) => setRoomIdToJoin(e.target.value)}
+              className="w-full px-4 py-2 rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              onClick={handleJoinRoom}
+              className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:bg-green-900 disabled:cursor-not-allowed"
+              disabled={!roomIdToJoin.trim() || !name.trim()}
+            >
+              Join Room
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }
