@@ -27,6 +27,9 @@ app.prepare().then(() => {
     // We don't need a custom path anymore
   });
 
+  // Store server-side timers
+  const roomTimers = new Map<string, NodeJS.Timeout>();
+
   io.on("connection", (socket) => {
     console.log(`[Socket.IO] New connection: ${socket.id}`);
 
@@ -38,13 +41,53 @@ app.prepare().then(() => {
 
         await redis.hset(`participants:${roomId}`, { [name]: "" });
 
+        const roomSettings = await redis.hgetall(`room:${roomId}`);
         const participantVotes = await redis.hgetall(`participants:${roomId}`);
+        
         const participantsStatus = Object.entries(participantVotes).map(([pName, pVote]) => ({
           name: pName,
           hasVoted: pVote !== "",
         }));
 
+        // Send room settings to the user who just joined
+        socket.emit("room_settings", roomSettings);
+
+        // Send updated participant list to everyone
         io.to(roomId).emit("update_participants", participantsStatus);
+      });
+
+      socket.on("start_round", async ({ roomId }) => {
+        console.log(`[Socket.IO] Starting round for room ${roomId}`);
+        await redis.hset(`room:${roomId}`, { state: "voting" });
+        io.to(roomId).emit("round_started");
+
+        const roomSettings = await redis.hgetall(`room:${roomId}`);
+        const timerDuration = parseInt(roomSettings.timerDuration, 10);
+        const autoReveal = roomSettings.autoReveal === "true";
+
+        if (timerDuration > 0) {
+            // Clear any existing timer for this room
+            if (roomTimers.has(roomId)) {
+                clearTimeout(roomTimers.get(roomId));
+            }
+
+            const timer = setTimeout(async () => {
+                console.log(`[Socket.IO] Timer ended for room ${roomId}`);
+                if (autoReveal) {
+                    // Re-fetch votes and broadcast
+                    const participantVotes = await redis.hgetall(`participants:${roomId}`);
+                    const votes = Object.entries(participantVotes)
+                      .filter(([, vote]) => vote !== "")
+                      .map(([name, vote]) => ({ name, vote: parseInt(vote, 10) }));
+                    
+                    await redis.hset(`room:${roomId}`, { state: "revealed" });
+                    io.to(roomId).emit("votes_revealed", votes);
+                }
+                roomTimers.delete(roomId);
+            }, timerDuration * 1000);
+
+            roomTimers.set(roomId, timer);
+        }
       });
 
       socket.on("user_voted", async ({ roomId, name, vote }) => {

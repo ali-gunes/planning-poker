@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
     try {
-        const { name } = await req.json();
+        const { name, votingPreset, timerDuration, autoReveal } = await req.json();
 
         if (!name) {
             return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -15,6 +15,10 @@ export async function POST(req: Request) {
         const roomData = {
             owner: name,
             created_at: new Date().toISOString(),
+            votingPreset: votingPreset || "fibonacci",
+            timerDuration: timerDuration || 0,
+            autoReveal: autoReveal || false,
+            state: "lobby", // initial state
         };
 
         // Use a Redis pipeline to create the room and set an expiration

@@ -5,183 +5,234 @@ import { useParams } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
 import { NamePromptModal } from "@/components/NamePromptModal";
 
-const fibonacci = [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
+const votingStacks = {
+    fibonacci: [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
+    days: [1, 2, 3, 4, 5, 6, 7, 8],
+    hours: [4, 8, 12, 16, 24, 32, 40, 48, 56, 64]
+};
 
-interface Participant {
-  name: string;
-  hasVoted: boolean;
-}
-
-interface Vote {
-    name: string;
-    vote: number;
+interface Participant { name: string; hasVoted: boolean; }
+interface Vote { name: string; vote: number; }
+interface RoomSettings {
+    owner: string;
+    votingPreset: keyof typeof votingStacks;
+    timerDuration: number;
+    autoReveal: boolean;
+    state: string;
 }
 
 export default function RoomPage() {
-  const params = useParams();
-  const roomId = params ? (params.roomId as string) : "";
-  const [name, setName] = useState("");
-  const socket = useSocket(roomId, name);
+    const params = useParams();
+    const roomId = params ? (params.roomId as string) : "";
+    const [name, setName] = useState("");
+    const socket = useSocket(roomId, name);
+    
+    const [participants, setParticipants] = useState<Participant[]>([]);
+    const [isNameModalOpen, setIsNameModalOpen] = useState(false);
+    const [selectedVote, setSelectedVote] = useState<number | null>(null);
+    const [votes, setVotes] = useState<Vote[]>([]);
+    const [roomSettings, setRoomSettings] = useState<RoomSettings | null>(null);
+    const [gameState, setGameState] = useState("lobby"); // lobby, voting, revealed
+    const [timer, setTimer] = useState(0);
+
+    const isOwner = roomSettings?.owner === name;
+    const votingCards = roomSettings ? votingStacks[roomSettings.votingPreset] : [];
+
+    useEffect(() => {
+        const storedName = sessionStorage.getItem("username");
+        if (storedName) {
+            setName(storedName);
+        } else {
+            setIsNameModalOpen(true);
+        }
+    }, []);
+
+    useEffect(() => {
+        let countdown: NodeJS.Timeout;
+        if (gameState === 'voting' && timer > 0) {
+            countdown = setInterval(() => {
+                setTimer(prev => (prev > 0 ? prev - 1 : 0));
+            }, 1000);
+        }
+        return () => clearInterval(countdown);
+    }, [gameState, timer]);
+
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.on("room_settings", (settings: RoomSettings) => {
+            setRoomSettings(settings);
+            setGameState(settings.state);
+        });
+
+        socket.on("update_participants", (participants: Participant[]) => setParticipants(participants));
+        
+        socket.on("votes_revealed", (revealedVotes: Vote[]) => {
+            setVotes(revealedVotes);
+            setGameState("revealed");
+        });
+
+        socket.on("new_round_started", (participants: Participant[]) => {
+            setGameState("voting");
+            setVotes([]);
+            setSelectedVote(null);
+            setParticipants(participants);
+            if (roomSettings) setTimer(roomSettings.timerDuration);
+        });
+
+        socket.on("round_started", () => {
+            setGameState("voting");
+            setSelectedVote(null);
+            if (roomSettings) setTimer(roomSettings.timerDuration);
+        });
+
+        return () => {
+          socket.off("room_settings");
+          socket.off("update_participants");
+          socket.off("votes_revealed");
+          socket.off("new_round_started");
+          socket.off("round_started");
+        }
+    }, [socket, roomSettings]);
   
-  const [participants, setParticipants] = useState<Participant[]>([]);
-  const [isNameModalOpen, setIsNameModalOpen] = useState(false);
-  const [selectedVote, setSelectedVote] = useState<number | null>(null);
-  const [revealed, setRevealed] = useState(false);
-  const [votes, setVotes] = useState<Vote[]>([]);
+    const handleNameSubmit = (submittedName: string) => {
+        const trimmedName = submittedName.trim();
+        setName(trimmedName);
+        sessionStorage.setItem("username", trimmedName);
+        setIsNameModalOpen(false);
+    };
 
-  useEffect(() => {
-    const storedName = sessionStorage.getItem("username");
-    if (storedName) {
-      setName(storedName);
-    } else {
-      setIsNameModalOpen(true);
-    }
-  }, []);
+    const handleVote = (vote: number) => {
+        if (socket && gameState === 'voting') {
+            setSelectedVote(vote);
+            socket.emit("user_voted", { roomId, name, vote });
+        }
+    };
 
-  useEffect(() => {
-    if (!socket) return;
+    const handleRevealVotes = () => {
+        if (socket) socket.emit("reveal_votes", { roomId });
+    };
 
-    socket.on("update_participants", (participants: Participant[]) => {
-      setParticipants(participants);
-    });
-    
-    socket.on("votes_revealed", (revealedVotes: Vote[]) => {
-        setVotes(revealedVotes);
-        setRevealed(true);
-    });
+    const handleNewRound = () => {
+        if (socket) socket.emit("new_round", { roomId });
+    };
 
-    socket.on("new_round_started", (participants: Participant[]) => {
-        setRevealed(false);
-        setVotes([]);
-        setSelectedVote(null);
-        setParticipants(participants);
-    });
+    const handleStartRound = () => {
+        if (socket && isOwner) socket.emit("start_round", { roomId });
+    };
 
-    return () => {
-      socket.off("update_participants");
-      socket.off("votes_revealed");
-      socket.off("new_round_started");
-    }
-  }, [socket]);
-  
-  const handleNameSubmit = (submittedName: string) => {
-    const trimmedName = submittedName.trim();
-    setName(trimmedName);
-    sessionStorage.setItem("username", trimmedName);
-    setIsNameModalOpen(false);
-  };
+    const voteCounts = useMemo(() => {
+        if (gameState !== 'revealed') return { average: 0, min: 0, max: 0, consensus: false };
+        const numericVotes = votes.map(v => v.vote);
+        if (numericVotes.length === 0) return { average: 0, min: 0, max: 0, consensus: false };
+        
+        const sum = numericVotes.reduce((acc, v) => acc + v, 0);
+        const average = sum / numericVotes.length;
+        const min = Math.min(...numericVotes);
+        const max = Math.max(...numericVotes);
+        const consensus = new Set(numericVotes).size === 1;
+        
+        return { average: average.toFixed(1), min, max, consensus };
+    }, [votes, gameState]);
 
-  const handleVote = (vote: number) => {
-    if (socket && !revealed) {
-      setSelectedVote(vote);
-      socket.emit("user_voted", { roomId, name, vote });
-    }
-  };
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const secs = (seconds % 60).toString().padStart(2, '0');
+        return `${mins}:${secs}`;
+    };
 
-  const handleRevealVotes = () => {
-    if (socket) {
-        socket.emit("reveal_votes", { roomId });
-    }
-  };
+    return (
+        <>
+            <NamePromptModal isOpen={isNameModalOpen} onClose={() => {}} onSubmit={handleNameSubmit} />
+            <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col p-4 md:p-8">
+                
+                {/* Header */}
+                <header className="w-full max-w-7xl mx-auto flex justify-between items-center mb-6">
+                    <h1 className="text-2xl md:text-3xl font-bold">Planning Poker</h1>
+                    {timer > 0 && gameState === 'voting' && (
+                        <div className="text-2xl font-mono bg-red-800 text-white px-4 py-2 rounded-lg shadow-lg">{formatTime(timer)}</div>
+                    )}
+                    <div className="text-lg bg-gray-800 px-3 py-1 rounded-md">
+                        Room: <span className="font-mono text-blue-400">{roomId}</span>
+                    </div>
+                </header>
 
-  const handleNewRound = () => {
-    if (socket) {
-        socket.emit("new_round", { roomId });
-    }
-  };
+                <main className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    
+                    {/* Left Panel: Participants & Controls */}
+                    <aside className="lg:col-span-1 bg-gray-800/50 rounded-lg p-6 h-fit shadow-2xl">
+                        <h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">Participants ({participants.length})</h2>
+                        <ul className="space-y-3">
+                            {participants.map((p) => (
+                                <li key={p.name} className="flex items-center justify-between bg-gray-700/50 px-3 py-2 rounded-md">
+                                    <span className="font-medium">{p.name} {p.name === name && "(You)"} {p.name === roomSettings?.owner && "👑"}</span>
+                                    <span className={`w-3 h-3 rounded-full transition-colors ${p.hasVoted ? "bg-green-400" : "bg-gray-500"}`} title={p.hasVoted ? "Voted" : "Waiting..."}></span>
+                                </li>
+                            ))}
+                        </ul>
+                         <div className="mt-8 pt-4 border-t border-gray-700 flex flex-col gap-3">
+                            {isOwner && gameState === 'lobby' && (
+                                <button onClick={handleStartRound} className="w-full px-6 py-2 bg-yellow-500 text-black font-bold rounded-md hover:bg-yellow-600 transition-all transform hover:scale-105">Start Round</button>
+                            )}
+                            {isOwner && gameState === 'voting' && (
+                                <button onClick={handleRevealVotes} className="w-full px-6 py-2 bg-green-500 text-white font-bold rounded-md hover:bg-green-600 transition-all transform hover:scale-105">Reveal Votes</button>
+                            )}
+                            {isOwner && gameState === 'revealed' && (
+                                <button onClick={handleNewRound} className="w-full px-6 py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 transition-all transform hover:scale-105">New Round</button>
+                            )}
+                        </div>
+                    </aside>
 
-  const voteCounts = useMemo(() => {
-    if (!revealed) return { average: 0, min: 0, max: 0 };
-    const numericVotes = votes.map(v => v.vote);
-    if (numericVotes.length === 0) return { average: 0, min: 0, max: 0 };
-    
-    const sum = numericVotes.reduce((acc, v) => acc + v, 0);
-    const average = sum / numericVotes.length;
-    const min = Math.min(...numericVotes);
-    const max = Math.max(...numericVotes);
-    
-    return { average: average.toFixed(1), min, max };
-  }, [votes, revealed]);
+                    {/* Right Panel: Voting Area */}
+                    <section className="lg:col-span-3 bg-gray-800/50 rounded-lg p-6 md:p-8 flex flex-col items-center justify-center min-h-[50vh] shadow-2xl">
+                        <h2 className="text-3xl font-bold mb-8 text-center">
+                            {gameState === 'revealed' && "Votes"}
+                            {gameState === 'voting' && "Cast your vote"}
+                            {gameState === 'lobby' && "Waiting for the round to start..."}
+                        </h2>
 
-
-  return (
-    <>
-      <NamePromptModal
-        isOpen={isNameModalOpen}
-        onClose={() => {}} // Don't allow closing without a name
-        onSubmit={handleNameSubmit}
-      />
-      <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-8">
-        <header className="w-full max-w-6xl mx-auto flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Planning Poker</h1>
-          <div className="text-lg">
-            Room: <span className="font-mono bg-gray-800 px-2 py-1 rounded">{roomId}</span>
-          </div>
-        </header>
-
-        <main className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Participants Panel */}
-          <aside className="md:col-span-1 bg-gray-800 rounded-lg p-6">
-            <h2 className="text-2xl font-semibold mb-4">Participants ({participants.length})</h2>
-            <ul className="space-y-3">
-              {participants.map((p) => (
-                <li key={p.name} className="flex items-center justify-between">
-                  <span>{p.name}</span>
-                  <span className={`w-3 h-3 rounded-full ${p.hasVoted ? "bg-green-500" : "bg-gray-500"}`} title={p.hasVoted ? "Voted" : "Waiting..."}></span>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          {/* Voting Area */}
-          <section className="md:col-span-3 bg-gray-800 rounded-lg p-8 flex flex-col items-center justify-center">
-            <h2 className="text-3xl font-bold mb-8">
-              {revealed ? "Votes" : "Cast your vote"}
-            </h2>
-
-            {revealed ? (
-              <div className="flex flex-col items-center gap-4 w-full">
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
-                  {votes.map((vote, i) => (
-                      <div key={i} className="flex flex-col items-center">
-                          <div className="w-24 h-36 bg-white text-black rounded-lg flex items-center justify-center text-4xl font-bold">
-                              {vote.vote}
-                          </div>
-                          <span className="mt-2 text-lg">{vote.name}</span>
-                      </div>
-                  ))}
-                </div>
-                <div className="mt-8 text-xl w-full flex justify-around">
-                    <span>Min: <span className="font-bold">{voteCounts.min}</span></span>
-                    <span className="font-bold text-2xl">Average: {voteCounts.average}</span>
-                    <span>Max: <span className="font-bold">{voteCounts.max}</span></span>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
-                {fibonacci.map((value) => (
-                  <button
-                    key={value}
-                    onClick={() => handleVote(value)}
-                    className={`w-24 h-36 rounded-lg flex items-center justify-center text-4xl font-bold transition-transform transform hover:-translate-y-1 ${selectedVote === value ? "bg-green-600" : "bg-blue-600 hover:bg-blue-700"}`}
-                  >
-                    {value}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            <div className="mt-12 flex gap-4">
-              <button onClick={handleRevealVotes} className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-                Reveal Votes
-              </button>
-              <button onClick={handleNewRound} className="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">
-                New Round
-              </button>
+                        {/* Revealed State */}
+                        {gameState === 'revealed' ? (
+                            <div className="flex flex-col items-center gap-6 w-full">
+                                <div className="flex flex-wrap justify-center gap-4">
+                                    {votes.map((vote, i) => (
+                                        <div key={i} className="flex flex-col items-center text-center">
+                                            <div className="w-24 h-36 bg-white text-gray-900 rounded-lg flex items-center justify-center text-4xl font-bold shadow-lg transform transition-transform hover:scale-105">{vote.vote}</div>
+                                            <span className="mt-2 text-lg font-medium">{vote.name}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="mt-6 text-xl w-full flex justify-around items-center bg-gray-900/50 p-4 rounded-lg">
+                                    <span>Min: <span className="font-bold text-blue-400">{voteCounts.min}</span></span>
+                                    <span className="font-bold text-2xl">Average: {voteCounts.average}</span>
+                                    <span>Max: <span className="font-bold text-blue-400">{voteCounts.max}</span></span>
+                                </div>
+                                {voteCounts.consensus && <div className="mt-4 text-green-400 font-bold text-2xl animate-pulse">CONSENSUS!</div>}
+                            </div>
+                        ) : (
+                        /* Voting State */
+                            <div className="flex flex-wrap justify-center gap-4">
+                                {votingCards.map((value) => (
+                                    <button
+                                        key={value}
+                                        onClick={() => handleVote(value)}
+                                        disabled={gameState !== 'voting'}
+                                        className={`w-28 h-40 rounded-xl flex items-center justify-center text-4xl font-bold transition-all duration-200 shadow-lg
+                                            ${ gameState !== 'voting'
+                                                ? "bg-gray-700 cursor-not-allowed text-gray-500"
+                                                : selectedVote === value
+                                                ? "bg-blue-600 text-white ring-4 ring-blue-400 transform -translate-y-2"
+                                                : "bg-gray-800 text-blue-400 hover:bg-gray-700 hover:-translate-y-1"
+                                            }`}
+                                    >
+                                        {value}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </section>
+                </main>
             </div>
-          </section>
-        </main>
-      </div>
-    </>
-  );
+        </>
+    );
 } 
