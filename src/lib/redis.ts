@@ -1,4 +1,4 @@
-import Redis from "ioredis";
+import Redis, { type RedisOptions } from "ioredis";
 
 // Use a global variable to cache the connection
 declare global {
@@ -17,8 +17,13 @@ const getRedisUrl = () => {
     throw new Error("REDIS_URL is not defined in the environment");
 }
 
-const options = {
-  maxRetriesPerRequest: null,
+const options: RedisOptions = {
+  // This is required for Upstash Redis to work with Vercel
+  tls: {},
+  connectTimeout: 10000, // 10 seconds
+  // Do not retry on connection errors, fail fast
+  maxRetriesPerRequest: 0,
+  enableOfflineQueue: false,
 };
 
 if (process.env.NODE_ENV === 'production') {
