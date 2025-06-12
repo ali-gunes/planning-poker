@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import { useEffect, useState, useRef } from "react";
+import PartySocket from "partysocket";
 
 export const useSocket = (roomId: string, name: string) => {
-    const [socket, setSocket] = useState<Socket | null>(null);
+    const [socket, setSocket] = useState<PartySocket | null>(null);
+    const nameRef = useRef(name);
+    nameRef.current = name;
 
     useEffect(() => {
-        if (!name || !roomId) return;
+        if (!roomId) return;
 
         // This is a special flag that Next.js sets for server-side rendering.
         // We only want to connect on the client-side.
@@ -13,51 +15,45 @@ export const useSocket = (roomId: string, name: string) => {
             return;
         }
         
-        console.log(`Attempting to connect socket for user: ${name} in room: ${roomId}`);
+        console.log(`Attempting to connect to PartySocket for room: ${roomId}`);
         
-        const newSocket = io(window.location.origin, {
-            path: "/api/socket",
-            transports: ["websocket"] // Force websocket connection, prevent polling
+        const newSocket = new PartySocket({
+            host: process.env.NEXT_PUBLIC_PARTYKIT_HOST || "localhost:1999",
+            room: roomId,
         });
 
-        newSocket.on("connect", () => {
-            console.log("%cSocket connected successfully:", "color: #22c55e", newSocket.id);
-            newSocket.emit("join_room", { roomId, name });
-        });
+        newSocket.onopen = () => {
+            console.log("%cPartySocket connected successfully!", "color: #22c55e");
+            // Only join if we have a name
+            if (nameRef.current) {
+                newSocket.send(JSON.stringify({ type: "join_room", name: nameRef.current }));
+            }
+        };
 
-        newSocket.on("disconnect", (reason) => {
-            console.warn("Socket disconnected:", reason);
-        });
+        newSocket.onclose = (event) => {
+            console.warn("PartySocket disconnected:", event);
+        };
 
-        newSocket.on("connect_error", (error) => {
-            console.error("Socket connection error:", error);
-        });
-
-        // Reconnection events for more detailed logging
-        newSocket.io.on("reconnect_attempt", (attempt) => {
-            console.log(`Socket reconnect attempt #${attempt}`);
-        });
-
-        newSocket.io.on("reconnect", (attempt) => {
-            console.log(`%cSocket reconnected successfully after ${attempt} attempts`, "color: #22c55e");
-        });
-
-        newSocket.io.on("reconnect_error", (error) => {
-            console.error("Socket reconnection error:", error);
-        });
-
-        newSocket.io.on("reconnect_failed", () => {
-            console.error("Socket reconnection failed permanently.");
-        });
+        newSocket.onerror = (error) => {
+            console.error("PartySocket connection error:", error);
+        };
 
         setSocket(newSocket);
 
         return () => {
-            console.log("Cleaning up socket connection.");
-            newSocket.disconnect();
+            console.log("Cleaning up PartySocket connection.");
+            newSocket.close();
         };
 
-    }, [roomId, name]);
+    }, [roomId]); // Reconnect only if roomId changes
+
+    useEffect(() => {
+        // When the name is finally available (after the modal), join the room
+        if (socket && socket.readyState === WebSocket.OPEN && name) {
+            socket.send(JSON.stringify({ type: "join_room", name }));
+        }
+    }, [name, socket]);
+
 
     return socket;
 }; 

@@ -59,40 +59,44 @@ export default function RoomPage() {
 
     useEffect(() => {
         if (!socket) return;
-
-        socket.on("initial_state", ({ settings, participants }: { settings: RoomSettings, participants: Participant[] }) => {
-            setRoomSettings(settings);
-            setParticipants(participants);
-            setGameState(settings.state);
-        });
-
-        socket.on("update_participants", (participants: Participant[]) => setParticipants(participants));
         
-        socket.on("votes_revealed", (revealedVotes: Vote[]) => {
-            setVotes(revealedVotes);
-            setGameState("revealed");
-        });
+        const handleMessage = (event: MessageEvent) => {
+            const msg = JSON.parse(event.data);
+            
+            if (msg.type === "initial_state") {
+                setRoomSettings(msg.settings);
+                setParticipants(msg.participants);
+                setGameState(msg.settings.state);
+            }
+            if (msg.type === "update_participants") {
+                setParticipants(msg.payload);
+            }
+            if (msg.type === "votes_revealed") {
+                setVotes(msg.payload);
+                setGameState("revealed");
+            }
+            if (msg.type === "new_round_started") {
+                setGameState("voting");
+                setVotes([]);
+                setSelectedVote(null);
+                setParticipants(msg.payload);
+                if (roomSettings) setTimer(roomSettings.timerDuration);
+            }
+            if (msg.type === "round_started") {
+                setGameState("voting");
+                setSelectedVote(null);
+                if (roomSettings) setTimer(roomSettings.timerDuration);
+            }
+            if (msg.type === "room_settings") {
+                setRoomSettings(prev => ({ ...prev, ...msg.payload }));
+                setGameState(msg.payload.state);
+            }
+        };
 
-        socket.on("new_round_started", (participants: Participant[]) => {
-            setGameState("voting");
-            setVotes([]);
-            setSelectedVote(null);
-            setParticipants(participants);
-            if (roomSettings) setTimer(roomSettings.timerDuration);
-        });
-
-        socket.on("round_started", () => {
-            setGameState("voting");
-            setSelectedVote(null);
-            if (roomSettings) setTimer(roomSettings.timerDuration);
-        });
+        socket.addEventListener("message", handleMessage);
 
         return () => {
-          socket.off("initial_state");
-          socket.off("update_participants");
-          socket.off("votes_revealed");
-          socket.off("new_round_started");
-          socket.off("round_started");
+          socket.removeEventListener("message", handleMessage);
         }
     }, [socket, roomSettings]);
   
@@ -106,20 +110,20 @@ export default function RoomPage() {
     const handleVote = (vote: number) => {
         if (socket && gameState === 'voting') {
             setSelectedVote(vote);
-            socket.emit("user_voted", { roomId, name, vote });
+            socket.send(JSON.stringify({ type: "user_voted", roomId, name, vote }));
         }
     };
 
     const handleRevealVotes = () => {
-        if (socket) socket.emit("reveal_votes", { roomId });
+        if (socket) socket.send(JSON.stringify({ type: "reveal_votes", roomId }));
     };
 
     const handleNewRound = () => {
-        if (socket) socket.emit("new_round", { roomId });
+        if (socket) socket.send(JSON.stringify({ type: "new_round", roomId }));
     };
 
     const handleStartRound = () => {
-        if (socket && isOwner) socket.emit("start_round", { roomId });
+        if (socket && isOwner) socket.send(JSON.stringify({ type: "start_round", roomId }));
     };
 
     const handleCopyToClipboard = () => {

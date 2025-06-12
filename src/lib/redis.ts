@@ -1,4 +1,4 @@
-import Redis from 'ioredis';
+import { Redis } from '@upstash/redis'
 
 // This is the recommended pattern for managing database connections in a serverless environment like Vercel.
 // It uses a global cache to ensure a single, stable connection is created and reused across function invocations.
@@ -17,18 +17,14 @@ declare global {
   var redis: Redis | undefined;
 }
 
-// If the client is not already cached, create a new one.
-const redis = global.redis || new Redis(getRedisUrl(), {
-  tls: {},
-  // These settings are recommended by Upstash for Vercel deployments
-  maxRetriesPerRequest: null,
-  enableReadyCheck: false,
-});
-
-// In development, cache the client in the global scope to prevent
-// too many connections during hot reloads.
-if (process.env.NODE_ENV !== 'production') {
-  global.redis = redis;
+if (!process.env.UPSTASH_REDIS_REST_URL) {
+  throw new Error('UPSTASH_REDIS_REST_URL is not set');
+}
+if (!process.env.UPSTASH_REDIS_REST_TOKEN) {
+  throw new Error('UPSTASH_REDIS_REST_TOKEN is not set');
 }
 
-export { redis }; 
+export const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+}); 
