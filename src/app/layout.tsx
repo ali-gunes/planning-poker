@@ -19,8 +19,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={roboto.className}>{children}</body>
+    <html lang="tr">
+      <body className={`${roboto.className} bg-gray-900 text-white`}>
+        <div className="flex flex-col min-h-screen">
+          <main className="flex-grow">
+            {children}
+          </main>
+          <footer className="w-full text-center p-4 mt-8 text-gray-500">
+            C&I ekibi için ❤️ ve ☕️ ile yapıldı.
+          </footer>
+        </div>
+      </body>
     </html>
   );
 }
