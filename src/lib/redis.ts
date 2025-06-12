@@ -20,10 +20,9 @@ const getRedisUrl = () => {
 const options: RedisOptions = {
   // This is required for Upstash Redis to work with Vercel
   tls: {},
-  connectTimeout: 10000, // 10 seconds
-  // Do not retry on connection errors, fail fast
-  maxRetriesPerRequest: 0,
-  enableOfflineQueue: false,
+  // Upstash recommends this for Vercel
+  maxRetriesPerRequest: null,
+  enableReadyCheck: false,
 };
 
 if (process.env.NODE_ENV === 'production') {
