@@ -67,8 +67,10 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
   });
   res.socket.server.io = io;
 
+  console.log("Socket server instance created. Waiting for connections.");
+
   io.on("connection", (socket: Socket) => {
-    console.log(`[Socket Connected]: ${socket.id}`);
+    console.log(`[CONNECTION] New client connected: ${socket.id}`);
 
     socket.on("join_room", async ({ roomId, name }: { roomId: string, name: string }) => {
         console.log(`[JOIN_ROOM] User: "${name}" attempting to join Room: "${roomId}"`);

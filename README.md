@@ -75,3 +75,4 @@ This document outlines the steps to build our real-time planning poker web appli
 3.  [x] Prepare for Vercel deployment (environment variables for Redis connection).
 4.  [ ] Test thoroughly.
 5.  [ ] Deploy!
+ 
