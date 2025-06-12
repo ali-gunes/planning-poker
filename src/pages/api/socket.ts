@@ -67,27 +67,33 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
     console.log(`[Socket Connected]: ${socket.id}`);
 
     socket.on("join_room", async ({ roomId, name }: { roomId: string, name: string }) => {
-        console.log(`[join_room] received for room: ${roomId}, user: ${name}`);
+        console.log(`[JOIN_ROOM] User: "${name}" attempting to join Room: "${roomId}"`);
         await socket.join(roomId);
         const room = await getRoom(roomId);
-        console.log(`[join_room] retrieved room data:`, room);
-
+        
         if (!room) {
-            console.error(`[join_room] CRITICAL: Room not found for id ${roomId}`);
+            console.error(`[JOIN_ROOM] CRITICAL: Room not found for id ${roomId}`);
+            // Optionally, emit an error back to the client
+            socket.emit("error", { message: `Room ${roomId} not found.` });
             return;
         }
+        
+        console.log(`[JOIN_ROOM] Initial participants for room ${roomId}:`, JSON.stringify(room.participants));
 
         const isParticipant = room.participants.some(p => p.name === name);
         if (!isParticipant) {
-            console.log(`[join_room] adding new participant: ${name}`);
+            console.log(`[JOIN_ROOM] User "${name}" is new. Adding to participants.`);
             room.participants.push({ name, hasVoted: false });
             if (!room.votes.some(v => v.name === name)) {
                 room.votes.push({ name, vote: null });
             }
+        } else {
+            console.log(`[JOIN_ROOM] User "${name}" is already a participant.`);
         }
+        
+        console.log(`[JOIN_ROOM] Participants after update for room ${roomId}:`, JSON.stringify(room.participants));
 
         await setRoom(roomId, room);
-        console.log(`[join_room] updated room data:`, room);
         
         const settings = {
             owner: room.owner,
@@ -98,14 +104,16 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
         };
 
         // Send the complete initial state to the user who just joined
+        console.log(`[JOIN_ROOM] Emitting 'initial_state' to ${socket.id} with ${room.participants.length} participants.`);
         socket.emit("initial_state", { settings, participants: room.participants });
 
         // Let everyone else in the room know about the new participant
+        console.log(`[JOIN_ROOM] Emitting 'update_participants' to room ${roomId} (except sender) with ${room.participants.length} participants.`);
         socket.to(roomId).emit("update_participants", room.participants);
 
         if (room.state === 'revealed') {
             const revealedVotes = room.votes.filter(v => v.vote !== null);
-            console.log(`[join_room] emitting 'votes_revealed' for revealed room:`, revealedVotes);
+            console.log(`[JOIN_ROOM] Emitting 'votes_revealed' for revealed room:`, revealedVotes);
             io.to(roomId).emit("votes_revealed", revealedVotes);
         }
     });
