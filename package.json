@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@types/redis": "^4.0.10",
-    "@upstash/redis": "^1.35.1",
+    "@upstash/redis": "latest",
     "dotenv": "^16.4.5",
     "nanoid": "^5.1.5",
     "next": "15.3.3",
