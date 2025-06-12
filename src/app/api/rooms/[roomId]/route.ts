@@ -8,16 +8,26 @@ export async function GET(
     try {
         const { roomId } = params;
 
-        const roomExists = await redis.exists(`room:${roomId}`);
+        const roomData = await redis.get(`room:${roomId}`);
 
-        if (!roomExists) {
+        if (!roomData) {
             return NextResponse.json({ error: "Room not found" }, { status: 404 });
         }
 
-        return NextResponse.json({ roomId });
+        const room = JSON.parse(roomData);
+
+        // Return some basic info, not the whole room object for security
+        return NextResponse.json({ 
+            roomId, 
+            owner: room.owner,
+            participantsCount: room.participants.length 
+        });
 
     } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        console.error(`[API_ROOM_GET_ERROR] roomId: ${params.roomId}`, error);
+        return NextResponse.json(
+            { error: "Internal Server Error" },
+            { status: 500 }
+        );
     }
 } 
