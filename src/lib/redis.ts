@@ -3,14 +3,6 @@ import { Redis } from '@upstash/redis'
 // This is the recommended pattern for managing database connections in a serverless environment like Vercel.
 // It uses a global cache to ensure a single, stable connection is created and reused across function invocations.
 
-const getRedisUrl = () => {
-    const url = process.env.REDIS_URL;
-    if (url) {
-        return url;
-    }
-    throw new Error("REDIS_URL is not defined in the environment");
-}
-
 declare global {
   // allow global `var` declarations
   // eslint-disable-next-line no-var
