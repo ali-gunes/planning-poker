@@ -1,37 +1,5 @@
 import { NextResponse } from "next/server";
 
-export async function GET(
-    req: Request,
-    { params }: { params: { roomId: string } }
-): Promise<NextResponse> {
-    try {
-        const { roomId } = params;
-
-        // DIAGNOSTIC: Temporarily disable Redis check to isolate build error
-        return NextResponse.json({ roomId, status: "ok" });
-
-        /*
-        const roomData = await redis.get(`room:${roomId}`);
-
-        if (!roomData) {
-            return NextResponse.json({ error: "Room not found" }, { status: 404 });
-        }
-
-        const room = JSON.parse(roomData);
-
-        // Return some basic info, not the whole room object for security
-        return NextResponse.json({ 
-            roomId, 
-            owner: room.owner,
-            participantsCount: room.participants.length 
-        });
-        */
-
-    } catch (error) {
-        console.error(`[API_ROOM_GET_ERROR] roomId: ${params.roomId}`, error);
-        return NextResponse.json(
-            { error: "Internal Server Error" },
-            { status: 500 }
-        );
-    }
+export async function GET() {
+  return NextResponse.json({ message: "Success" });
 } 
