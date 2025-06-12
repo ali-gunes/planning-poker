@@ -2,7 +2,7 @@ import { Server, type Socket } from "socket.io";
 import type { Server as HTTPServer } from "http";
 import type { Socket as NetSocket } from "net";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { redis } from "@/lib/redis";
+// import { redis } from "@/lib/redis"; // STEP 1: All Redis code is temporarily disabled
 
 // --- START OF TYPES ---
 // These are the types that are used in the application.
@@ -42,13 +42,19 @@ interface NextApiResponseWithSocket extends NextApiResponse {
   socket: SocketWithIO;
 }
 
+// --- DIAGNOSTIC: In-memory store instead of Redis ---
+const rooms = new Map<string, Room>();
+// ---
+
 const getRoom = async (roomId: string): Promise<Room | null> => {
-    const roomData = await redis.get(`room:${roomId}`);
-    return roomData ? JSON.parse(roomData) : null;
+    // const roomData = await redis.get(`room:${roomId}`);
+    // return roomData ? JSON.parse(roomData) : null;
+    return rooms.get(roomId) || null;
 };
 
 const setRoom = (roomId: string, roomData: Room | object) => {
-    return redis.set(`room:${roomId}`, JSON.stringify(roomData));
+    // return redis.set(`room:${roomId}`, JSON.stringify(roomData));
+    rooms.set(roomId, roomData as Room);
 };
 
 const ioHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
@@ -75,15 +81,25 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
     socket.on("join_room", async ({ roomId, name }: { roomId: string, name: string }) => {
         console.log(`[JOIN_ROOM] User: "${name}" attempting to join Room: "${roomId}"`);
         await socket.join(roomId);
-        const room = await getRoom(roomId);
         
+        // --- DIAGNOSTIC: Create room if it doesn't exist ---
+        let room = await getRoom(roomId);
         if (!room) {
-            console.error(`[JOIN_ROOM] CRITICAL: Room not found for id ${roomId}`);
-            // Optionally, emit an error back to the client
-            socket.emit("error", { message: `Room ${roomId} not found.` });
-            return;
+            const newRoom: Room = {
+                owner: name,
+                votingPreset: 'fibonacci',
+                timerDuration: 0,
+                autoReveal: false,
+                state: 'lobby',
+                participants: [],
+                votes: [],
+            };
+            setRoom(roomId, newRoom);
+            room = newRoom;
+            console.log(`[JOIN_ROOM] In-memory room created for id ${roomId}`);
         }
-        
+        // ---
+
         console.log(`[JOIN_ROOM] Initial participants for room ${roomId}:`, JSON.stringify(room.participants));
 
         const isParticipant = room.participants.some(p => p.name === name);
