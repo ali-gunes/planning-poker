@@ -209,4 +209,7 @@ export const config = {
   },
 };
 
+// Set a higher timeout for this specific API route
+export const maxDuration = 60; // in seconds
+
 export default ioHandler; 

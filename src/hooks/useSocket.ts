@@ -21,16 +21,33 @@ export const useSocket = (roomId: string, name: string) => {
         });
 
         newSocket.on("connect", () => {
-            console.log("Socket connected successfully:", newSocket.id);
+            console.log("%cSocket connected successfully:", "color: #22c55e", newSocket.id);
             newSocket.emit("join_room", { roomId, name });
+        });
+
+        newSocket.on("disconnect", (reason) => {
+            console.warn("Socket disconnected:", reason);
         });
 
         newSocket.on("connect_error", (error) => {
             console.error("Socket connection error:", error);
         });
 
-        newSocket.on("disconnect", (reason) => {
-            console.log("Socket disconnected:", reason);
+        // Reconnection events for more detailed logging
+        newSocket.io.on("reconnect_attempt", (attempt) => {
+            console.log(`Socket reconnect attempt #${attempt}`);
+        });
+
+        newSocket.io.on("reconnect", (attempt) => {
+            console.log(`%cSocket reconnected successfully after ${attempt} attempts`, "color: #22c55e");
+        });
+
+        newSocket.io.on("reconnect_error", (error) => {
+            console.error("Socket reconnection error:", error);
+        });
+
+        newSocket.io.on("reconnect_failed", () => {
+            console.error("Socket reconnection failed permanently.");
         });
 
         setSocket(newSocket);
