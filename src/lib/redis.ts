@@ -10,19 +10,24 @@ declare global {
 let redis: Redis;
 
 const getRedisUrl = () => {
-    if (process.env.REDIS_URL) {
-        return process.env.REDIS_URL;
+    const url = process.env.REDIS_URL;
+    if (url) {
+        return url;
     }
     throw new Error("REDIS_URL is not defined in the environment");
 }
 
+const options = {
+  maxRetriesPerRequest: null,
+};
+
 if (process.env.NODE_ENV === 'production') {
-  redis = new Redis(getRedisUrl());
+  redis = new Redis(getRedisUrl(), options);
 } else {
   // In development, use a global variable so that the value
   // is preserved across module reloads caused by HMR (Hot Module Replacement).
   if (!global.redis) {
-    global.redis = new Redis(getRedisUrl());
+    global.redis = new Redis(getRedisUrl(), options);
   }
   redis = global.redis;
 }
