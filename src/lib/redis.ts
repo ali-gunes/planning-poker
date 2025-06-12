@@ -1,13 +1,7 @@
-import Redis, { type RedisOptions } from "ioredis";
+import Redis from 'ioredis';
 
-// Use a global variable to cache the connection
-declare global {
-  // allow global `var` declarations
-  // eslint-disable-next-line no-var
-  var redis: Redis | undefined;
-}
-
-let redis: Redis;
+// This is the recommended pattern for managing database connections in a serverless environment like Vercel.
+// It uses a global cache to ensure a single, stable connection is created and reused across function invocations.
 
 const getRedisUrl = () => {
     const url = process.env.REDIS_URL;
@@ -17,23 +11,24 @@ const getRedisUrl = () => {
     throw new Error("REDIS_URL is not defined in the environment");
 }
 
-const options: RedisOptions = {
-  // This is required for Upstash Redis to work with Vercel
+declare global {
+  // allow global `var` declarations
+  // eslint-disable-next-line no-var
+  var redis: Redis | undefined;
+}
+
+// If the client is not already cached, create a new one.
+const redis = global.redis || new Redis(getRedisUrl(), {
   tls: {},
-  // Upstash recommends this for Vercel
+  // These settings are recommended by Upstash for Vercel deployments
   maxRetriesPerRequest: null,
   enableReadyCheck: false,
-};
+});
 
-if (process.env.NODE_ENV === 'production') {
-  redis = new Redis(getRedisUrl(), options);
-} else {
-  // In development, use a global variable so that the value
-  // is preserved across module reloads caused by HMR (Hot Module Replacement).
-  if (!global.redis) {
-    global.redis = new Redis(getRedisUrl(), options);
-  }
-  redis = global.redis;
+// In development, cache the client in the global scope to prevent
+// too many connections during hot reloads.
+if (process.env.NODE_ENV !== 'production') {
+  global.redis = redis;
 }
 
 export { redis }; 
