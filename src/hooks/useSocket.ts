@@ -7,12 +7,15 @@ export const useSocket = (roomId: string, name: string) => {
     useEffect(() => {
         if (!name || !roomId) return;
 
+        // This is a special flag that Next.js sets for server-side rendering.
+        // We only want to connect on the client-side.
+        if (typeof window === "undefined") {
+            return;
+        }
+        
         console.log(`Attempting to connect socket for user: ${name} in room: ${roomId}`);
         
-        // Ensure this environment variable is set in Vercel
-        const SOCKET_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-
-        const newSocket = io(SOCKET_URL, {
+        const newSocket = io(window.location.origin, {
             path: "/api/socket",
             transports: ["websocket"] // Force websocket connection, prevent polling
         });
