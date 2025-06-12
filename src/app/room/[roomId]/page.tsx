@@ -150,7 +150,7 @@ export default function RoomPage() {
 
     return (
         <>
-            <NamePromptModal isOpen={isNameModalOpen} onClose={() => {}} onSubmit={handleNameSubmit} />
+            <NamePromptModal isOpen={isNameModalOpen} onSubmit={handleNameSubmit} />
             <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col p-4 md:p-8">
                 
                 {/* Header */}
