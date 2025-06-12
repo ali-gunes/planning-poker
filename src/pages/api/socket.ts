@@ -60,6 +60,10 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
   const io = new Server(res.socket.server, {
     path: "/api/socket",
     addTrailingSlash: false,
+    cors: {
+      origin: "*", // Allow all origins for simplicity, can be restricted later
+      methods: ["GET", "POST"]
+    }
   });
   res.socket.server.io = io;
 
