@@ -14,17 +14,19 @@ export async function POST(req: Request) {
 
         const roomData = {
             owner: name,
-            created_at: new Date().toISOString(),
             votingPreset: votingPreset || "days",
             timerDuration: timerDuration || 0,
             autoReveal: autoReveal || false,
             state: "lobby", // initial state
+            participants: [{ name, hasVoted: false }],
+            votes: [{ name, vote: null }],
         };
 
-        // Use a Redis pipeline to create the room and set an expiration
+        const roomKey = `room:${roomId}`;
+        
         const pipeline = redis.pipeline();
-        pipeline.hset(`room:${roomId}`, roomData);
-        pipeline.expire(`room:${roomId}`, 60 * 60 * 24); // 24 hours
+        pipeline.set(roomKey, JSON.stringify(roomData));
+        pipeline.expire(roomKey, 60 * 60 * 24); // 24 hours
 
         await pipeline.exec();
 

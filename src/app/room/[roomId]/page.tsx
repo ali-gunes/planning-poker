@@ -60,8 +60,9 @@ export default function RoomPage() {
     useEffect(() => {
         if (!socket) return;
 
-        socket.on("room_settings", (settings: RoomSettings) => {
+        socket.on("initial_state", ({ settings, participants }: { settings: RoomSettings, participants: Participant[] }) => {
             setRoomSettings(settings);
+            setParticipants(participants);
             setGameState(settings.state);
         });
 
@@ -87,7 +88,7 @@ export default function RoomPage() {
         });
 
         return () => {
-          socket.off("room_settings");
+          socket.off("initial_state");
           socket.off("update_participants");
           socket.off("votes_revealed");
           socket.off("new_round_started");

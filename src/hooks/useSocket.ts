@@ -9,8 +9,7 @@ export const useSocket = (roomId: string, name: string) => {
 
         console.log(`Attempting to connect socket for user: ${name} in room: ${roomId}`);
 
-        // Connect to the root, no custom path needed anymore
-        const newSocket = io();
+        const newSocket = io({ path: "/api/socket" });
 
         newSocket.on("connect", () => {
             console.log("Socket connected successfully:", newSocket.id);
