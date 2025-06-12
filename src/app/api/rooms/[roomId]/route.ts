@@ -8,6 +8,10 @@ export async function GET(
     try {
         const { roomId } = params;
 
+        // DIAGNOSTIC: Temporarily disable Redis check to isolate build error
+        return NextResponse.json({ roomId, status: "ok" });
+
+        /*
         const roomData = await redis.get(`room:${roomId}`);
 
         if (!roomData) {
@@ -22,6 +26,7 @@ export async function GET(
             owner: room.owner,
             participantsCount: room.participants.length 
         });
+        */
 
     } catch (error) {
         console.error(`[API_ROOM_GET_ERROR] roomId: ${params.roomId}`, error);
