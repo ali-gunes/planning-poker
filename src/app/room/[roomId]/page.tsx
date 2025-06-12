@@ -121,6 +121,12 @@ export default function RoomPage() {
         if (socket && isOwner) socket.emit("start_round", { roomId });
     };
 
+    const handleCopyToClipboard = () => {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert("Davet linki panoya kopyalandı!");
+        });
+    };
+
     const voteCounts = useMemo(() => {
         if (gameState !== 'revealed') return { average: 0, min: 0, max: 0, consensus: false };
         const numericVotes = votes.map(v => v.vote);
@@ -152,8 +158,13 @@ export default function RoomPage() {
                     {timer > 0 && gameState === 'voting' && (
                         <div className="text-2xl font-mono bg-red-800 text-white px-4 py-2 rounded-lg shadow-lg">{formatTime(timer)}</div>
                     )}
-                    <div className="text-lg bg-gray-800 px-3 py-1 rounded-md">
-                        Oda: <span className="font-mono text-blue-400">{roomId}</span>
+                    <div className="flex items-center gap-4">
+                        <div className="text-lg bg-gray-800 px-3 py-1 rounded-md">
+                            Oda: <span className="font-mono text-blue-400">{roomId}</span>
+                        </div>
+                        <button onClick={handleCopyToClipboard} className="px-4 py-1 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition-all transform hover:scale-105">
+                            Davet Et
+                        </button>
                     </div>
                 </header>
 
