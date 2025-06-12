@@ -51,11 +51,17 @@ export default function RoomPage() {
         let countdown: NodeJS.Timeout;
         if (gameState === 'voting' && timer > 0) {
             countdown = setInterval(() => {
-                setTimer(prev => (prev > 0 ? prev - 1 : 0));
+                setTimer(prev => {
+                    const newTime = prev > 0 ? prev - 1 : 0;
+                    if (newTime === 0 && isOwner && roomSettings?.autoReveal) {
+                        handleRevealVotes();
+                    }
+                    return newTime;
+                });
             }, 1000);
         }
         return () => clearInterval(countdown);
-    }, [gameState, timer]);
+    }, [gameState, timer, isOwner, roomSettings?.autoReveal]);
 
     useEffect(() => {
         if (!socket) return;
@@ -115,7 +121,10 @@ export default function RoomPage() {
     };
 
     const handleRevealVotes = () => {
-        if (socket) socket.send(JSON.stringify({ type: "reveal_votes", roomId }));
+        if (socket) {
+            console.log("handleRevealVotes called");
+            socket.send(JSON.stringify({ type: "reveal_votes", roomId }));
+        }
     };
 
     const handleNewRound = () => {
