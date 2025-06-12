@@ -10,7 +10,7 @@ export default function Home() {
   const router = useRouter();
 
   // New room settings state
-  const [votingPreset, setVotingPreset] = useState("fibonacci");
+  const [votingPreset, setVotingPreset] = useState("days");
   const [timerMinutes, setTimerMinutes] = useState(0);
   const [autoReveal, setAutoReveal] = useState(false);
 
@@ -23,7 +23,7 @@ export default function Home() {
 
   const handleCreateRoom = async () => {
     if (!name.trim()) {
-      alert("Please enter your name.");
+      alert("Lütfen adınızı girin.");
       return;
     }
 
@@ -50,11 +50,11 @@ export default function Home() {
         router.push(`/room/${roomId}`);
       } else {
         const error = await res.json();
-        alert(`Error creating room: ${error.error}`);
+        alert(`Oda oluşturulurken hata: ${error.error}`);
       }
     } catch (error) {
       console.error(error);
-      alert("An unexpected error occurred. Please try again.");
+      alert("Beklenmedik bir hata oluştu. Lütfen tekrar deneyin.");
     } finally {
       setIsLoading(false);
     }
@@ -62,11 +62,11 @@ export default function Home() {
 
   const handleJoinRoom = () => {
     if (!name.trim()) {
-      alert("Please enter your name.");
+      alert("Lütfen adınızı girin.");
       return;
     }
     if (!roomIdToJoin.trim()) {
-      alert("Please enter a Room ID.");
+      alert("Lütfen bir Oda ID'si girin.");
       return;
     }
     sessionStorage.setItem("username", name.trim());
@@ -78,20 +78,20 @@ export default function Home() {
       <div className="w-full max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
-            Planning Poker Online
+            C&I Planlama Pokeri
           </h1>
           <p className="text-lg text-gray-400 mt-4 max-w-2xl mx-auto">
-            Create a room and invite your team to estimate tasks together in real-time.
+            Bir oda oluşturun ve ekibinizi görevleri gerçek zamanlı olarak tahmin etmeye davet edin.
           </p>
         </div>
 
         <div className="bg-gray-800/50 rounded-lg p-6 md:p-8 shadow-2xl">
           <div className="w-full max-w-sm mx-auto mb-8">
-            <label htmlFor="name" className="block text-lg font-medium text-gray-300 mb-2 text-center">Your Name</label>
+            <label htmlFor="name" className="block text-lg font-medium text-gray-300 mb-2 text-center">Adınız</label>
             <input
               id="name"
               type="text"
-              placeholder="Enter your name to begin..."
+              placeholder="Başlamak için adınızı girin..."
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full px-4 py-3 rounded-md bg-gray-900/70 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
@@ -103,25 +103,26 @@ export default function Home() {
             
             {/* Create Room */}
             <div className="p-6 bg-gray-900/50 border border-gray-700 rounded-lg flex flex-col gap-4 items-center w-full h-full">
-              <h2 className="text-2xl font-semibold mb-4 text-white">Create a New Room</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-white">Yeni Bir Oda Oluştur</h2>
 
               <div className="w-full">
-                  <label htmlFor="voting-preset" className="block text-sm font-medium text-gray-400 mb-1">Voting System</label>
+                  <label htmlFor="voting-preset" className="block text-sm font-medium text-gray-400 mb-1">Oylama Sistemi</label>
                   <select id="voting-preset" value={votingPreset} onChange={e => setVotingPreset(e.target.value)} className="w-full px-4 py-2 rounded-md bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-blue-500">
+                      
+                      <option value="days">Günler (1, 2, 3, 4...)</option>
+                      <option value="hours">Saatler (4, 8, 12, 16...)</option>
                       <option value="fibonacci">Fibonacci (1, 2, 3, 5...)</option>
-                      <option value="days">Days (1, 2, 3, 4...)</option>
-                      <option value="hours">Hours (4, 8, 12, 16...)</option>
                   </select>
               </div>
 
               <div className="w-full">
-                  <label htmlFor="timer" className="block text-sm font-medium text-gray-400 mb-1">Round Timer (minutes)</label>
+                  <label htmlFor="timer" className="block text-sm font-medium text-gray-400 mb-1">Tur Zamanlayıcısı (dakika)</label>
                   <input type="number" id="timer" value={timerMinutes} onChange={e => setTimerMinutes(parseInt(e.target.value, 10))} min="0" className="w-full px-4 py-2 rounded-md bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-blue-500" />
               </div>
 
               <div className="w-full flex items-center gap-2 mt-2">
                   <input type="checkbox" id="auto-reveal" checked={autoReveal} onChange={e => setAutoReveal(e.target.checked)} className="h-4 w-4 rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-600" />
-                  <label htmlFor="auto-reveal" className="text-sm font-medium text-gray-300">Auto-reveal votes when timer ends</label>
+                  <label htmlFor="auto-reveal" className="text-sm font-medium text-gray-300">Zamanlayıcı bittiğinde oyları otomatik göster</label>
               </div>
 
               <button
@@ -129,17 +130,17 @@ export default function Home() {
                 className="w-full px-4 py-3 mt-4 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition-all transform hover:scale-105 disabled:bg-blue-900/50 disabled:cursor-not-allowed"
                 disabled={isLoading || !name.trim()}
               >
-                {isLoading ? "Creating..." : "Create Room"}
+                {isLoading ? "Oluşturuluyor..." : "Oda Oluştur"}
               </button>
             </div>
 
             {/* Join Room */}
             <div className="p-6 bg-gray-900/50 border border-gray-700 rounded-lg flex flex-col gap-4 items-center w-full h-full">
-              <h2 className="text-2xl font-semibold mb-4 text-white">Join an Existing Room</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-white">Mevcut Bir Odaya Katıl</h2>
               <div className="w-full h-full flex flex-col justify-center items-center gap-4">
                 <input
                   type="text"
-                  placeholder="Enter Room ID"
+                  placeholder="Oda ID'sini Girin"
                   value={roomIdToJoin}
                   onChange={(e) => setRoomIdToJoin(e.target.value)}
                   className="w-full px-4 py-3 rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 text-center"
@@ -149,7 +150,7 @@ export default function Home() {
                   className="w-full px-4 py-3 bg-green-600 text-white font-bold rounded-md hover:bg-green-700 transition-all transform hover:scale-105 disabled:bg-green-900/50 disabled:cursor-not-allowed"
                   disabled={!roomIdToJoin.trim() || !name.trim()}
                 >
-                  Join Room
+                  Odaya Katıl
                 </button>
               </div>
             </div>

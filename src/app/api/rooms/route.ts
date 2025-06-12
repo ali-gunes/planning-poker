@@ -15,7 +15,7 @@ export async function POST(req: Request) {
         const roomData = {
             owner: name,
             created_at: new Date().toISOString(),
-            votingPreset: votingPreset || "fibonacci",
+            votingPreset: votingPreset || "days",
             timerDuration: timerDuration || 0,
             autoReveal: autoReveal || false,
             state: "lobby", // initial state

@@ -22,13 +22,13 @@ export const NamePromptModal = ({ isOpen, onClose, onSubmit }: NamePromptModalPr
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-gray-800 rounded-lg p-8 shadow-xl w-full max-w-sm m-4">
-        <h2 className="text-2xl font-bold mb-4">Enter Your Name</h2>
+        <h2 className="text-2xl font-bold mb-4">Adınızı Girin</h2>
         <p className="text-gray-400 mb-6">
-          Please provide your name to join the room.
+          Odaya katılmak için lütfen adınızı belirtin.
         </p>
         <input
           type="text"
-          placeholder="Your name"
+          placeholder="Adınız"
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
@@ -41,7 +41,7 @@ export const NamePromptModal = ({ isOpen, onClose, onSubmit }: NamePromptModalPr
             className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={!name.trim()}
           >
-            Join
+            Katıl
           </button>
         </div>
       </div>

@@ -9,8 +9,8 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Planning Poker",
-  description: "A real-time planning poker application.",
+  title: "C&I Planlama Pokeri",
+  description: "Gerçek zamanlı planlama pokeri uygulaması",
 };
 
 export default function RootLayout({
