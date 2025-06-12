@@ -4,11 +4,10 @@ import { useState } from "react";
 
 interface NamePromptModalProps {
   isOpen: boolean;
-  onClose: () => void;
   onSubmit: (name: string) => void;
 }
 
-export const NamePromptModal = ({ isOpen, onClose, onSubmit }: NamePromptModalProps) => {
+export const NamePromptModal = ({ isOpen, onSubmit }: NamePromptModalProps) => {
   const [name, setName] = useState("");
 
   if (!isOpen) return null;

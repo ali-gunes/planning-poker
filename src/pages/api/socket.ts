@@ -30,12 +30,6 @@ interface Room {
 }
 // --- END OF TYPES ---
 
-const VOTE_SYSTEMS = {
-  fibonacci: ["1", "2", "3", "5", "8", "13", "21", "☕️", "?"],
-  days: ["1", "2", "3", "4", "5", "10", "15", "☕️", "?"],
-  hours: ["1", "2", "3", "4", "6", "8", "12", "☕️", "?"],
-};
-
 interface SocketServer extends HTTPServer {
   io?: Server | undefined;
 }
@@ -48,8 +42,6 @@ interface NextApiResponseWithSocket extends NextApiResponse {
   socket: SocketWithIO;
 }
 
-const PORT = process.env.PORT || 3001;
-
 const getRoom = async (roomId: string): Promise<Room | null> => {
     const roomData = await redis.get(`room:${roomId}`);
     return roomData ? JSON.parse(roomData) : null;
@@ -57,27 +49,6 @@ const getRoom = async (roomId: string): Promise<Room | null> => {
 
 const setRoom = (roomId: string, roomData: Room | object) => {
     return redis.set(`room:${roomId}`, JSON.stringify(roomData));
-};
-
-const calculateStatistics = (votes: Vote[]) => {
-  const numericVotes = votes
-    .map((v) => parseInt(v.value || "", 10))
-    .filter((v) => !isNaN(v));
-
-  if (numericVotes.length === 0) {
-    return { average: 0, min: 0, max: 0 };
-  }
-
-  const sum = numericVotes.reduce((acc, curr) => acc + curr, 0);
-  const average = sum / numericVotes.length;
-  const min = Math.min(...numericVotes);
-  const max = Math.max(...numericVotes);
-
-  return {
-    average: parseFloat(average.toFixed(1)),
-    min,
-    max,
-  };
 };
 
 const ioHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
@@ -98,7 +69,7 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
     socket.on("join_room", async ({ roomId, name }: { roomId: string, name: string }) => {
         console.log(`[join_room] received for room: ${roomId}, user: ${name}`);
         await socket.join(roomId);
-        let room = await getRoom(roomId);
+        const room = await getRoom(roomId);
         console.log(`[join_room] retrieved room data:`, room);
 
         if (!room) {
@@ -141,7 +112,7 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
 
     socket.on("start_round", async ({ roomId }: { roomId: string }) => {
         console.log(`[start_round] received for room: ${roomId}`);
-        let room = await getRoom(roomId);
+        const room = await getRoom(roomId);
         if (room && room.state === 'lobby') {
             room.state = 'voting';
             if (room.timerDuration > 0) {
@@ -158,7 +129,7 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
 
     socket.on("user_voted", async ({ roomId, name, vote }: { roomId: string, name: string, vote: number }) => {
         console.log(`[user_voted] received for room: ${roomId}, user: ${name}, vote: ${vote}`);
-        let room = await getRoom(roomId);
+        const room = await getRoom(roomId);
         if (room && room.state === 'voting') {
             const participant = room.participants.find(p => p.name === name);
             if (participant) participant.hasVoted = true;
@@ -176,7 +147,7 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
 
     socket.on("reveal_votes", async ({ roomId }: { roomId: string }) => {
         console.log(`[reveal_votes] received for room: ${roomId}`);
-        let room = await getRoom(roomId);
+        const room = await getRoom(roomId);
         if (room && room.state === 'voting') {
             room.state = 'revealed';
             await setRoom(roomId, room);
@@ -192,7 +163,7 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
 
     socket.on("new_round", async ({ roomId }: { roomId: string }) => {
         console.log(`[new_round] received for room: ${roomId}`);
-        let room = await getRoom(roomId);
+        const room = await getRoom(roomId);
         if (room && room.state === 'revealed') {
             room.state = 'lobby';
             room.participants.forEach(p => p.hasVoted = false);

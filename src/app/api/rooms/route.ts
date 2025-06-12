@@ -2,9 +2,16 @@ import { redis } from "@/lib/redis";
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+interface CreateRoomRequest {
+    name: string;
+    votingPreset: 'fibonacci' | 'days' | 'hours';
+    timerDuration: number;
+    autoReveal: boolean;
+}
+
+export async function POST(request: Request) {
     try {
-        const { name, votingPreset, timerDuration, autoReveal } = await req.json();
+        const { name, votingPreset, timerDuration, autoReveal } = (await request.json()) as CreateRoomRequest;
 
         if (!name) {
             return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -12,28 +19,23 @@ export async function POST(req: Request) {
 
         const roomId = nanoid(6); // 6-character room ID
 
-        const roomData = {
+        const room = {
             owner: name,
-            votingPreset: votingPreset || "days",
-            timerDuration: timerDuration || 0,
-            autoReveal: autoReveal || false,
+            votingPreset,
+            timerDuration,
+            autoReveal,
             state: "lobby", // initial state
             participants: [{ name, hasVoted: false }],
             votes: [{ name, vote: null }],
         };
 
-        const roomKey = `room:${roomId}`;
-        
-        const pipeline = redis.pipeline();
-        pipeline.set(roomKey, JSON.stringify(roomData));
-        pipeline.expire(roomKey, 60 * 60 * 24); // 24 hours
-
-        await pipeline.exec();
+        // Use redis.set with JSON.stringify to match the format in socket.ts
+        await redis.set(`room:${roomId}`, JSON.stringify(room));
 
         return NextResponse.json({ roomId });
 
     } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        console.error('[API_CREATE_ROOM_ERROR]', error);
+        return NextResponse.json({ error: "Failed to create room" }, { status: 500 });
     }
 } 
