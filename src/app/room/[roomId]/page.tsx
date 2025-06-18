@@ -249,7 +249,20 @@ export default function RoomPage() {
                                     <span className="font-bold text-2xl">Ortalama: {voteCounts.average}</span>
                                     <span>Max: <span className="font-bold text-blue-400">{voteCounts.max}</span></span>
                                 </div>
-                                {voteCounts.consensus && <div className="mt-4 text-green-400 font-bold text-2xl animate-pulse">OY BİRLİĞİ!</div>}
+                                {voteCounts.consensus && (
+                                    <div className="mt-6 flex flex-col items-center gap-4">
+                                        <div className="text-green-400 font-bold text-2xl animate-pulse">OY BİRLİĞİ!</div>
+                                        <Image 
+                                            src="/gifs/dicaprio-clapping.gif" 
+                                            alt="DiCaprio Clapping" 
+                                            width={250}
+                                            height={200}
+                                            className="rounded-lg shadow-lg"
+                                            unoptimized={true}
+                                        />
+                                        <div className="text-yellow-400 font-bold text-lg">🎉 Mükemmel uyum! 🎉</div>
+                                    </div>
+                                )}
                                 
                                 {/* Deniz Card */}
                                 <div className="mt-6">
