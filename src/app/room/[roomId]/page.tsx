@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useSocket } from "@/hooks/useSocket";
 import { NamePromptModal } from "@/components/NamePromptModal";
 import { DenizModal } from "@/components/DenizModal";
+import { EzgiModal } from "@/components/EzgiModal";
 
 const votingStacks = {
     fibonacci: [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
@@ -37,6 +38,7 @@ export default function RoomPage() {
     const [gameState, setGameState] = useState("lobby"); // lobby, voting, revealed
     const [timer, setTimer] = useState(0);
     const [isDenizModalOpen, setIsDenizModalOpen] = useState(false);
+    const [isEzgiModalOpen, setIsEzgiModalOpen] = useState(false);
 
     const isOwner = roomSettings?.owner === name;
     const votingCards = roomSettings ? votingStacks[roomSettings.votingPreset] : [];
@@ -148,6 +150,10 @@ export default function RoomPage() {
         setIsDenizModalOpen(true);
     };
 
+    const handleEzgiCard = () => {
+        setIsEzgiModalOpen(true);
+    };
+
     const voteCounts = useMemo(() => {
         if (gameState !== 'revealed') return { average: 0, min: 0, max: 0, consensus: false, hugeDifference: false };
         const numericVotes = votes.map(v => v.vote);
@@ -173,6 +179,7 @@ export default function RoomPage() {
         <>
             <NamePromptModal isOpen={isNameModalOpen} onSubmit={handleNameSubmit} />
             <DenizModal isOpen={isDenizModalOpen} onClose={() => setIsDenizModalOpen(false)} />
+            <EzgiModal isOpen={isEzgiModalOpen} onClose={() => setIsEzgiModalOpen(false)} />
             <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col p-4 md:p-8">
                 
                 {/* Header */}
@@ -276,17 +283,23 @@ export default function RoomPage() {
                                             className="rounded-lg shadow-lg"
                                             unoptimized={true}
                                         />
-                                        <div className="text-orange-400 font-bold text-lg">😱 Bu kadar fark olur mu? 😱</div>
+                                        <div className="text-orange-400 font-bold text-lg">Bu kadar fark olur mu?</div>
                                     </div>
                                 )}
                                 
-                                {/* Deniz Card */}
-                                <div className="mt-6">
+                                {/* Character Cards */}
+                                <div className="mt-6 flex flex-wrap justify-center gap-4">
                                     <button
                                         onClick={handleDenizCard}
                                         className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold rounded-lg hover:from-orange-600 hover:to-red-700 transition-all transform hover:scale-105 shadow-lg"
                                     >
-                                        Deniz Kartını Oyna
+                                        🤔 Deniz Kartını Oyna
+                                    </button>
+                                    <button
+                                        onClick={handleEzgiCard}
+                                        className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105 shadow-lg"
+                                    >
+                                        🛡️ Ezgi Kartını Oyna
                                     </button>
                                 </div>
                             </div>
