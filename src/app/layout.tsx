@@ -11,6 +11,16 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   title: "C&I Planlama Pokeri",
   description: "Gerçek zamanlı planlama pokeri uygulaması",
+  icons: {
+    icon: [
+      {
+        url: '/planning-poker.svg',
+        type: 'image/svg+xml',
+      },
+    ],
+    shortcut: '/planning-poker.svg',
+    apple: '/planning-poker.svg',
+  },
 };
 
 export default function RootLayout({

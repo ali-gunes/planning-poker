@@ -168,7 +168,14 @@ export default function RoomPage() {
                 
                 {/* Header */}
                 <header className="w-full max-w-7xl mx-auto flex justify-between items-center mb-6">
-                    <h1 className="text-2xl md:text-3xl font-bold">C&I Planlama Pokeri</h1>
+                    <div className="flex items-center gap-3">
+                        <img 
+                            src="/planning-poker.svg" 
+                            alt="Planlama Pokeri Logo" 
+                            className="w-8 h-8 md:w-10 md:h-10" 
+                        />
+                        <h1 className="text-2xl md:text-3xl font-bold">C&I Planlama Pokeri</h1>
+                    </div>
                     {timer > 0 && gameState === 'voting' && (
                         <div className="text-2xl font-mono bg-red-800 text-white px-4 py-2 rounded-lg shadow-lg">{formatTime(timer)}</div>
                     )}

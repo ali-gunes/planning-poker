@@ -77,6 +77,13 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-center p-4 md:p-8">
       <div className="w-full max-w-4xl mx-auto">
         <div className="text-center mb-12">
+          <div className="flex justify-center mb-6">
+            <img 
+              src="/planning-poker.svg" 
+              alt="Planlama Pokeri Logo" 
+              className="w-24 h-24 md:w-32 md:h-32" 
+            />
+          </div>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
             C&I Planlama Pokeri
           </h1>
