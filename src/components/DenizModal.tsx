@@ -61,7 +61,7 @@ export function DenizModal({ isOpen, onClose }: DenizModalProps) {
           <div className="flex flex-col items-center mb-4">
             <div className="text-6xl mb-2">🤔</div>
             <Image 
-              src="/attack.gif" 
+              src="/gifs/attack.gif" 
               alt="Deniz Attack" 
               width={200}
               height={150}

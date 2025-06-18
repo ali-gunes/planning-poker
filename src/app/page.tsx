@@ -11,7 +11,7 @@ export default function Home() {
   const router = useRouter();
 
   // New room settings state
-  const [votingPreset, setVotingPreset] = useState("days");
+  const [votingPreset, setVotingPreset] = useState("hours");
   const [timerMinutes, setTimerMinutes] = useState(0);
   const [autoReveal, setAutoReveal] = useState(false);
 
@@ -118,9 +118,8 @@ export default function Home() {
               <div className="w-full">
                   <label htmlFor="voting-preset" className="block text-sm font-medium text-gray-400 mb-1">Oylama Sistemi</label>
                   <select id="voting-preset" value={votingPreset} onChange={e => setVotingPreset(e.target.value)} className="w-full px-4 py-2 rounded-md bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-blue-500">
-                      
-                      <option value="days">Günler (1, 2, 3, 4...)</option>
                       <option value="hours">Saatler (4, 8, 12, 16...)</option>
+                      <option value="days">Günler (1, 2, 3, 4...)</option>
                       <option value="fibonacci">Fibonacci (1, 2, 3, 5...)</option>
                   </select>
               </div>
