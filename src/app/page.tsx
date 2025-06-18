@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Home() {
   const [name, setName] = useState("");
@@ -78,9 +79,11 @@ export default function Home() {
       <div className="w-full max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
-            <img 
+            <Image 
               src="/planning-poker.svg" 
               alt="Planlama Pokeri Logo" 
+              width={128}
+              height={128}
               className="w-24 h-24 md:w-32 md:h-32" 
             />
           </div>

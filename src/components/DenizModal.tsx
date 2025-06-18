@@ -26,6 +26,13 @@ export function DenizModal({ isOpen, onClose }: DenizModalProps) {
   const [currentQuote, setCurrentQuote] = useState("");
   const [isVisible, setIsVisible] = useState(false);
 
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(() => {
+      onClose();
+    }, 300); // Wait for animation to complete
+  };
+
   useEffect(() => {
     if (isOpen) {
       const randomQuote = denizQuotes[Math.floor(Math.random() * denizQuotes.length)];
@@ -39,14 +46,7 @@ export function DenizModal({ isOpen, onClose }: DenizModalProps) {
       
       return () => clearTimeout(timer);
     }
-  }, [isOpen]);
-
-  const handleClose = () => {
-    setIsVisible(false);
-    setTimeout(() => {
-      onClose();
-    }, 300); // Wait for animation to complete
-  };
+  }, [isOpen, handleClose]);
 
   if (!isOpen) return null;
 
@@ -60,7 +60,7 @@ export function DenizModal({ isOpen, onClose }: DenizModalProps) {
           <h2 className="text-2xl font-bold text-white mb-4">Deniz Diyor Ki:</h2>
           <div className="bg-white/90 rounded-lg p-4 mb-6">
             <p className="text-gray-800 text-lg font-medium italic">
-              "{currentQuote}"
+              &quot;{currentQuote}&quot;
             </p>
           </div>
           <div className="text-yellow-200 font-bold text-sm animate-pulse">

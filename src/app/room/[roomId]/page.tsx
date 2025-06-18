@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 import { useSocket } from "@/hooks/useSocket";
 import { NamePromptModal } from "@/components/NamePromptModal";
 import { DenizModal } from "@/components/DenizModal";
@@ -49,6 +50,13 @@ export default function RoomPage() {
         }
     }, []);
 
+    const handleRevealVotes = useCallback(() => {
+        if (socket) {
+            console.log("handleRevealVotes called");
+            socket.send(JSON.stringify({ type: "reveal_votes", roomId }));
+        }
+    }, [socket, roomId]);
+
     useEffect(() => {
         let countdown: NodeJS.Timeout;
         if (gameState === 'voting' && timer > 0) {
@@ -63,7 +71,7 @@ export default function RoomPage() {
             }, 1000);
         }
         return () => clearInterval(countdown);
-    }, [gameState, timer, isOwner, roomSettings?.autoReveal]);
+    }, [gameState, timer, isOwner, roomSettings?.autoReveal, handleRevealVotes]);
 
     useEffect(() => {
         if (!socket) return;
@@ -122,13 +130,6 @@ export default function RoomPage() {
         }
     };
 
-    const handleRevealVotes = () => {
-        if (socket) {
-            console.log("handleRevealVotes called");
-            socket.send(JSON.stringify({ type: "reveal_votes", roomId }));
-        }
-    };
-
     const handleNewRound = () => {
         if (socket) socket.send(JSON.stringify({ type: "new_round", roomId }));
     };
@@ -176,9 +177,11 @@ export default function RoomPage() {
                 {/* Header */}
                 <header className="w-full max-w-7xl mx-auto flex justify-between items-center mb-6">
                     <div className="flex items-center gap-3">
-                        <img 
+                        <Image 
                             src="/planning-poker.svg" 
                             alt="Planlama Pokeri Logo" 
+                            width={40}
+                            height={40}
                             className="w-8 h-8 md:w-10 md:h-10" 
                         />
                         <h1 className="text-2xl md:text-3xl font-bold">C&I Planlama Pokeri</h1>
