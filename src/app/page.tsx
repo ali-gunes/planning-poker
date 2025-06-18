@@ -118,6 +118,19 @@ export default function Home() {
               <div className="w-full">
                   <label className="block text-sm font-medium text-gray-400 mb-3 text-center">Oylama Sistemi</label>
                   <div className="grid grid-cols-2 gap-3">
+                  <button
+                          type="button"
+                          onClick={() => setVotingPreset("hours")}
+                          className={`p-4 rounded-lg border-2 transition-all text-center ${
+                              votingPreset === "hours"
+                                  ? "border-blue-500 bg-blue-500/20 text-blue-300"
+                                  : "border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500"
+                          }`}
+                      >
+                          <div className="font-bold text-lg">⏰</div>
+                          <div className="text-sm font-medium">Saatler</div>
+                          <div className="text-xs text-gray-400">4, 8, 12, 16...</div>
+                      </button>
                       <button
                           type="button"
                           onClick={() => setVotingPreset("days")}
@@ -131,19 +144,7 @@ export default function Home() {
                           <div className="text-sm font-medium">Günler</div>
                           <div className="text-xs text-gray-400">1, 2, 3, 4...</div>
                       </button>
-                      <button
-                          type="button"
-                          onClick={() => setVotingPreset("hours")}
-                          className={`p-4 rounded-lg border-2 transition-all text-center ${
-                              votingPreset === "hours"
-                                  ? "border-blue-500 bg-blue-500/20 text-blue-300"
-                                  : "border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500"
-                          }`}
-                      >
-                          <div className="font-bold text-lg">⏰</div>
-                          <div className="text-sm font-medium">Saatler</div>
-                          <div className="text-xs text-gray-400">4, 8, 12, 16...</div>
-                      </button>
+                      
                       <button
                           type="button"
                           onClick={() => setVotingPreset("fibonacci")}
