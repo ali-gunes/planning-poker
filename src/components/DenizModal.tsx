@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface DenizModalProps {
   isOpen: boolean;
@@ -8,8 +9,9 @@ interface DenizModalProps {
 }
 
 const denizQuotes = [
-  "Aslında, bence bu 2 kat daha uzun sürer...",
-  "Edge case'leri düşündük mü?",
+  "Arkadaşlar test eforunu ayrı alacağız",
+  "Hayret... Ezgi eforlara itiraz etmedi!",
+  "2'şer saat yazıyorum o zaman...",
   "Bu çok iyimser görünüyor...",
   "Ölçeklenebilirlik konusunda ne düşünüyorsunuz?",
   "Gerçekten bu kadar basit mi?",
@@ -56,7 +58,17 @@ export function DenizModal({ isOpen, onClose }: DenizModalProps) {
         isVisible ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
       }`}>
         <div className="text-center">
-          <div className="text-6xl mb-4">🤔</div>
+          <div className="flex flex-col items-center mb-4">
+            <div className="text-6xl mb-2">🤔</div>
+            <Image 
+              src="/attack.gif" 
+              alt="Deniz Attack" 
+              width={200}
+              height={150}
+              className="rounded-lg shadow-lg"
+              unoptimized={true}
+            />
+          </div>
           <h2 className="text-2xl font-bold text-white mb-4">Deniz Diyor Ki:</h2>
           <div className="bg-white/90 rounded-lg p-4 mb-6">
             <p className="text-gray-800 text-lg font-medium italic">
@@ -64,7 +76,7 @@ export function DenizModal({ isOpen, onClose }: DenizModalProps) {
             </p>
           </div>
           <div className="text-yellow-200 font-bold text-sm animate-pulse">
-            Reality Check Activated! 🚨
+            Titre ve özüne dön C&I! 🚨
           </div>
           <button
             onClick={handleClose}
