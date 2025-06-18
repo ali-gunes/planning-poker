@@ -35,14 +35,14 @@ export function DenizModal({ isOpen, onClose }: DenizModalProps) {
       setCurrentQuote(randomQuote);
       setIsVisible(true);
       
-      // Auto close after 4 seconds
-      const timer = setTimeout(() => {
-        handleClose();
-      }, 4000);
+      // Auto close after 4 seconds - DISABLED for now
+      // const timer = setTimeout(() => {
+      //   handleClose();
+      // }, 4000);
       
-      return () => clearTimeout(timer);
+      // return () => clearTimeout(timer);
     }
-  }, [isOpen, handleClose]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

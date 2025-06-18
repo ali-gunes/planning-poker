@@ -270,7 +270,7 @@ export default function RoomPage() {
                                         onClick={handleDenizCard}
                                         className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold rounded-lg hover:from-orange-600 hover:to-red-700 transition-all transform hover:scale-105 shadow-lg"
                                     >
-                                        🤔 Deniz Kartını Oyna
+                                        Deniz Kartını Oyna
                                     </button>
                                 </div>
                             </div>
