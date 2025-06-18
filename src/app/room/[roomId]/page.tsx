@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
 import { NamePromptModal } from "@/components/NamePromptModal";
+import { DenizModal } from "@/components/DenizModal";
 
 const votingStacks = {
     fibonacci: [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
@@ -34,6 +35,7 @@ export default function RoomPage() {
     const [roomSettings, setRoomSettings] = useState<RoomSettings | null>(null);
     const [gameState, setGameState] = useState("lobby"); // lobby, voting, revealed
     const [timer, setTimer] = useState(0);
+    const [isDenizModalOpen, setIsDenizModalOpen] = useState(false);
 
     const isOwner = roomSettings?.owner === name;
     const votingCards = roomSettings ? votingStacks[roomSettings.votingPreset] : [];
@@ -141,6 +143,10 @@ export default function RoomPage() {
         });
     };
 
+    const handleDenizCard = () => {
+        setIsDenizModalOpen(true);
+    };
+
     const voteCounts = useMemo(() => {
         if (gameState !== 'revealed') return { average: 0, min: 0, max: 0, consensus: false };
         const numericVotes = votes.map(v => v.vote);
@@ -164,6 +170,7 @@ export default function RoomPage() {
     return (
         <>
             <NamePromptModal isOpen={isNameModalOpen} onSubmit={handleNameSubmit} />
+            <DenizModal isOpen={isDenizModalOpen} onClose={() => setIsDenizModalOpen(false)} />
             <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col p-4 md:p-8">
                 
                 {/* Header */}
@@ -240,6 +247,16 @@ export default function RoomPage() {
                                     <span>Max: <span className="font-bold text-blue-400">{voteCounts.max}</span></span>
                                 </div>
                                 {voteCounts.consensus && <div className="mt-4 text-green-400 font-bold text-2xl animate-pulse">OY BİRLİĞİ!</div>}
+                                
+                                {/* Deniz Card */}
+                                <div className="mt-6">
+                                    <button
+                                        onClick={handleDenizCard}
+                                        className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold rounded-lg hover:from-orange-600 hover:to-red-700 transition-all transform hover:scale-105 shadow-lg"
+                                    >
+                                        🤔 Deniz Kartını Oyna
+                                    </button>
+                                </div>
                             </div>
                         ) : (
                         /* Voting State */
