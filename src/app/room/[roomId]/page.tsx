@@ -11,11 +11,12 @@ import { EzgiModal } from "@/components/EzgiModal";
 const votingStacks = {
     fibonacci: [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
     days: [1, 2, 3, 4, 5, 6, 7, 8],
-    hours: [4, 8, 12, 16, 24, 32, 40, 48, 56, 64]
+    hours: [4, 8, 12, 16, 24, 32, 40, 48, 56, 64],
+    yesno: ["Evet", "Hayır"]
 };
 
 interface Participant { name: string; hasVoted: boolean; }
-interface Vote { name: string; vote: number; }
+interface Vote { name: string; vote: number | string; }
 interface RoomSettings {
     owner: string;
     votingPreset: keyof typeof votingStacks;
@@ -32,7 +33,7 @@ export default function RoomPage() {
     
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [isNameModalOpen, setIsNameModalOpen] = useState(false);
-    const [selectedVote, setSelectedVote] = useState<number | null>(null);
+    const [selectedVote, setSelectedVote] = useState<number | string | null>(null);
     const [votes, setVotes] = useState<Vote[]>([]);
     const [roomSettings, setRoomSettings] = useState<RoomSettings | null>(null);
     const [gameState, setGameState] = useState("lobby"); // lobby, voting, revealed
@@ -125,7 +126,7 @@ export default function RoomPage() {
         setIsNameModalOpen(false);
     };
 
-    const handleVote = (vote: number) => {
+    const handleVote = (vote: number | string) => {
         if (socket && gameState === 'voting') {
             setSelectedVote(vote);
             socket.send(JSON.stringify({ type: "user_voted", roomId, name, vote }));
@@ -155,19 +156,28 @@ export default function RoomPage() {
     };
 
     const voteCounts = useMemo(() => {
-        if (gameState !== 'revealed') return { average: 0, min: 0, max: 0, consensus: false, hugeDifference: false };
-        const numericVotes = votes.map(v => v.vote);
-        if (numericVotes.length === 0) return { average: 0, min: 0, max: 0, consensus: false, hugeDifference: false };
+        if (gameState !== 'revealed') return { average: 0, min: 0, max: 0, consensus: false, hugeDifference: false, isYesNo: false };
+        const allVotes = votes.map(v => v.vote);
+        if (allVotes.length === 0) return { average: 0, min: 0, max: 0, consensus: false, hugeDifference: false, isYesNo: false };
         
+        const consensus = new Set(allVotes).size === 1;
+        const isYesNo = roomSettings?.votingPreset === 'yesno';
+        
+        if (isYesNo) {
+            // For Yes/No votes, don't calculate numeric statistics
+            return { average: 0, min: 0, max: 0, consensus, hugeDifference: false, isYesNo };
+        }
+        
+        // For numeric votes
+        const numericVotes = allVotes as number[];
         const sum = numericVotes.reduce((acc, v) => acc + v, 0);
         const average = sum / numericVotes.length;
         const min = Math.min(...numericVotes);
         const max = Math.max(...numericVotes);
-        const consensus = new Set(numericVotes).size === 1;
         const hugeDifference = min > 0 && max >= min * 3; // Check if max is at least 3x min
         
-        return { average: average.toFixed(1), min, max, consensus, hugeDifference };
-    }, [votes, gameState]);
+        return { average: average.toFixed(1), min, max, consensus, hugeDifference, isYesNo };
+    }, [votes, gameState, roomSettings?.votingPreset]);
 
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -252,11 +262,18 @@ export default function RoomPage() {
                                         </div>
                                     ))}
                                 </div>
-                                <div className="mt-6 text-xl w-full flex justify-around items-center bg-gray-900/50 p-4 rounded-lg">
-                                    <span>Min: <span className="font-bold text-blue-400">{voteCounts.min}</span></span>
-                                    <span className="font-bold text-2xl">Ortalama: {voteCounts.average}</span>
-                                    <span>Max: <span className="font-bold text-blue-400">{voteCounts.max}</span></span>
-                                </div>
+                                {!voteCounts.isYesNo && (
+                                    <div className="mt-6 text-xl w-full flex justify-around items-center bg-gray-900/50 p-4 rounded-lg">
+                                        <span>Min: <span className="font-bold text-blue-400">{voteCounts.min}</span></span>
+                                        <span className="font-bold text-2xl">Ortalama: {voteCounts.average}</span>
+                                        <span>Max: <span className="font-bold text-blue-400">{voteCounts.max}</span></span>
+                                    </div>
+                                )}
+                                {voteCounts.isYesNo && (
+                                    <div className="mt-6 text-xl w-full flex justify-center items-center bg-gray-900/50 p-4 rounded-lg">
+                                        <span className="font-bold text-2xl">Evet/Hayır Oylaması</span>
+                                    </div>
+                                )}
                                 {voteCounts.consensus && (
                                     <div className="mt-6 flex flex-col items-center gap-4">
                                         <div className="text-green-400 font-bold text-2xl animate-pulse">OY BİRLİĞİ!</div>
@@ -293,7 +310,7 @@ export default function RoomPage() {
                                         onClick={handleDenizCard}
                                         className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold rounded-lg hover:from-orange-600 hover:to-red-700 transition-all transform hover:scale-105 shadow-lg"
                                     >
-                                        🤔 Deniz Kartını Oyna
+                                        ⚔ Deniz Kartını Oyna
                                     </button>
                                     <button
                                         onClick={handleEzgiCard}

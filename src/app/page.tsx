@@ -121,6 +121,7 @@ export default function Home() {
                       <option value="hours">Saatler (4, 8, 12, 16...)</option>
                       <option value="days">Günler (1, 2, 3, 4...)</option>
                       <option value="fibonacci">Fibonacci (1, 2, 3, 5...)</option>
+                      <option value="yesno">Evet/Hayır</option>
                   </select>
               </div>
 
