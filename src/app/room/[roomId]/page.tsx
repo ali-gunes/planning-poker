@@ -149,17 +149,18 @@ export default function RoomPage() {
     };
 
     const voteCounts = useMemo(() => {
-        if (gameState !== 'revealed') return { average: 0, min: 0, max: 0, consensus: false };
+        if (gameState !== 'revealed') return { average: 0, min: 0, max: 0, consensus: false, hugeDifference: false };
         const numericVotes = votes.map(v => v.vote);
-        if (numericVotes.length === 0) return { average: 0, min: 0, max: 0, consensus: false };
+        if (numericVotes.length === 0) return { average: 0, min: 0, max: 0, consensus: false, hugeDifference: false };
         
         const sum = numericVotes.reduce((acc, v) => acc + v, 0);
         const average = sum / numericVotes.length;
         const min = Math.min(...numericVotes);
         const max = Math.max(...numericVotes);
         const consensus = new Set(numericVotes).size === 1;
+        const hugeDifference = min > 0 && max >= min * 3; // Check if max is at least 3x min
         
-        return { average: average.toFixed(1), min, max, consensus };
+        return { average: average.toFixed(1), min, max, consensus, hugeDifference };
     }, [votes, gameState]);
 
     const formatTime = (seconds: number) => {
@@ -261,6 +262,21 @@ export default function RoomPage() {
                                             unoptimized={true}
                                         />
                                         <div className="text-yellow-400 font-bold text-lg">🎉 Mükemmel uyum! 🎉</div>
+                                    </div>
+                                )}
+                                
+                                {voteCounts.hugeDifference && !voteCounts.consensus && (
+                                    <div className="mt-6 flex flex-col items-center gap-4">
+                                        <div className="text-red-400 font-bold text-2xl animate-pulse">BÜYÜK FARK!</div>
+                                        <Image 
+                                            src="/gifs/surprised-pikachu.gif" 
+                                            alt="Surprised Pikachu" 
+                                            width={250}
+                                            height={200}
+                                            className="rounded-lg shadow-lg"
+                                            unoptimized={true}
+                                        />
+                                        <div className="text-orange-400 font-bold text-lg">😱 Bu kadar fark olur mu? 😱</div>
                                     </div>
                                 )}
                                 
