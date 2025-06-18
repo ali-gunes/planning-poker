@@ -12,16 +12,10 @@ const denizQuotes = [
   "Arkadaşlar test eforunu ayrı alacağız",
   "Hayret... Ezgi eforlara itiraz etmedi!",
   "2'şer saat yazıyorum o zaman...",
-  "Bu çok iyimser görünüyor...",
-  "Ölçeklenebilirlik konusunda ne düşünüyorsunuz?",
-  "Gerçekten bu kadar basit mi?",
-  "Bir dakika, bu daha karmaşık...",
-  "MVP'de bile bu çok zaman alır",
-  "Kullanıcı deneyimi açısından eksik var",
-  "Test zamanını hesapladınız mı?",
-  "Refactoring süresini unuttunuz",
-  "Documentation da yazılacak...",
-  "Code review sürecini düşünelim",
+  "Arkadaşlar biliyorsunuz ben ırkçı değilim, ama...",
+  "Arkadaşlar biliyorsunuz ben cinsiyetçi değilim, ama...",
+  "İlhan bana bi şey demedi arkadaşlar.",
+  "Ben itiraz edersiniz sandım."
 ];
 
 export function DenizModal({ isOpen, onClose }: DenizModalProps) {
@@ -58,8 +52,7 @@ export function DenizModal({ isOpen, onClose }: DenizModalProps) {
         isVisible ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
       }`}>
         <div className="text-center">
-          <div className="flex flex-col items-center mb-4">
-            <div className="text-6xl mb-2">🤔</div>
+          <div className="flex justify-center mb-4">
             <Image 
               src="/gifs/attack.gif" 
               alt="Deniz Attack" 
@@ -82,7 +75,7 @@ export function DenizModal({ isOpen, onClose }: DenizModalProps) {
             onClick={handleClose}
             className="mt-4 px-6 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors"
           >
-            Tamam, haklısın... 😅
+            Tamam, haklısın...
           </button>
         </div>
       </div>
