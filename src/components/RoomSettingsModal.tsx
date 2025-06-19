@@ -111,17 +111,55 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
 
           {/* Timer Settings */}
           <div>
-            <label htmlFor="timer" className="block text-sm font-medium text-gray-400 mb-2">
-              Tur Zamanlayıcısı (dakika)
+            <label className="block text-sm font-medium text-gray-400 mb-3 text-center">
+              Tur Zamanlayıcısı
             </label>
-            <input 
-              type="number" 
-              id="timer" 
-              value={timerMinutes} 
-              onChange={e => setTimerMinutes(parseInt(e.target.value, 10) || 0)} 
-              min="0" 
-              className="w-full px-4 py-2 rounded-md bg-gray-700 text-white border-gray-600 focus:ring-2 focus:ring-blue-500" 
-            />
+            <div className="grid grid-cols-4 gap-2">
+              <button
+                type="button"
+                onClick={() => setTimerMinutes(0.5)}
+                className={`p-3 rounded-lg border-2 transition-all text-center ${
+                  timerMinutes === 0.5
+                    ? "border-blue-500 bg-blue-500/20 text-blue-300"
+                    : "border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500"
+                }`}
+              >
+                <div className="text-xs font-medium">30 sn</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTimerMinutes(1)}
+                className={`p-3 rounded-lg border-2 transition-all text-center ${
+                  timerMinutes === 1
+                    ? "border-blue-500 bg-blue-500/20 text-blue-300"
+                    : "border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500"
+                }`}
+              >
+                <div className="text-xs font-medium">1 dk</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTimerMinutes(2)}
+                className={`p-3 rounded-lg border-2 transition-all text-center ${
+                  timerMinutes === 2
+                    ? "border-blue-500 bg-blue-500/20 text-blue-300"
+                    : "border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500"
+                }`}
+              >
+                <div className="text-xs font-medium">2 dk</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTimerMinutes(3)}
+                className={`p-3 rounded-lg border-2 transition-all text-center ${
+                  timerMinutes === 3
+                    ? "border-blue-500 bg-blue-500/20 text-blue-300"
+                    : "border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500"
+                }`}
+              >
+                <div className="text-xs font-medium">3 dk</div>
+              </button>
+            </div>
           </div>
 
           {/* Auto Reveal Settings */}
