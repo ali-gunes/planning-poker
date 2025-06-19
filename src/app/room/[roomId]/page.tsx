@@ -262,6 +262,26 @@ export default function RoomPage() {
                     
                     {/* Left Panel: Participants & Controls */}
                     <aside className="lg:col-span-1 bg-gray-800/50 rounded-lg p-6 h-fit shadow-2xl">
+                        {/* Voting System Info */}
+                        {roomSettings && (
+                            <div className="mb-6 p-3 bg-gray-700/50 rounded-lg border border-gray-600">
+                                <div className="text-center">
+                                    <div className="text-sm text-gray-400 mb-1">Oylama sistemi</div>
+                                    <div className="font-semibold text-white">
+                                        {roomSettings.votingPreset === 'fibonacci' && '🔢 Fibonacci'}
+                                        {roomSettings.votingPreset === 'days' && '📅 Günler'}
+                                        {roomSettings.votingPreset === 'hours' && '⏰ Saatler'}
+                                        {roomSettings.votingPreset === 'yesno' && '✅ Evet/Hayır'}
+                                    </div>
+                                    {roomSettings.timerDuration > 0 && (
+                                        <div className="text-sm text-blue-400 mt-1">
+                                            ⏱️ {roomSettings.timerDuration < 60 ? `${roomSettings.timerDuration} sn` : `${Math.floor(roomSettings.timerDuration / 60)} dk`}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                        
                         <h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">Katılımcılar ({participants.length})</h2>
                         <ul className="space-y-3">
                             {participants.map((p) => (
