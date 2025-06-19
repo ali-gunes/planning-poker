@@ -345,7 +345,8 @@ export default function RoomPage() {
                                     <div className="mt-6 flex flex-col items-center gap-4">
                                         <div className="text-green-400 font-bold text-2xl animate-pulse">OY BİRLİĞİ!</div>
                                         <Image 
-                                            src="/gifs/dicaprio-clapping.gif" 
+                                            src="/gifs/mark-dancing.gif" 
+                                            //src="/gifs/dicaprio-clapping.gif" 
                                             alt="DiCaprio Clapping" 
                                             width={250}
                                             height={200}

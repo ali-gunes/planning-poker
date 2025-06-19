@@ -16,7 +16,8 @@ const ezgiQuotes = [
   "Bence 2 katına çıkaralım eforları",
   "Documentation yazma süremiz yok mu?",
   "Bug fix süresini de eklememiz lazım",
-  "İnsaf yani Deniz, bu kadar verilir mi?!"
+  "İnsaf yani Deniz, bu kadar verilir mi?!",
+  "Deniz biz bi de test dökümanı yazıyoruz yani."
 ];
 
 export function EzgiModal({ isOpen, onClose }: EzgiModalProps) {
