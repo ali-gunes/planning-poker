@@ -17,17 +17,26 @@ export const useSocket = (roomId: string, name: string) => {
         
         console.log(`Attempting to connect to PartySocket for room: ${roomId}`);
         
+        const host = process.env.NEXT_PUBLIC_PARTYKIT_HOST || "localhost:1999";
+        console.log(`🔌 Creating PartySocket connection to: ${host}`);
+        
         const newSocket = new PartySocket({
-            host: process.env.NEXT_PUBLIC_PARTYKIT_HOST || "localhost:1999",
+            host: host,
             room: roomId,
         });
 
         newSocket.onopen = () => {
             console.log("%cPartySocket connected successfully!", "color: #22c55e");
+            console.log(`✅ Connected to PartyKit host: ${host}`);
             // Only join if we have a name
             if (nameRef.current) {
+                console.log(`📤 Sending join_room message for: ${nameRef.current}`);
                 newSocket.send(JSON.stringify({ type: "join_room", name: nameRef.current }));
             }
+        };
+
+        newSocket.onmessage = (event) => {
+            console.log("📨 Received message from PartyKit:", JSON.parse(event.data));
         };
 
         newSocket.onclose = (event) => {

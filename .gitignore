@@ -36,3 +36,4 @@ yarn-error.log*
 *.tsbuildinfo
 tsconfig.server.json
 /dist
+.env

@@ -83,8 +83,10 @@ export default function RoomPage() {
         
         const handleMessage = (event: MessageEvent) => {
             const msg = JSON.parse(event.data);
+            console.log("📨 Received message:", msg.type, msg);
             
             if (msg.type === "initial_state") {
+                console.log("🏠 Setting initial room settings:", msg.settings);
                 setRoomSettings(msg.settings);
                 setParticipants(msg.participants);
                 setGameState(msg.settings.state);
@@ -163,13 +165,22 @@ export default function RoomPage() {
     };
 
     const handleSettingsUpdate = (settings: RoomSettingsUpdate) => {
+        console.log("🔧 handleSettingsUpdate called with:", settings);
+        console.log("🔍 Socket state:", socket ? "connected" : "not connected");
+        console.log("👑 Is owner:", isOwner);
+        console.log("👤 Owner name:", name);
+        
         if (socket && isOwner) {
-            console.log("Sending settings update:", settings);
-            socket.send(JSON.stringify({ 
+            const message = { 
                 type: "update_room_settings", 
                 ...settings,
                 ownerName: name
-            }));
+            };
+            console.log("📤 Sending message to PartyKit:", message);
+            socket.send(JSON.stringify(message));
+        } else {
+            if (!socket) console.error("❌ No socket connection");
+            if (!isOwner) console.error("❌ Not room owner");
         }
     };
 
@@ -271,7 +282,10 @@ export default function RoomPage() {
                                 <button onClick={handleNewRound} className="w-full px-6 py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 transition-all transform hover:scale-105">Yeni Tur</button>
                             )}
                             {isOwner && (gameState === 'lobby' || gameState === 'revealed') && (
-                                <button onClick={() => setIsSettingsModalOpen(true)} className="w-full px-6 py-2 bg-purple-500 text-white font-bold rounded-md hover:bg-purple-600 transition-all transform hover:scale-105">⚙️ Oda Ayarları</button>
+                                <button onClick={() => {
+                                    console.log("⚙️ Opening settings modal. Current settings:", roomSettings);
+                                    setIsSettingsModalOpen(true);
+                                }} className="w-full px-6 py-2 bg-purple-500 text-white font-bold rounded-md hover:bg-purple-600 transition-all transform hover:scale-105">⚙️ Oda Ayarları</button>
                             )}
                         </div>
                     </aside>

@@ -32,11 +32,13 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
   }, [currentSettings]);
 
   const handleSave = () => {
-    onSave({
+    const newSettings = {
       votingPreset: votingPreset as 'fibonacci' | 'days' | 'hours' | 'yesno',
       timerDuration: timerMinutes * 60,
       autoReveal,
-    });
+    };
+    console.log("💾 Settings modal - saving settings:", newSettings);
+    onSave(newSettings);
     onClose();
   };
 
