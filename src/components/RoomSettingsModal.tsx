@@ -57,6 +57,18 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-3 text-center">Oylama Sistemi</label>
             <div className="grid grid-cols-2 gap-3">
+            <button
+                type="button"
+                onClick={() => setVotingPreset("hours")}
+                className={`p-3 rounded-lg border-2 transition-all text-center ${
+                  votingPreset === "hours"
+                    ? "border-blue-500 bg-blue-500/20 text-blue-300"
+                    : "border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500"
+                }`}
+              >
+                <div className="font-bold">⏰</div>
+                <div className="text-xs font-medium">Saatler</div>
+              </button>
               <button
                 type="button"
                 onClick={() => setVotingPreset("days")}
@@ -69,18 +81,7 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
                 <div className="font-bold">📅</div>
                 <div className="text-xs font-medium">Günler</div>
               </button>
-              <button
-                type="button"
-                onClick={() => setVotingPreset("hours")}
-                className={`p-3 rounded-lg border-2 transition-all text-center ${
-                  votingPreset === "hours"
-                    ? "border-blue-500 bg-blue-500/20 text-blue-300"
-                    : "border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500"
-                }`}
-              >
-                <div className="font-bold">⏰</div>
-                <div className="text-xs font-medium">Saatler</div>
-              </button>
+              
               <button
                 type="button"
                 onClick={() => setVotingPreset("fibonacci")}
