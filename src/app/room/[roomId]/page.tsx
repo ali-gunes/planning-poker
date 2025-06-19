@@ -7,6 +7,7 @@ import { useSocket } from "@/hooks/useSocket";
 import { NamePromptModal } from "@/components/NamePromptModal";
 import { DenizModal } from "@/components/DenizModal";
 import { EzgiModal } from "@/components/EzgiModal";
+import { RoomSettingsModal, type RoomSettingsUpdate } from "@/components/RoomSettingsModal";
 
 const votingStacks = {
     fibonacci: [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
@@ -40,6 +41,7 @@ export default function RoomPage() {
     const [timer, setTimer] = useState(0);
     const [isDenizModalOpen, setIsDenizModalOpen] = useState(false);
     const [isEzgiModalOpen, setIsEzgiModalOpen] = useState(false);
+    const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
     const isOwner = roomSettings?.owner === name;
     const votingCards = roomSettings ? votingStacks[roomSettings.votingPreset] : [];
@@ -110,6 +112,10 @@ export default function RoomPage() {
                 setRoomSettings(prev => ({ ...prev, ...msg.payload }));
                 setGameState(msg.payload.state);
             }
+            if (msg.type === "room_settings_updated") {
+                setRoomSettings(prev => ({ ...prev, ...msg.payload }));
+                setGameState(msg.payload.state);
+            }
         };
 
         socket.addEventListener("message", handleMessage);
@@ -155,6 +161,16 @@ export default function RoomPage() {
         setIsEzgiModalOpen(true);
     };
 
+    const handleSettingsUpdate = (settings: RoomSettingsUpdate) => {
+        if (socket && isOwner) {
+            socket.send(JSON.stringify({ 
+                type: "update_room_settings", 
+                ...settings,
+                ownerName: name
+            }));
+        }
+    };
+
     const voteCounts = useMemo(() => {
         if (gameState !== 'revealed') return { average: 0, min: 0, max: 0, consensus: false, hugeDifference: false, isYesNo: false };
         const allVotes = votes.map(v => v.vote);
@@ -190,6 +206,18 @@ export default function RoomPage() {
             <NamePromptModal isOpen={isNameModalOpen} onSubmit={handleNameSubmit} />
             <DenizModal isOpen={isDenizModalOpen} onClose={() => setIsDenizModalOpen(false)} />
             <EzgiModal isOpen={isEzgiModalOpen} onClose={() => setIsEzgiModalOpen(false)} />
+            {roomSettings && (
+                <RoomSettingsModal 
+                    isOpen={isSettingsModalOpen} 
+                    onClose={() => setIsSettingsModalOpen(false)}
+                    onSave={handleSettingsUpdate}
+                    currentSettings={{
+                        votingPreset: roomSettings.votingPreset,
+                        timerDuration: roomSettings.timerDuration,
+                        autoReveal: roomSettings.autoReveal
+                    }}
+                />
+            )}
             <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col p-4 md:p-8">
                 
                 {/* Header */}
@@ -239,6 +267,9 @@ export default function RoomPage() {
                             )}
                             {isOwner && gameState === 'revealed' && (
                                 <button onClick={handleNewRound} className="w-full px-6 py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 transition-all transform hover:scale-105">Yeni Tur</button>
+                            )}
+                            {isOwner && (gameState === 'lobby' || gameState === 'revealed') && (
+                                <button onClick={() => setIsSettingsModalOpen(true)} className="w-full px-6 py-2 bg-purple-500 text-white font-bold rounded-md hover:bg-purple-600 transition-all transform hover:scale-105">⚙️ Oda Ayarları</button>
                             )}
                         </div>
                     </aside>

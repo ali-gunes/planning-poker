@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 interface CreateRoomRequest {
     name: string;
-    votingPreset: 'fibonacci' | 'days' | 'hours';
+    votingPreset: 'fibonacci' | 'days' | 'hours' | 'yesno';
     timerDuration: number;
     autoReveal: boolean;
 }

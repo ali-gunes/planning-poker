@@ -10,12 +10,12 @@ interface Participant {
 
 interface Vote {
   name: string;
-  vote: number | null;
+  vote: number | string | null;
 }
 
 interface Room {
   owner: string;
-  votingPreset: 'fibonacci' | 'days' | 'hours';
+  votingPreset: 'fibonacci' | 'days' | 'hours' | 'yesno';
   timerDuration: number;
   autoReveal: boolean;
   state: 'lobby' | 'voting' | 'revealed';
@@ -133,6 +133,28 @@ export default class PokerServer implements Party.Server {
         await setRoom(this.room.id, roomState);
         this.room.broadcast(JSON.stringify({ type: 'new_round_started', payload: roomState.participants }));
         this.room.broadcast(JSON.stringify({ type: 'room_settings', payload: { state: roomState.state } }));
+      }
+    }
+
+    if (msg.type === 'update_room_settings') {
+      const { votingPreset, timerDuration, autoReveal, ownerName } = msg;
+      let roomState = await getRoom(this.room.id);
+      
+      if (roomState && roomState.owner === ownerName && (roomState.state === 'lobby' || roomState.state === 'revealed')) {
+        roomState.votingPreset = votingPreset;
+        roomState.timerDuration = timerDuration;
+        roomState.autoReveal = autoReveal;
+        
+        await setRoom(this.room.id, roomState);
+        
+        const updatedSettings = {
+          votingPreset: roomState.votingPreset,
+          timerDuration: roomState.timerDuration,
+          autoReveal: roomState.autoReveal,
+          state: roomState.state,
+        };
+        
+        this.room.broadcast(JSON.stringify({ type: 'room_settings_updated', payload: updatedSettings }));
       }
     }
   }
