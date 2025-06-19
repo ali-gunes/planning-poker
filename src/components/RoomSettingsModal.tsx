@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface RoomSettingsModalProps {
   isOpen: boolean;
@@ -23,6 +23,13 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
   const [votingPreset, setVotingPreset] = useState(currentSettings.votingPreset);
   const [timerMinutes, setTimerMinutes] = useState(Math.floor(currentSettings.timerDuration / 60));
   const [autoReveal, setAutoReveal] = useState(currentSettings.autoReveal);
+
+  // Update internal state when currentSettings change
+  useEffect(() => {
+    setVotingPreset(currentSettings.votingPreset);
+    setTimerMinutes(Math.floor(currentSettings.timerDuration / 60));
+    setAutoReveal(currentSettings.autoReveal);
+  }, [currentSettings]);
 
   const handleSave = () => {
     onSave({

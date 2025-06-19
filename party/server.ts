@@ -138,7 +138,16 @@ export default class PokerServer implements Party.Server {
 
     if (msg.type === 'update_room_settings') {
       const { votingPreset, timerDuration, autoReveal, ownerName } = msg;
+      console.log(`[UPDATE_SETTINGS] Request from ${ownerName}:`, { votingPreset, timerDuration, autoReveal });
+      
       let roomState = await getRoom(this.room.id);
+      
+      if (!roomState) {
+        console.log(`[UPDATE_SETTINGS] Room ${this.room.id} not found`);
+        return;
+      }
+      
+      console.log(`[UPDATE_SETTINGS] Room owner: ${roomState.owner}, Request from: ${ownerName}, State: ${roomState.state}`);
       
       if (roomState && roomState.owner === ownerName && (roomState.state === 'lobby' || roomState.state === 'revealed')) {
         roomState.votingPreset = votingPreset;
@@ -146,6 +155,7 @@ export default class PokerServer implements Party.Server {
         roomState.autoReveal = autoReveal;
         
         await setRoom(this.room.id, roomState);
+        console.log(`[UPDATE_SETTINGS] Settings updated successfully`);
         
         const updatedSettings = {
           votingPreset: roomState.votingPreset,
@@ -155,6 +165,9 @@ export default class PokerServer implements Party.Server {
         };
         
         this.room.broadcast(JSON.stringify({ type: 'room_settings_updated', payload: updatedSettings }));
+        console.log(`[UPDATE_SETTINGS] Broadcast sent:`, updatedSettings);
+      } else {
+        console.log(`[UPDATE_SETTINGS] Permission denied or invalid state`);
       }
     }
   }

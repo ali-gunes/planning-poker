@@ -113,6 +113,7 @@ export default function RoomPage() {
                 setGameState(msg.payload.state);
             }
             if (msg.type === "room_settings_updated") {
+                console.log("Received settings update:", msg.payload);
                 setRoomSettings(prev => ({ ...prev, ...msg.payload }));
                 setGameState(msg.payload.state);
             }
@@ -163,6 +164,7 @@ export default function RoomPage() {
 
     const handleSettingsUpdate = (settings: RoomSettingsUpdate) => {
         if (socket && isOwner) {
+            console.log("Sending settings update:", settings);
             socket.send(JSON.stringify({ 
                 type: "update_room_settings", 
                 ...settings,
