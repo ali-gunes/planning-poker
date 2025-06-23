@@ -7,6 +7,7 @@ import { useSocket } from "@/hooks/useSocket";
 import { NamePromptModal } from "@/components/NamePromptModal";
 import { DenizModal } from "@/components/DenizModal";
 import { EzgiModal } from "@/components/EzgiModal";
+import { OnurModal } from "@/components/OnurModal";
 import { RoomSettingsModal, type RoomSettingsUpdate } from "@/components/RoomSettingsModal";
 
 const votingStacks = {
@@ -41,6 +42,7 @@ export default function RoomPage() {
     const [timer, setTimer] = useState(0);
     const [isDenizModalOpen, setIsDenizModalOpen] = useState(false);
     const [isEzgiModalOpen, setIsEzgiModalOpen] = useState(false);
+    const [isOnurModalOpen, setIsOnurModalOpen] = useState(false);
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
     const isOwner = roomSettings?.owner === name;
@@ -164,6 +166,10 @@ export default function RoomPage() {
         setIsEzgiModalOpen(true);
     };
 
+    const handleOnurCard = () => {
+        setIsOnurModalOpen(true);
+    };
+
     const handleSettingsUpdate = (settings: RoomSettingsUpdate) => {
         console.log("🔧 handleSettingsUpdate called with:", settings);
         console.log("🔍 Socket state:", socket ? "connected" : "not connected");
@@ -219,6 +225,7 @@ export default function RoomPage() {
             <NamePromptModal isOpen={isNameModalOpen} onSubmit={handleNameSubmit} />
             <DenizModal isOpen={isDenizModalOpen} onClose={() => setIsDenizModalOpen(false)} />
             <EzgiModal isOpen={isEzgiModalOpen} onClose={() => setIsEzgiModalOpen(false)} />
+            <OnurModal isOpen={isOnurModalOpen} onClose={() => setIsOnurModalOpen(false)} />
             {roomSettings && (
                 <RoomSettingsModal 
                     isOpen={isSettingsModalOpen} 
@@ -385,6 +392,12 @@ export default function RoomPage() {
                                         className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105 shadow-lg"
                                     >
                                         🛡️ Ezgi Kartını Oyna
+                                    </button>
+                                    <button
+                                        onClick={handleOnurCard}
+                                        className="px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold rounded-lg hover:from-purple-600 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-lg"
+                                    >
+                                        💻 Onur Kartını Oyna
                                     </button>
                                 </div>
                             </div>
