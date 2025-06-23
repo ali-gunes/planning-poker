@@ -8,6 +8,7 @@ export default function Home() {
   const [name, setName] = useState("");
   const [roomIdToJoin, setRoomIdToJoin] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [joinError, setJoinError] = useState("");
   const router = useRouter();
 
   // New room settings state
@@ -19,6 +20,15 @@ export default function Home() {
     const storedName = sessionStorage.getItem("username");
     if (storedName) {
       setName(storedName);
+    }
+    
+    // Check for error message in URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorMessage = urlParams.get('error');
+    if (errorMessage) {
+      setJoinError(decodeURIComponent(errorMessage));
+      // Clean the URL
+      window.history.replaceState({}, '', '/');
     }
   }, []);
 
@@ -63,13 +73,14 @@ export default function Home() {
 
   const handleJoinRoom = () => {
     if (!name.trim()) {
-      alert("Lütfen adınızı girin.");
+      setJoinError("Lütfen adınızı girin.");
       return;
     }
     if (!roomIdToJoin.trim()) {
-      alert("Lütfen bir Oda ID'si girin.");
+      setJoinError("Lütfen bir Oda ID'si girin.");
       return;
     }
+    setJoinError("");
     sessionStorage.setItem("username", name.trim());
     router.push(`/room/${roomIdToJoin.trim()}`);
   };
@@ -246,9 +257,17 @@ export default function Home() {
                   type="text"
                   placeholder="Oda ID'sini Girin"
                   value={roomIdToJoin}
-                  onChange={(e) => setRoomIdToJoin(e.target.value)}
+                  onChange={(e) => {
+                    setRoomIdToJoin(e.target.value);
+                    setJoinError("");
+                  }}
                   className="w-full px-4 py-3 rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 text-center"
                 />
+                {joinError && (
+                  <div className="w-full p-3 bg-red-500/20 border border-red-500 rounded-md text-red-200 text-sm text-center">
+                    {joinError}
+                  </div>
+                )}
                 <button
                   onClick={handleJoinRoom}
                   className="w-full px-4 py-3 bg-green-600 text-white font-bold rounded-md hover:bg-green-700 transition-all transform hover:scale-105 disabled:bg-green-900/50 disabled:cursor-not-allowed"

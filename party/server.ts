@@ -48,17 +48,13 @@ export default class PokerServer implements Party.Server {
       let roomState = await getRoom(this.room.id);
 
       if (!roomState) {
-        // This shouldn't happen if room is created first, but as a fallback:
-        roomState = {
-          owner: name,
-          votingPreset: 'fibonacci',
-          timerDuration: 0,
-          autoReveal: false,
-          state: 'lobby',
-          participants: [],
-          votes: [],
-        };
-        console.log(`[FALLBACK] Creating new room state for ${this.room.id}`);
+        // Room doesn't exist, send error
+        console.log(`[ERROR] Room ${this.room.id} not found`);
+        sender.send(JSON.stringify({ 
+          type: "room_error", 
+          error: "Bu oda mevcut değil. Lütfen doğru oda ID'sini kontrol edin." 
+        }));
+        return;
       }
       
       const isParticipant = roomState.participants.some(p => p.name === name);

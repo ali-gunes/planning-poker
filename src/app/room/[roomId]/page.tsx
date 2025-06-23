@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useSocket } from "@/hooks/useSocket";
 import { NamePromptModal } from "@/components/NamePromptModal";
@@ -29,6 +29,7 @@ interface RoomSettings {
 
 export default function RoomPage() {
     const params = useParams();
+    const router = useRouter();
     const roomId = params ? (params.roomId as string) : "";
     const [name, setName] = useState("");
     const socket = useSocket(roomId, name);
@@ -120,6 +121,10 @@ export default function RoomPage() {
                 console.log("Received settings update:", msg.payload);
                 setRoomSettings(prev => ({ ...prev, ...msg.payload }));
                 setGameState(msg.payload.state);
+            }
+            if (msg.type === "room_error") {
+                const errorParam = encodeURIComponent(msg.error);
+                router.push(`/?error=${errorParam}`);
             }
         };
 
