@@ -13,7 +13,10 @@ const onurQuotes = [
   "Ya ben bi rapor alıp geleyim...",
   "Ayrı ayrı maddeler açalım abi böyle olmaz!",
   "Ah Rize'm canım Rize'm...",
-  "Bu uygulamayı bi refactor edelim bence."
+  "Bu uygulamayı bi refactor edelim bence.",
+  "Aklımdayken bi izin gireyim ben...",
+  "Ya benim başıma Metropol'de de benzer bi olay gelmişti... durun anlatayım.",
+  "Arkadaşlar evlilik çok güzel bir şey, herkes evlensin, hemen evlenin!"
 ];
 
 export function OnurModal({ isOpen, onClose }: OnurModalProps) {
@@ -45,7 +48,7 @@ export function OnurModal({ isOpen, onClose }: OnurModalProps) {
         <div className="text-center">
           <div className="flex justify-center mb-4">
             <Image 
-              src="/gifs/mark-dancing.gif" 
+              src="/gifs/cool-spongebob.gif" 
               alt="Onur Dancing" 
               width={200}
               height={150}
@@ -66,7 +69,7 @@ export function OnurModal({ isOpen, onClose }: OnurModalProps) {
             onClick={handleClose}
             className="mt-4 px-6 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors"
           >
-            Doğru söylüyor...
+            Haklısın Onur...
           </button>
         </div>
       </div>
