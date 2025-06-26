@@ -279,35 +279,6 @@ export default function RoomPage() {
                             Davet Et
                         </button>
                     </div>
-                    
-                    {/* Owner Controls - Responsive */}
-                    {isOwner && (
-                        <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto md:ml-0 border-t md:border-t-0 border-gray-600 pt-3 md:pt-0">
-                            {gameState === 'lobby' && (
-                                <button onClick={handleStartRound} className="px-4 py-2 bg-yellow-500 text-black font-bold rounded-md hover:bg-yellow-600 transition-all transform hover:scale-105 text-sm">
-                                    🚀 Turu Başlat
-                                </button>
-                            )}
-                            {gameState === 'voting' && (
-                                <button onClick={handleRevealVotes} className="px-4 py-2 bg-green-500 text-white font-bold rounded-md hover:bg-green-600 transition-all transform hover:scale-105 text-sm">
-                                    Oyları Göster
-                                </button>
-                            )}
-                            {gameState === 'revealed' && (
-                                <button onClick={handleNewRound} className="px-4 py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 transition-all transform hover:scale-105 text-sm">
-                                    🔄 Yeni Tur
-                                </button>
-                            )}
-                            {(gameState === 'lobby' || gameState === 'revealed') && (
-                                <button onClick={() => {
-                                    console.log("⚙️ Opening settings modal. Current settings:", roomSettings);
-                                    setIsSettingsModalOpen(true);
-                                }} className="px-4 py-2 bg-purple-500 text-white font-bold rounded-md hover:bg-purple-600 transition-all transform hover:scale-105 text-sm">
-                                    ⚙️ Oda Ayarları
-                                </button>
-                            )}
-                        </div>
-                    )}
                 </header>
 
                 <main className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -331,6 +302,35 @@ export default function RoomPage() {
                                         </div>
                                     )}
                                 </div>
+                            </div>
+                        )}
+                        
+                        {/* Owner Controls - Moved above participants list */}
+                        {isOwner && (
+                            <div className="mb-6 p-3 bg-gray-700/50 rounded-lg border border-gray-600 flex flex-wrap gap-2 justify-center">
+                                {gameState === 'lobby' && (
+                                    <button onClick={handleStartRound} className="px-4 py-2 bg-yellow-500 text-black font-bold rounded-md hover:bg-yellow-600 transition-all transform hover:scale-105 text-sm">
+                                        Turu Başlat
+                                    </button>
+                                )}
+                                {gameState === 'voting' && (
+                                    <button onClick={handleRevealVotes} className="px-4 py-2 bg-green-500 text-white font-bold rounded-md hover:bg-green-600 transition-all transform hover:scale-105 text-sm">
+                                        Oyları Göster
+                                    </button>
+                                )}
+                                {gameState === 'revealed' && (
+                                    <button onClick={handleNewRound} className="px-4 py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 transition-all transform hover:scale-105 text-sm">
+                                        Yeni Tur
+                                    </button>
+                                )}
+                                {(gameState === 'lobby' || gameState === 'revealed') && (
+                                    <button onClick={() => {
+                                        console.log("⚙️ Opening settings modal. Current settings:", roomSettings);
+                                        setIsSettingsModalOpen(true);
+                                    }} className="px-4 py-2 bg-purple-500 text-white font-bold rounded-md hover:bg-purple-600 transition-all transform hover:scale-105 text-sm">
+                                        ⚙️ Oda Ayarları
+                                    </button>
+                                )}
                             </div>
                         )}
                         
