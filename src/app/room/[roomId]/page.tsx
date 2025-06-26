@@ -307,19 +307,19 @@ export default function RoomPage() {
                         
                         {/* Owner Controls - Moved above participants list */}
                         {isOwner && (
-                            <div className="mb-6 p-3 bg-gray-700/50 rounded-lg border border-gray-600 flex flex-wrap gap-2 justify-center">
+                            <div className="mb-6 p-3 bg-gray-700/50 rounded-lg border border-gray-600 flex flex-wrap gap-2 justify-center w-full">
                                 {gameState === 'lobby' && (
-                                    <button onClick={handleStartRound} className="px-4 py-2 bg-yellow-500 text-black font-bold rounded-md hover:bg-yellow-600 transition-all transform hover:scale-105 text-sm">
+                                    <button onClick={handleStartRound} className="w-full px-6 py-2 bg-yellow-500 text-black font-bold rounded-md hover:bg-yellow-600 transition-all transform hover:scale-105">
                                         Turu Başlat
                                     </button>
                                 )}
                                 {gameState === 'voting' && (
-                                    <button onClick={handleRevealVotes} className="px-4 py-2 bg-green-500 text-white font-bold rounded-md hover:bg-green-600 transition-all transform hover:scale-105 text-sm">
+                                    <button onClick={handleRevealVotes} className="w-full px-6 py-2 bg-green-500 text-white font-bold rounded-md hover:bg-green-600 transition-all transform hover:scale-105">
                                         Oyları Göster
                                     </button>
                                 )}
                                 {gameState === 'revealed' && (
-                                    <button onClick={handleNewRound} className="px-4 py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 transition-all transform hover:scale-105 text-sm">
+                                    <button onClick={handleNewRound} className="w-full px-6 py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 transition-all transform hover:scale-105">
                                         Yeni Tur
                                     </button>
                                 )}
@@ -327,7 +327,7 @@ export default function RoomPage() {
                                     <button onClick={() => {
                                         console.log("⚙️ Opening settings modal. Current settings:", roomSettings);
                                         setIsSettingsModalOpen(true);
-                                    }} className="px-4 py-2 bg-purple-500 text-white font-bold rounded-md hover:bg-purple-600 transition-all transform hover:scale-105 text-sm">
+                                    }} className="w-full px-6 py-2 bg-purple-500 text-white font-bold rounded-md hover:bg-purple-600 transition-all transform hover:scale-105">
                                         ⚙️ Oda Ayarları
                                     </button>
                                 )}
