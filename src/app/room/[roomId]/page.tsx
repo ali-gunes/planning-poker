@@ -253,7 +253,7 @@ export default function RoomPage() {
             <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col p-4 md:p-8">
                 
                 {/* Header */}
-                <header className="w-full max-w-7xl mx-auto flex justify-between items-center mb-6">
+                <header className="w-full max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <div className="flex items-center gap-3">
                         <Image 
                             src="/planning-poker.svg" 
@@ -264,17 +264,50 @@ export default function RoomPage() {
                         />
                         <h1 className="text-2xl md:text-3xl font-bold">C&I Planlama Pokeri</h1>
                     </div>
-                    {timer > 0 && gameState === 'voting' && (
-                        <div className="text-2xl font-mono bg-red-800 text-white px-4 py-2 rounded-lg shadow-lg">{formatTime(timer)}</div>
-                    )}
-                    <div className="flex items-center gap-4">
+                    
+                    {/* Room info and controls */}
+                    <div className="flex flex-wrap items-center justify-center gap-3 w-full md:w-auto">
+                        {timer > 0 && gameState === 'voting' && (
+                            <div className="text-xl font-mono bg-red-800 text-white px-4 py-2 rounded-lg shadow-lg order-first md:order-none">{formatTime(timer)}</div>
+                        )}
+                        
                         <div className="text-lg bg-gray-800 px-3 py-1 rounded-md">
                             Oda: <span className="font-mono text-blue-400">{roomId}</span>
                         </div>
+                        
                         <button onClick={handleCopyToClipboard} className="px-4 py-1 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition-all transform hover:scale-105">
                             Davet Et
                         </button>
                     </div>
+                    
+                    {/* Owner Controls - Responsive */}
+                    {isOwner && (
+                        <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto md:ml-0 border-t md:border-t-0 border-gray-600 pt-3 md:pt-0">
+                            {gameState === 'lobby' && (
+                                <button onClick={handleStartRound} className="px-4 py-2 bg-yellow-500 text-black font-bold rounded-md hover:bg-yellow-600 transition-all transform hover:scale-105 text-sm">
+                                    🚀 Turu Başlat
+                                </button>
+                            )}
+                            {gameState === 'voting' && (
+                                <button onClick={handleRevealVotes} className="px-4 py-2 bg-green-500 text-white font-bold rounded-md hover:bg-green-600 transition-all transform hover:scale-105 text-sm">
+                                    Oyları Göster
+                                </button>
+                            )}
+                            {gameState === 'revealed' && (
+                                <button onClick={handleNewRound} className="px-4 py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 transition-all transform hover:scale-105 text-sm">
+                                    🔄 Yeni Tur
+                                </button>
+                            )}
+                            {(gameState === 'lobby' || gameState === 'revealed') && (
+                                <button onClick={() => {
+                                    console.log("⚙️ Opening settings modal. Current settings:", roomSettings);
+                                    setIsSettingsModalOpen(true);
+                                }} className="px-4 py-2 bg-purple-500 text-white font-bold rounded-md hover:bg-purple-600 transition-all transform hover:scale-105 text-sm">
+                                    ⚙️ Oda Ayarları
+                                </button>
+                            )}
+                        </div>
+                    )}
                 </header>
 
                 <main className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -310,23 +343,6 @@ export default function RoomPage() {
                                 </li>
                             ))}
                         </ul>
-                         <div className="mt-8 pt-4 border-t border-gray-700 flex flex-col gap-3">
-                            {isOwner && gameState === 'lobby' && (
-                                <button onClick={handleStartRound} className="w-full px-6 py-2 bg-yellow-500 text-black font-bold rounded-md hover:bg-yellow-600 transition-all transform hover:scale-105">Turu Başlat</button>
-                            )}
-                            {isOwner && gameState === 'voting' && (
-                                <button onClick={handleRevealVotes} className="w-full px-6 py-2 bg-green-500 text-white font-bold rounded-md hover:bg-green-600 transition-all transform hover:scale-105">Oyları Göster</button>
-                            )}
-                            {isOwner && gameState === 'revealed' && (
-                                <button onClick={handleNewRound} className="w-full px-6 py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 transition-all transform hover:scale-105">Yeni Tur</button>
-                            )}
-                            {isOwner && (gameState === 'lobby' || gameState === 'revealed') && (
-                                <button onClick={() => {
-                                    console.log("⚙️ Opening settings modal. Current settings:", roomSettings);
-                                    setIsSettingsModalOpen(true);
-                                }} className="w-full px-6 py-2 bg-purple-500 text-white font-bold rounded-md hover:bg-purple-600 transition-all transform hover:scale-105">⚙️ Oda Ayarları</button>
-                            )}
-                        </div>
                     </aside>
 
                     {/* Right Panel: Voting Area */}
