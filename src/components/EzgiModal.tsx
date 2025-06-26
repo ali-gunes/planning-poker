@@ -20,6 +20,9 @@ const ezgiQuotes = [
   "Deniz biz bi de test dökümanı yazıyoruz yani."
 ];
 
+// Track used quotes across all instances
+let usedEzgiQuotes: string[] = [];
+
 export function EzgiModal({ isOpen, onClose }: EzgiModalProps) {
   const [currentQuote, setCurrentQuote] = useState("");
   const [isVisible, setIsVisible] = useState(false);
@@ -33,8 +36,21 @@ export function EzgiModal({ isOpen, onClose }: EzgiModalProps) {
 
   useEffect(() => {
     if (isOpen) {
-      const randomQuote = ezgiQuotes[Math.floor(Math.random() * ezgiQuotes.length)];
+      // Smart quote selection - avoid recently used quotes
+      const availableQuotes = ezgiQuotes.filter(quote => !usedEzgiQuotes.includes(quote));
+      
+      // If all quotes have been used, reset the used quotes array
+      if (availableQuotes.length === 0) {
+        usedEzgiQuotes = [];
+        availableQuotes.push(...ezgiQuotes);
+      }
+      
+      const randomQuote = availableQuotes[Math.floor(Math.random() * availableQuotes.length)];
       setCurrentQuote(randomQuote);
+      
+      // Add to used quotes
+      usedEzgiQuotes.push(randomQuote);
+      
       setIsVisible(true);
     }
   }, [isOpen]);

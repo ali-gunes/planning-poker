@@ -15,8 +15,14 @@ const denizQuotes = [
   "Arkadaşlar biliyorsunuz ben ırkçı değilim, ama...",
   "Arkadaşlar biliyorsunuz ben cinsiyetçi değilim, ama...",
   "İlhan bana bi şey demedi arkadaşlar.",
-  "Ben itiraz edersiniz sandım."
+  "Ben itiraz edersiniz sandım.",
+  "Son durumları çekiyorum arkadaşlar, Task eforları güncel mi?",
+  "Bunun Acceptance Criteria'si niye boş kalmış?",
+  "Ben bunu kabul edemem arkadaşlar Solution Note'u doldurulmamış."
 ];
+
+// Track used quotes across all instances
+let usedDenizQuotes: string[] = [];
 
 export function DenizModal({ isOpen, onClose }: DenizModalProps) {
   const [currentQuote, setCurrentQuote] = useState("");
@@ -31,8 +37,21 @@ export function DenizModal({ isOpen, onClose }: DenizModalProps) {
 
   useEffect(() => {
     if (isOpen) {
-      const randomQuote = denizQuotes[Math.floor(Math.random() * denizQuotes.length)];
+      // Smart quote selection - avoid recently used quotes
+      const availableQuotes = denizQuotes.filter(quote => !usedDenizQuotes.includes(quote));
+      
+      // If all quotes have been used, reset the used quotes array
+      if (availableQuotes.length === 0) {
+        usedDenizQuotes = [];
+        availableQuotes.push(...denizQuotes);
+      }
+      
+      const randomQuote = availableQuotes[Math.floor(Math.random() * availableQuotes.length)];
       setCurrentQuote(randomQuote);
+      
+      // Add to used quotes
+      usedDenizQuotes.push(randomQuote);
+      
       setIsVisible(true);
       
       // Auto close after 4 seconds - DISABLED for now

@@ -19,6 +19,9 @@ const onurQuotes = [
   "Arkadaşlar evlilik çok güzel bir şey, herkes evlensin, hemen evlenin!"
 ];
 
+// Track used quotes across all instances
+let usedOnurQuotes: string[] = [];
+
 export function OnurModal({ isOpen, onClose }: OnurModalProps) {
   const [currentQuote, setCurrentQuote] = useState("");
   const [isVisible, setIsVisible] = useState(false);
@@ -32,8 +35,21 @@ export function OnurModal({ isOpen, onClose }: OnurModalProps) {
 
   useEffect(() => {
     if (isOpen) {
-      const randomQuote = onurQuotes[Math.floor(Math.random() * onurQuotes.length)];
+      // Smart quote selection - avoid recently used quotes
+      const availableQuotes = onurQuotes.filter(quote => !usedOnurQuotes.includes(quote));
+      
+      // If all quotes have been used, reset the used quotes array
+      if (availableQuotes.length === 0) {
+        usedOnurQuotes = [];
+        availableQuotes.push(...onurQuotes);
+      }
+      
+      const randomQuote = availableQuotes[Math.floor(Math.random() * availableQuotes.length)];
       setCurrentQuote(randomQuote);
+      
+      // Add to used quotes
+      usedOnurQuotes.push(randomQuote);
+      
       setIsVisible(true);
     }
   }, [isOpen]);

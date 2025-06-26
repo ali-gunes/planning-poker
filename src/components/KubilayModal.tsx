@@ -19,6 +19,9 @@ const kubilayQuotes = [
   "2015'ten kalan bi Workflow var zaten bu işi yapan."
 ];
 
+// Track used quotes across all instances
+let usedKubilayQuotes: string[] = [];
+
 export function KubilayModal({ isOpen, onClose }: KubilayModalProps) {
   const [currentQuote, setCurrentQuote] = useState("");
   const [isVisible, setIsVisible] = useState(false);
@@ -32,8 +35,21 @@ export function KubilayModal({ isOpen, onClose }: KubilayModalProps) {
 
   useEffect(() => {
     if (isOpen) {
-      const randomQuote = kubilayQuotes[Math.floor(Math.random() * kubilayQuotes.length)];
+      // Smart quote selection - avoid recently used quotes
+      const availableQuotes = kubilayQuotes.filter(quote => !usedKubilayQuotes.includes(quote));
+      
+      // If all quotes have been used, reset the used quotes array
+      if (availableQuotes.length === 0) {
+        usedKubilayQuotes = [];
+        availableQuotes.push(...kubilayQuotes);
+      }
+      
+      const randomQuote = availableQuotes[Math.floor(Math.random() * availableQuotes.length)];
       setCurrentQuote(randomQuote);
+      
+      // Add to used quotes
+      usedKubilayQuotes.push(randomQuote);
+      
       setIsVisible(true);
     }
   }, [isOpen]);
