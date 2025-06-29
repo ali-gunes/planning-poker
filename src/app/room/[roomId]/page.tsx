@@ -135,7 +135,7 @@ export default function RoomPage() {
         return () => {
           socket.removeEventListener("message", handleMessage);
         }
-    }, [socket, roomSettings]);
+    }, [socket, roomSettings, router]);
   
     const handleNameSubmit = (submittedName: string) => {
         const trimmedName = submittedName.trim();
@@ -418,7 +418,7 @@ export default function RoomPage() {
                                     <div className="mt-6 flex flex-col items-center gap-4">
                                         <div className="text-blue-400 font-bold text-2xl animate-pulse">ÇOĞUNLUK KARARI!</div>
                                         <Image 
-                                            src="/gifs/pillow-man.gif" 
+                                            src="/gifs/gandalf.gif" 
                                             alt="Majority Vote" 
                                             width={250}
                                             height={200}
@@ -426,7 +426,7 @@ export default function RoomPage() {
                                             unoptimized={true}
                                         />
                                         <div className="text-blue-300 font-bold text-lg">
-                                            Çoğunluk "{voteCounts.majorityValue}" oyunu verdi!
+                                            Çoğunluk &quot;{voteCounts.majorityValue}&quot; oyunu verdi!
                                         </div>
                                     </div>
                                 )}
