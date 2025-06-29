@@ -418,7 +418,7 @@ export default function RoomPage() {
                                     <div className="mt-6 flex flex-col items-center gap-4">
                                         <div className="text-blue-400 font-bold text-2xl animate-pulse">ÇOĞUNLUK KARARI!</div>
                                         <Image 
-                                            src="/gifs/gandalf.gif" 
+                                            src="/gifs/pillow-man.gif" 
                                             alt="Majority Vote" 
                                             width={250}
                                             height={200}
