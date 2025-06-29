@@ -202,16 +202,38 @@ export default function RoomPage() {
     };
 
     const voteCounts = useMemo(() => {
-        if (gameState !== 'revealed') return { average: 0, min: 0, max: 0, consensus: false, hugeDifference: false, isYesNo: false };
+        if (gameState !== 'revealed') return { average: 0, min: 0, max: 0, consensus: false, hugeDifference: false, isYesNo: false, majority: false, majorityValue: null };
         const allVotes = votes.map(v => v.vote);
-        if (allVotes.length === 0) return { average: 0, min: 0, max: 0, consensus: false, hugeDifference: false, isYesNo: false };
+        if (allVotes.length === 0) return { average: 0, min: 0, max: 0, consensus: false, hugeDifference: false, isYesNo: false, majority: false, majorityValue: null };
         
         const consensus = new Set(allVotes).size === 1;
         const isYesNo = roomSettings?.votingPreset === 'yesno';
         
+        // Check for majority (more than 50% of votes are the same)
+        let majority = false;
+        let majorityValue = null;
+        
+        if (!consensus) { // Only check for majority if there's no consensus
+            const voteCounts = allVotes.reduce((acc, vote) => {
+                acc[vote] = (acc[vote] || 0) + 1;
+                return acc;
+            }, {} as Record<string | number, number>);
+            
+            const entries = Object.entries(voteCounts);
+            const totalVotes = allVotes.length;
+            
+            for (const [value, count] of entries) {
+                if (count > totalVotes / 2) { // More than 50%
+                    majority = true;
+                    majorityValue = value;
+                    break;
+                }
+            }
+        }
+        
         if (isYesNo) {
             // For Yes/No votes, don't calculate numeric statistics
-            return { average: 0, min: 0, max: 0, consensus, hugeDifference: false, isYesNo };
+            return { average: 0, min: 0, max: 0, consensus, hugeDifference: false, isYesNo, majority, majorityValue };
         }
         
         // For numeric votes
@@ -222,7 +244,7 @@ export default function RoomPage() {
         const max = Math.max(...numericVotes);
         const hugeDifference = min > 0 && max >= min * 3; // Check if max is at least 3x min
         
-        return { average: average.toFixed(1), min, max, consensus, hugeDifference, isYesNo };
+        return { average: average.toFixed(1), min, max, consensus, hugeDifference, isYesNo, majority, majorityValue };
     }, [votes, gameState, roomSettings?.votingPreset]);
 
     const formatTime = (seconds: number) => {
@@ -392,7 +414,24 @@ export default function RoomPage() {
                                     </div>
                                 )}
                                 
-                                {voteCounts.hugeDifference && !voteCounts.consensus && (
+                                {voteCounts.majority && !voteCounts.consensus && (
+                                    <div className="mt-6 flex flex-col items-center gap-4">
+                                        <div className="text-blue-400 font-bold text-2xl animate-pulse">ÇOĞUNLUK KARARI!</div>
+                                        <Image 
+                                            src="/gifs/pillow-man.gif" 
+                                            alt="Majority Vote" 
+                                            width={250}
+                                            height={200}
+                                            className="rounded-lg shadow-lg"
+                                            unoptimized={true}
+                                        />
+                                        <div className="text-blue-300 font-bold text-lg">
+                                            Çoğunluk "{voteCounts.majorityValue}" oyunu verdi!
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                {voteCounts.hugeDifference && !voteCounts.consensus && !voteCounts.majority && (
                                     <div className="mt-6 flex flex-col items-center gap-4">
                                         <div className="text-red-400 font-bold text-2xl animate-pulse">BÜYÜK FARK!</div>
                                         <Image 
