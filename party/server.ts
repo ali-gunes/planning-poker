@@ -1,5 +1,6 @@
 import type * as Party from "partykit/server";
 import { redis } from "@/lib/redis";
+import { REDIS_TTL } from "@/lib/constants";
 
 // --- START OF TYPES ---
 // These types should ideally be shared between client and server
@@ -44,7 +45,8 @@ const getRoom = async (roomId: string): Promise<Room | null> => {
 };
 
 const setRoom = (roomId: string, roomData: Room | object) => {
-  return redis.set(`room:${roomId}`, roomData);
+  // Set the room data with a TTL from constants
+  return redis.set(`room:${roomId}`, roomData, { ex: REDIS_TTL.ROOM });
 };
 
 export default class PokerServer implements Party.Server {

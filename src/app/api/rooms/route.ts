@@ -1,4 +1,5 @@
 import { redis } from "@/lib/redis";
+import { REDIS_TTL } from "@/lib/constants";
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
         };
 
         // Use redis.set with JSON.stringify to match the format in socket.ts
-        await redis.set(`room:${roomId}`, JSON.stringify(room));
+        await redis.set(`room:${roomId}`, JSON.stringify(room), { ex: REDIS_TTL.ROOM });
 
         return NextResponse.json({ roomId });
 
