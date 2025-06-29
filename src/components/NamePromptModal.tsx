@@ -5,9 +5,10 @@ import { useState } from "react";
 interface NamePromptModalProps {
   isOpen: boolean;
   onSubmit: (name: string) => void;
+  error?: string | null;
 }
 
-export const NamePromptModal = ({ isOpen, onSubmit }: NamePromptModalProps) => {
+export const NamePromptModal = ({ isOpen, onSubmit, error }: NamePromptModalProps) => {
   const [name, setName] = useState("");
 
   if (!isOpen) return null;
@@ -25,6 +26,13 @@ export const NamePromptModal = ({ isOpen, onSubmit }: NamePromptModalProps) => {
         <p className="text-gray-400 mb-6">
           Odaya katılmak için lütfen adınızı belirtin.
         </p>
+        
+        {error && (
+          <div className="mb-4 p-3 bg-red-900/50 border border-red-500 rounded-md text-red-200">
+            {error}
+          </div>
+        )}
+        
         <input
           type="text"
           placeholder="Adınız"

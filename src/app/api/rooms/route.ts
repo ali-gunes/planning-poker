@@ -25,7 +25,7 @@ export async function POST(request: Request) {
             timerDuration,
             autoReveal,
             state: "lobby", // initial state
-            participants: [{ name, hasVoted: false }],
+            participants: [{ name, hasVoted: false, connectionId: "pending" }],
             votes: [{ name, vote: null }],
         };
 

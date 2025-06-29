@@ -37,6 +37,7 @@ export default function RoomPage() {
     
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [isNameModalOpen, setIsNameModalOpen] = useState(false);
+    const [nameError, setNameError] = useState<string | null>(null);
     const [selectedVote, setSelectedVote] = useState<number | string | null>(null);
     const [votes, setVotes] = useState<Vote[]>([]);
     const [roomSettings, setRoomSettings] = useState<RoomSettings | null>(null);
@@ -128,6 +129,11 @@ export default function RoomPage() {
                 const errorParam = encodeURIComponent(msg.error);
                 router.push(`/?error=${errorParam}`);
             }
+            if (msg.type === "name_error") {
+                console.log("Name error:", msg.error);
+                setNameError(msg.error);
+                setIsNameModalOpen(true);
+            }
         };
 
         socket.addEventListener("message", handleMessage);
@@ -141,6 +147,7 @@ export default function RoomPage() {
         const trimmedName = submittedName.trim();
         setName(trimmedName);
         sessionStorage.setItem("username", trimmedName);
+        setNameError(null);
         setIsNameModalOpen(false);
     };
 
@@ -255,7 +262,11 @@ export default function RoomPage() {
 
     return (
         <>
-            <NamePromptModal isOpen={isNameModalOpen} onSubmit={handleNameSubmit} />
+            <NamePromptModal 
+                isOpen={isNameModalOpen} 
+                onSubmit={handleNameSubmit} 
+                error={nameError}
+            />
             <DenizModal isOpen={isDenizModalOpen} onClose={() => setIsDenizModalOpen(false)} />
             <EzgiModal isOpen={isEzgiModalOpen} onClose={() => setIsEzgiModalOpen(false)} />
             <OnurModal isOpen={isOnurModalOpen} onClose={() => setIsOnurModalOpen(false)} />

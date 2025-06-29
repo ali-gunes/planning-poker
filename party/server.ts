@@ -6,6 +6,7 @@ import { redis } from "@/lib/redis";
 interface Participant {
   name: string;
   hasVoted: boolean;
+  connectionId?: string; // Track connection ID
 }
 
 interface Vote {
@@ -26,7 +27,20 @@ interface Room {
 // --- END OF TYPES ---
 
 const getRoom = async (roomId: string): Promise<Room | null> => {
-  return await redis.get(`room:${roomId}`);
+  const data = await redis.get(`room:${roomId}`);
+  if (!data) return null;
+  
+  // Parse the JSON string if it's a string
+  if (typeof data === 'string') {
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      console.error(`[ERROR] Failed to parse room data for ${roomId}:`, e);
+      return null;
+    }
+  }
+  
+  return data as Room;
 };
 
 const setRoom = (roomId: string, roomData: Room | object) => {
@@ -57,9 +71,63 @@ export default class PokerServer implements Party.Server {
         return;
       }
       
+      // Special case: If this is the room owner's first connection, update their connectionId
+      if (roomState.owner === name) {
+        const ownerParticipant = roomState.participants.find(p => 
+          p.name === name && p.connectionId === "pending"
+        );
+        
+        if (ownerParticipant) {
+          console.log(`[INFO] Room owner "${name}" is connecting for the first time, updating connectionId`);
+          ownerParticipant.connectionId = sender.id;
+          await setRoom(this.room.id, roomState);
+          
+          // Send initial state to the owner
+          sender.send(JSON.stringify({ 
+            type: "initial_state", 
+            settings: {
+              owner: roomState.owner,
+              votingPreset: roomState.votingPreset,
+              timerDuration: roomState.timerDuration,
+              autoReveal: roomState.autoReveal,
+              state: roomState.state,
+            }, 
+            participants: roomState.participants 
+          }));
+          
+          // Let everyone else know
+          this.room.broadcast(JSON.stringify({ 
+            type: "update_participants", 
+            payload: roomState.participants 
+          }), [sender.id]);
+          
+          if (roomState.state === 'revealed') {
+            const revealedVotes = roomState.votes.filter(v => v.vote !== null);
+            this.room.broadcast(JSON.stringify({ type: "votes_revealed", payload: revealedVotes }));
+          }
+          
+          return;
+        }
+      }
+      
+      // Check if a participant with the same name already exists
+      // Ignore participants with connectionId = "pending" as they are placeholders
+      const existingParticipant = roomState.participants.find(p => 
+        p.name === name && p.connectionId !== "pending"
+      );
+      
+      if (existingParticipant) {
+        console.log(`[ERROR] Participant with name "${name}" already exists in room ${this.room.id}`);
+        sender.send(JSON.stringify({
+          type: "name_error",
+          error: "Bu isimde bir katılımcı zaten odada mevcut. Lütfen farklı bir isim seçin."
+        }));
+        return;
+      }
+      
       const isParticipant = roomState.participants.some(p => p.name === name);
       if (!isParticipant) {
-          roomState.participants.push({ name, hasVoted: false });
+          roomState.participants.push({ name, hasVoted: false, connectionId: sender.id });
           if (!roomState.votes.some(v => v.name === name)) {
               roomState.votes.push({ name, vote: null });
           }
