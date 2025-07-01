@@ -377,7 +377,7 @@ export default function RoomPage() {
                         <ParticipantsList 
                             participants={participants} 
                             currentUser={name} 
-                            gameState={gameState} 
+                            ownerName={roomSettings?.owner}
                         />
                     </aside>
 
