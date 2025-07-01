@@ -5,6 +5,7 @@ export const useSocket = (roomId: string, name: string) => {
     const [socket, setSocket] = useState<PartySocket | null>(null);
     const nameRef = useRef(name);
     nameRef.current = name;
+    const socketRef = useRef<PartySocket | null>(null);
 
     useEffect(() => {
         if (!roomId) return;
@@ -48,13 +49,29 @@ export const useSocket = (roomId: string, name: string) => {
         };
 
         setSocket(newSocket);
+        socketRef.current = newSocket;
+
+        // Set up beforeunload event handler to detect when user is intentionally closing the page
+        const handleBeforeUnload = () => {
+            // Only send leave message if we have a name and socket
+            if (nameRef.current && socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+                console.log(`📤 Sending leave_room message for: ${nameRef.current}`);
+                socketRef.current.send(JSON.stringify({ 
+                    type: "leave_room", 
+                    name: nameRef.current 
+                }));
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
 
         return () => {
             console.log("Cleaning up PartySocket connection.");
+            window.removeEventListener('beforeunload', handleBeforeUnload);
             newSocket.close();
         };
 
-    }, [roomId]); // Reconnect only if roomId changes
+    }, [roomId]);
 
     useEffect(() => {
         // When the name is finally available (after the modal), join the room

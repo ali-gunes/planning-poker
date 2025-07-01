@@ -8,6 +8,7 @@ interface Participant {
   name: string;
   hasVoted: boolean;
   connectionId?: string; // Track connection ID
+  status: 'active' | 'inactive'; // Track participant status
 }
 
 interface Vote {
@@ -24,8 +25,12 @@ interface Room {
   participants: Participant[];
   votes: Vote[];
   timerEndsAt?: number;
+  disconnectionTimers?: Record<string, number>; // Track disconnection timers by name
 }
 // --- END OF TYPES ---
+
+// Time in milliseconds to wait before marking a user as inactive after disconnect
+const DISCONNECT_TIMEOUT = 10000; // 10 seconds
 
 const getRoom = async (roomId: string): Promise<Room | null> => {
   const data = await redis.get(`room:${roomId}`);
@@ -50,6 +55,9 @@ const setRoom = (roomId: string, roomData: Room | object) => {
 };
 
 export default class PokerServer implements Party.Server {
+  // Store disconnection timers
+  private disconnectionTimers: Map<string, NodeJS.Timeout> = new Map();
+  
   constructor(readonly room: Party.Room) {}
 
   async onConnect(conn: Party.Connection, ctx: Party.ConnectionContext) {
@@ -68,10 +76,41 @@ export default class PokerServer implements Party.Server {
     
     if (participantIndex !== -1) {
       const participant = roomState.participants[participantIndex];
-      console.log(`[DISCONNECT] Removing participant: ${participant.name} from room: ${this.room.id}`);
+      console.log(`[DISCONNECT] Participant: ${participant.name} disconnected from room: ${this.room.id}`);
       
-      // Update the participant's connection ID to null instead of removing them completely
-      // This allows them to reconnect with the same name
+      // Set a timer to mark the user as inactive after DISCONNECT_TIMEOUT
+      const timer = setTimeout(async () => {
+        const currentRoomState = await getRoom(this.room.id);
+        if (!currentRoomState) return;
+        
+        const currentParticipantIndex = currentRoomState.participants.findIndex(
+          p => p.name === participant.name
+        );
+        
+        if (currentParticipantIndex !== -1) {
+          // Check if they're still disconnected
+          const currentParticipant = currentRoomState.participants[currentParticipantIndex];
+          if (!currentParticipant.connectionId || currentParticipant.connectionId === conn.id) {
+            console.log(`[TIMEOUT] Marking participant: ${participant.name} as inactive in room: ${this.room.id}`);
+            currentRoomState.participants[currentParticipantIndex].status = 'inactive';
+            await setRoom(this.room.id, currentRoomState);
+            
+            // Notify other participants
+            this.room.broadcast(JSON.stringify({ 
+              type: "update_participants", 
+              payload: currentRoomState.participants 
+            }));
+          }
+        }
+        
+        // Clear the timer from our map
+        this.disconnectionTimers.delete(participant.name);
+      }, DISCONNECT_TIMEOUT);
+      
+      // Store the timer
+      this.disconnectionTimers.set(participant.name, timer);
+      
+      // Update the connection ID to undefined but keep status as active for now
       roomState.participants[participantIndex].connectionId = undefined;
       
       // Save the updated room state
@@ -102,6 +141,13 @@ export default class PokerServer implements Party.Server {
         return;
       }
       
+      // If there's a pending disconnection timer for this user, clear it
+      if (this.disconnectionTimers.has(name)) {
+        clearTimeout(this.disconnectionTimers.get(name));
+        this.disconnectionTimers.delete(name);
+        console.log(`[INFO] Cleared disconnection timer for ${name}`);
+      }
+      
       // Special case: If this is the room owner's first connection, update their connectionId
       if (roomState.owner === name) {
         const ownerParticipant = roomState.participants.find(p => 
@@ -111,6 +157,7 @@ export default class PokerServer implements Party.Server {
         if (ownerParticipant) {
           console.log(`[INFO] Room owner "${name}" is connecting for the first time, updating connectionId`);
           ownerParticipant.connectionId = sender.id;
+          ownerParticipant.status = 'active';
           await setRoom(this.room.id, roomState);
           
           // Send initial state to the owner
@@ -164,12 +211,18 @@ export default class PokerServer implements Party.Server {
       if (disconnectedParticipant) {
         console.log(`[INFO] Participant "${name}" is reconnecting to room ${this.room.id}`);
         disconnectedParticipant.connectionId = sender.id;
+        disconnectedParticipant.status = 'active';
         await setRoom(this.room.id, roomState);
       } else {
         // This is a new participant
         const isParticipant = roomState.participants.some(p => p.name === name);
         if (!isParticipant) {
-            roomState.participants.push({ name, hasVoted: false, connectionId: sender.id });
+            roomState.participants.push({ 
+              name, 
+              hasVoted: false, 
+              connectionId: sender.id,
+              status: 'active'
+            });
             if (!roomState.votes.some(v => v.name === name)) {
                 roomState.votes.push({ name, vote: null });
             }
@@ -275,6 +328,38 @@ export default class PokerServer implements Party.Server {
         console.log(`[UPDATE_SETTINGS] Broadcast sent:`, updatedSettings);
       } else {
         console.log(`[UPDATE_SETTINGS] Permission denied or invalid state`);
+      }
+    }
+
+    // Handle explicit leave room message
+    if (msg.type === "leave_room") {
+      const { name } = msg;
+      let roomState = await getRoom(this.room.id);
+      
+      if (!roomState) return;
+      
+      // Find and remove the participant
+      const participantIndex = roomState.participants.findIndex(p => p.name === name);
+      
+      if (participantIndex !== -1) {
+        console.log(`[LEAVE] Participant "${name}" is leaving room ${this.room.id}`);
+        
+        // Remove participant from the list
+        roomState.participants.splice(participantIndex, 1);
+        
+        // Remove their vote as well
+        const voteIndex = roomState.votes.findIndex(v => v.name === name);
+        if (voteIndex !== -1) {
+          roomState.votes.splice(voteIndex, 1);
+        }
+        
+        await setRoom(this.room.id, roomState);
+        
+        // Notify other participants
+        this.room.broadcast(JSON.stringify({ 
+          type: "update_participants", 
+          payload: roomState.participants 
+        }));
       }
     }
   }

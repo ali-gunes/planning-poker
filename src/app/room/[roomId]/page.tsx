@@ -10,6 +10,7 @@ import { EzgiModal } from "@/components/EzgiModal";
 import { OnurModal } from "@/components/OnurModal";
 import { KubilayModal } from "@/components/KubilayModal";
 import { RoomSettingsModal, type RoomSettingsUpdate } from "@/components/RoomSettingsModal";
+import { ParticipantsList } from "@/components/ParticipantsList";
 
 const votingStacks = {
     fibonacci: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
@@ -18,7 +19,12 @@ const votingStacks = {
     yesno: ["Evet", "Hayır"]
 };
 
-interface Participant { name: string; hasVoted: boolean; }
+interface Participant { 
+    name: string; 
+    hasVoted: boolean; 
+    status?: 'active' | 'inactive';
+}
+
 interface Vote { name: string; vote: number | string; }
 interface RoomSettings {
     owner: string;
@@ -367,15 +373,12 @@ export default function RoomPage() {
                             </div>
                         )}
                         
-                        <h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">Katılımcılar ({participants.length})</h2>
-                        <ul className="space-y-3">
-                            {participants.map((p) => (
-                                <li key={p.name} className="flex items-center justify-between bg-gray-700/50 px-3 py-2 rounded-md">
-                                    <span className="font-medium">{p.name} {p.name === name && "(Siz)"} {p.name === roomSettings?.owner && "👑"}</span>
-                                    <span className={`w-3 h-3 rounded-full transition-colors ${p.hasVoted ? "bg-green-400" : "bg-gray-500"}`} title={p.hasVoted ? "Oyladı" : "Bekleniyor..."}></span>
-                                </li>
-                            ))}
-                        </ul>
+                        {/* Replace the old participants list with ParticipantsList component */}
+                        <ParticipantsList 
+                            participants={participants} 
+                            currentUser={name} 
+                            gameState={gameState} 
+                        />
                     </aside>
 
                     {/* Right Panel: Voting Area */}
