@@ -56,6 +56,35 @@ export default class PokerServer implements Party.Server {
     console.log(`[CONNECT] user: ${conn.id} connected to room: ${this.room.id}`);
   }
   
+  async onClose(conn: Party.Connection) {
+    console.log(`[DISCONNECT] user: ${conn.id} disconnected from room: ${this.room.id}`);
+    
+    // Get the current room state
+    const roomState = await getRoom(this.room.id);
+    if (!roomState) return;
+    
+    // Find the participant with this connection ID
+    const participantIndex = roomState.participants.findIndex(p => p.connectionId === conn.id);
+    
+    if (participantIndex !== -1) {
+      const participant = roomState.participants[participantIndex];
+      console.log(`[DISCONNECT] Removing participant: ${participant.name} from room: ${this.room.id}`);
+      
+      // Update the participant's connection ID to null instead of removing them completely
+      // This allows them to reconnect with the same name
+      roomState.participants[participantIndex].connectionId = undefined;
+      
+      // Save the updated room state
+      await setRoom(this.room.id, roomState);
+      
+      // Notify other participants about the update
+      this.room.broadcast(JSON.stringify({ 
+        type: "update_participants", 
+        payload: roomState.participants 
+      }));
+    }
+  }
+  
   async onMessage(message: string, sender: Party.Connection) {
     const msg = JSON.parse(message);
 
@@ -115,7 +144,7 @@ export default class PokerServer implements Party.Server {
       // Check if a participant with the same name already exists
       // Ignore participants with connectionId = "pending" as they are placeholders
       const existingParticipant = roomState.participants.find(p => 
-        p.name === name && p.connectionId !== "pending"
+        p.name === name && p.connectionId !== "pending" && p.connectionId !== undefined
       );
       
       if (existingParticipant) {
@@ -127,13 +156,25 @@ export default class PokerServer implements Party.Server {
         return;
       }
       
-      const isParticipant = roomState.participants.some(p => p.name === name);
-      if (!isParticipant) {
-          roomState.participants.push({ name, hasVoted: false, connectionId: sender.id });
-          if (!roomState.votes.some(v => v.name === name)) {
-              roomState.votes.push({ name, vote: null });
-          }
-          await setRoom(this.room.id, roomState);
+      // Check if this is a reconnection (same name, but disconnected)
+      const disconnectedParticipant = roomState.participants.find(p => 
+        p.name === name && p.connectionId === undefined
+      );
+      
+      if (disconnectedParticipant) {
+        console.log(`[INFO] Participant "${name}" is reconnecting to room ${this.room.id}`);
+        disconnectedParticipant.connectionId = sender.id;
+        await setRoom(this.room.id, roomState);
+      } else {
+        // This is a new participant
+        const isParticipant = roomState.participants.some(p => p.name === name);
+        if (!isParticipant) {
+            roomState.participants.push({ name, hasVoted: false, connectionId: sender.id });
+            if (!roomState.votes.some(v => v.name === name)) {
+                roomState.votes.push({ name, vote: null });
+            }
+            await setRoom(this.room.id, roomState);
+        }
       }
 
       const settings = {
