@@ -16,6 +16,11 @@ interface Vote {
   vote: number | string | null;
 }
 
+interface OwnerVote {
+  voter: string;
+  candidate: string;
+}
+
 interface Room {
   owner: string;
   votingPreset: 'fibonacci' | 'days' | 'hours' | 'yesno';
@@ -26,11 +31,25 @@ interface Room {
   votes: Vote[];
   timerEndsAt?: number;
   disconnectionTimers?: Record<string, number>; // Track disconnection timers by name
+  ownerStatus: 'active' | 'grace' | 'voting'; // Track owner status
+  graceEndTime?: number; // When grace period ends (timestamp)
+  ownerVotes: OwnerVote[]; // Votes for new owner
+  previousOwner?: string; // Store previous owner name for reclamation
+  ownerToken?: string; // Secure token for owner authentication
 }
 // --- END OF TYPES ---
 
 // Time in milliseconds to wait before marking a user as inactive after disconnect
 const DISCONNECT_TIMEOUT = 10000; // 10 seconds
+
+// Time in milliseconds for owner grace period
+const OWNER_GRACE_PERIOD = 60000; // 1 minute
+
+// Generate a secure random token
+const generateToken = (): string => {
+  return Math.random().toString(36).substring(2, 15) + 
+         Math.random().toString(36).substring(2, 15);
+};
 
 const getRoom = async (roomId: string): Promise<Room | null> => {
   const data = await redis.get(`room:${roomId}`);
@@ -55,8 +74,9 @@ const setRoom = (roomId: string, roomData: Room | object) => {
 };
 
 export default class PokerServer implements Party.Server {
-  // Store disconnection timers
+  // Store disconnection timers and owner grace period timers
   private disconnectionTimers: Map<string, NodeJS.Timeout> = new Map();
+  private ownerGraceTimers: Map<string, NodeJS.Timeout> = new Map();
   
   constructor(readonly room: Party.Room) {}
 
@@ -78,6 +98,9 @@ export default class PokerServer implements Party.Server {
       const participant = roomState.participants[participantIndex];
       console.log(`[DISCONNECT] Participant: ${participant.name} disconnected from room: ${this.room.id}`);
       
+      // Check if this is the room owner
+      const isOwner = participant.name === roomState.owner;
+      
       // Set a timer to mark the user as inactive after DISCONNECT_TIMEOUT
       const timer = setTimeout(async () => {
         const currentRoomState = await getRoom(this.room.id);
@@ -93,6 +116,55 @@ export default class PokerServer implements Party.Server {
           if (!currentParticipant.connectionId || currentParticipant.connectionId === conn.id) {
             console.log(`[TIMEOUT] Marking participant: ${participant.name} as inactive in room: ${this.room.id}`);
             currentRoomState.participants[currentParticipantIndex].status = 'inactive';
+            
+            // If this is the owner and still in active status, start grace period
+            if (isOwner && currentRoomState.ownerStatus === 'active') {
+              console.log(`[OWNER_GRACE] Starting grace period for owner: ${participant.name}`);
+              currentRoomState.ownerStatus = 'grace';
+              currentRoomState.graceEndTime = Date.now() + OWNER_GRACE_PERIOD;
+              currentRoomState.previousOwner = participant.name;
+              
+              // Set a timer to start voting after grace period
+              const ownerGraceTimer = setTimeout(async () => {
+                const updatedRoomState = await getRoom(this.room.id);
+                if (!updatedRoomState) return;
+                
+                // Only proceed if still in grace period
+                if (updatedRoomState.ownerStatus === 'grace') {
+                  console.log(`[OWNER_VOTING] Grace period ended for owner: ${participant.name}, starting voting`);
+                  updatedRoomState.ownerStatus = 'voting';
+                  updatedRoomState.ownerVotes = [];
+                  await setRoom(this.room.id, updatedRoomState);
+                  
+                  // Notify all participants that voting has started
+                  this.room.broadcast(JSON.stringify({ 
+                    type: "owner_voting_started",
+                    payload: {
+                      previousOwner: updatedRoomState.previousOwner,
+                      participants: updatedRoomState.participants.filter(p => 
+                        p.status === 'active' && p.name !== updatedRoomState.previousOwner
+                      )
+                    }
+                  }));
+                }
+                
+                // Clear the timer reference
+                this.ownerGraceTimers.delete(this.room.id);
+              }, OWNER_GRACE_PERIOD);
+              
+              // Store the timer
+              this.ownerGraceTimers.set(this.room.id, ownerGraceTimer);
+              
+              // Notify participants about grace period
+              this.room.broadcast(JSON.stringify({ 
+                type: "owner_grace_started", 
+                payload: {
+                  owner: participant.name,
+                  graceEndTime: currentRoomState.graceEndTime
+                }
+              }));
+            }
+            
             await setRoom(this.room.id, currentRoomState);
             
             // Notify other participants
@@ -100,6 +172,17 @@ export default class PokerServer implements Party.Server {
               type: "update_participants", 
               payload: currentRoomState.participants 
             }));
+            
+            // If owner status changed, also broadcast that
+            if (isOwner && currentRoomState.ownerStatus !== 'active') {
+              this.room.broadcast(JSON.stringify({ 
+                type: "owner_status_changed", 
+                payload: {
+                  status: currentRoomState.ownerStatus,
+                  graceEndTime: currentRoomState.graceEndTime
+                }
+              }));
+            }
           }
         }
         
@@ -200,6 +283,70 @@ export default class PokerServer implements Party.Server {
           type: "name_error",
           error: "Bu isimde bir katılımcı zaten odada mevcut. Lütfen farklı bir isim seçin."
         }));
+        return;
+      }
+      
+      // Check if this is the previous owner returning during grace period or voting
+      const isPreviousOwner = name === roomState.previousOwner && 
+        (roomState.ownerStatus === 'grace' || roomState.ownerStatus === 'voting');
+      
+      if (isPreviousOwner) {
+        console.log(`[OWNER_RETURN] Previous owner "${name}" is returning to room ${this.room.id}`);
+        
+        // Update the owner's connection ID
+        const previousOwnerIndex = roomState.participants.findIndex(p => p.name === name);
+        
+        if (previousOwnerIndex !== -1) {
+          // Update existing participant
+          roomState.participants[previousOwnerIndex].connectionId = sender.id;
+          roomState.participants[previousOwnerIndex].status = 'active';
+        } else {
+          // Add the owner back to participants list
+          roomState.participants.push({ 
+            name, 
+            hasVoted: false, 
+            connectionId: sender.id,
+            status: 'active'
+          });
+          
+          if (!roomState.votes.some(v => v.name === name)) {
+            roomState.votes.push({ name, vote: null });
+          }
+        }
+        
+        // Send a special notification to the returning owner
+        sender.send(JSON.stringify({
+          type: "owner_can_reclaim",
+          payload: {
+            previousOwner: name,
+            graceEndTime: roomState.graceEndTime
+          }
+        }));
+        
+        await setRoom(this.room.id, roomState);
+        
+        // Send initial state
+        sender.send(JSON.stringify({ 
+          type: "initial_state", 
+          settings: {
+            owner: roomState.owner,
+            votingPreset: roomState.votingPreset,
+            timerDuration: roomState.timerDuration,
+            autoReveal: roomState.autoReveal,
+            state: roomState.state,
+            ownerStatus: roomState.ownerStatus,
+            graceEndTime: roomState.graceEndTime,
+            previousOwner: roomState.previousOwner
+          }, 
+          participants: roomState.participants 
+        }));
+        
+        // Let everyone else know
+        this.room.broadcast(JSON.stringify({ 
+          type: "update_participants", 
+          payload: roomState.participants 
+        }), [sender.id]);
+        
         return;
       }
       
@@ -344,6 +491,9 @@ export default class PokerServer implements Party.Server {
       if (participantIndex !== -1) {
         console.log(`[LEAVE] Participant "${name}" is leaving room ${this.room.id}`);
         
+        // Check if this is the owner
+        const isOwner = roomState.owner === name;
+        
         // Remove participant from the list
         roomState.participants.splice(participantIndex, 1);
         
@@ -353,12 +503,221 @@ export default class PokerServer implements Party.Server {
           roomState.votes.splice(voteIndex, 1);
         }
         
+        // If this is the owner, start grace period immediately
+        if (isOwner && roomState.ownerStatus === 'active') {
+          console.log(`[OWNER_GRACE] Owner "${name}" left, starting grace period`);
+          roomState.ownerStatus = 'grace';
+          roomState.graceEndTime = Date.now() + OWNER_GRACE_PERIOD;
+          roomState.previousOwner = name;
+          
+          // Set a timer to start voting after grace period
+          const ownerGraceTimer = setTimeout(async () => {
+            const updatedRoomState = await getRoom(this.room.id);
+            if (!updatedRoomState) return;
+            
+            // Only proceed if still in grace period
+            if (updatedRoomState.ownerStatus === 'grace') {
+              console.log(`[OWNER_VOTING] Grace period ended for owner: ${name}, starting voting`);
+              updatedRoomState.ownerStatus = 'voting';
+              updatedRoomState.ownerVotes = [];
+              await setRoom(this.room.id, updatedRoomState);
+              
+              // Notify all participants that voting has started
+              this.room.broadcast(JSON.stringify({ 
+                type: "owner_voting_started",
+                payload: {
+                  previousOwner: updatedRoomState.previousOwner,
+                  participants: updatedRoomState.participants.filter(p => 
+                    p.status === 'active' && p.name !== updatedRoomState.previousOwner
+                  )
+                }
+              }));
+            }
+            
+            // Clear the timer reference
+            this.ownerGraceTimers.delete(this.room.id);
+          }, OWNER_GRACE_PERIOD);
+          
+          // Store the timer
+          this.ownerGraceTimers.set(this.room.id, ownerGraceTimer);
+          
+          // Notify participants about grace period
+          this.room.broadcast(JSON.stringify({ 
+            type: "owner_grace_started", 
+            payload: {
+              owner: name,
+              graceEndTime: roomState.graceEndTime
+            }
+          }));
+        }
+        
         await setRoom(this.room.id, roomState);
         
         // Notify other participants
         this.room.broadcast(JSON.stringify({ 
           type: "update_participants", 
           payload: roomState.participants 
+        }));
+        
+        // If owner status changed, also broadcast that
+        if (isOwner && roomState.ownerStatus !== 'active') {
+          this.room.broadcast(JSON.stringify({ 
+            type: "owner_status_changed", 
+            payload: {
+              status: roomState.ownerStatus,
+              graceEndTime: roomState.graceEndTime
+            }
+          }));
+        }
+      }
+    }
+
+    // Handle owner reclamation
+    if (msg.type === "reclaim_ownership") {
+      const { name, ownerToken } = msg;
+      let roomState = await getRoom(this.room.id);
+      
+      if (!roomState) return;
+      
+      // Check if this is the previous owner and we're in grace period or voting
+      const isPreviousOwner = roomState.previousOwner === name && 
+          (roomState.ownerStatus === 'grace' || roomState.ownerStatus === 'voting');
+      
+      // Verify the owner token if provided
+      const isTokenValid = ownerToken && roomState.ownerToken === ownerToken;
+      
+      // Allow reclamation if it's the previous owner during grace/voting OR if the token is valid
+      if (isPreviousOwner || isTokenValid) {
+        console.log(`[OWNER_RECLAIM] Previous owner "${name}" is reclaiming ownership`);
+        
+        // Restore ownership
+        roomState.owner = name;
+        roomState.ownerStatus = 'active';
+        roomState.previousOwner = undefined;
+        roomState.graceEndTime = undefined;
+        roomState.ownerVotes = [];
+        
+        // Clear any pending grace timer
+        if (this.ownerGraceTimers.has(this.room.id)) {
+          clearTimeout(this.ownerGraceTimers.get(this.room.id));
+          this.ownerGraceTimers.delete(this.room.id);
+        }
+        
+        await setRoom(this.room.id, roomState);
+        
+        // Notify all participants
+        this.room.broadcast(JSON.stringify({ 
+          type: "owner_reclaimed", 
+          payload: {
+            owner: name
+          }
+        }));
+      } else {
+        // Send error if token is invalid
+        sender.send(JSON.stringify({
+          type: "reclaim_error",
+          error: "Krallık geri alınamadı. Yetkiniz yok."
+        }));
+      }
+    }
+
+    // Handle owner voting
+    if (msg.type === "vote_for_owner") {
+      const { voter, candidate } = msg;
+      let roomState = await getRoom(this.room.id);
+      
+      if (!roomState || roomState.ownerStatus !== 'voting') return;
+      
+      // Check if voter is an active participant
+      const voterParticipant = roomState.participants.find(p => 
+        p.name === voter && p.status === 'active'
+      );
+      
+      if (!voterParticipant) return;
+      
+      // Check if candidate is an active participant
+      const candidateParticipant = roomState.participants.find(p => 
+        p.name === candidate && p.status === 'active'
+      );
+      
+      if (!candidateParticipant) return;
+      
+      // Remove any existing vote from this voter
+      roomState.ownerVotes = roomState.ownerVotes.filter(vote => vote.voter !== voter);
+      
+      // Add the new vote
+      roomState.ownerVotes.push({ voter, candidate });
+      
+      // Calculate vote counts
+      const voteCounts = new Map<string, number>();
+      for (const vote of roomState.ownerVotes) {
+        voteCounts.set(vote.candidate, (voteCounts.get(vote.candidate) || 0) + 1);
+      }
+      
+      // Get active participants count (excluding previous owner)
+      const activeParticipantsCount = roomState.participants.filter(p => 
+        p.status === 'active' && p.name !== roomState.previousOwner
+      ).length;
+      
+      // Check if any candidate has majority
+      let newOwner: string | null = null;
+      for (const [candidate, count] of voteCounts.entries()) {
+        if (count > activeParticipantsCount / 2) {
+          newOwner = candidate;
+          break;
+        }
+      }
+      
+      // If we have a new owner with majority
+      if (newOwner) {
+        console.log(`[OWNER_ELECTED] New owner elected: ${newOwner}`);
+        
+        // First notify all participants about the election result
+        this.room.broadcast(JSON.stringify({ 
+          type: "owner_elected", 
+          payload: {
+            owner: newOwner,
+            voteCounts: Object.fromEntries(voteCounts)
+          }
+        }));
+        
+        // Delay the actual owner update to allow for the coronation animation
+        setTimeout(async () => {
+          // Get the latest room state
+          const updatedRoomState = await getRoom(this.room.id);
+          if (!updatedRoomState) return;
+          
+          // Only update if still in voting state
+          if (updatedRoomState.ownerStatus === 'voting') {
+            updatedRoomState.owner = newOwner;
+            updatedRoomState.ownerStatus = 'active';
+            updatedRoomState.previousOwner = undefined;
+            updatedRoomState.graceEndTime = undefined;
+            updatedRoomState.ownerVotes = [];
+            
+            await setRoom(this.room.id, updatedRoomState);
+            
+            // Notify all participants about the finalized owner change
+            this.room.broadcast(JSON.stringify({ 
+              type: "owner_change_finalized", 
+              payload: {
+                owner: newOwner
+              }
+            }));
+          }
+        }, 6000); // 6 seconds delay (5 for animation + 1 buffer)
+      } else {
+        // Just update the votes
+        await setRoom(this.room.id, roomState);
+        
+        // Notify about vote update
+        this.room.broadcast(JSON.stringify({ 
+          type: "owner_votes_updated", 
+          payload: {
+            votes: roomState.ownerVotes,
+            voteCounts: Object.fromEntries(voteCounts),
+            requiredVotes: Math.floor(activeParticipantsCount / 2) + 1
+          }
         }));
       }
     }

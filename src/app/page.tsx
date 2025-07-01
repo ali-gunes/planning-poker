@@ -57,7 +57,11 @@ export default function Home() {
       });
 
       if (res.ok) {
-        const { roomId } = await res.json();
+        const { roomId, ownerToken } = await res.json();
+        // Store the owner token in sessionStorage
+        if (ownerToken) {
+          sessionStorage.setItem(`owner_token_${roomId}`, ownerToken);
+        }
         router.push(`/room/${roomId}`);
       } else {
         const error = await res.json();
@@ -90,7 +94,7 @@ export default function Home() {
       <div className="w-full max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
-            <Image 
+        <Image
               src="/planning-poker.svg" 
               alt="Planlama Pokeri Logo" 
               width={128}
@@ -279,7 +283,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
+    </div>
     </main>
   );
 }

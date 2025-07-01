@@ -10,6 +10,12 @@ interface CreateRoomRequest {
     autoReveal: boolean;
 }
 
+// Generate a secure random token
+const generateToken = (): string => {
+  return Math.random().toString(36).substring(2, 15) + 
+         Math.random().toString(36).substring(2, 15);
+};
+
 export async function POST(request: Request) {
     try {
         const { name, votingPreset, timerDuration, autoReveal } = (await request.json()) as CreateRoomRequest;
@@ -19,6 +25,7 @@ export async function POST(request: Request) {
         }
 
         const roomId = nanoid(6); // 6-character room ID
+        const ownerToken = generateToken();
 
         const room = {
             owner: name,
@@ -26,14 +33,18 @@ export async function POST(request: Request) {
             timerDuration,
             autoReveal,
             state: "lobby", // initial state
-            participants: [{ name, hasVoted: false, connectionId: "pending" }],
+            participants: [{ name, hasVoted: false, connectionId: "pending", status: 'active' }],
             votes: [{ name, vote: null }],
+            ownerStatus: 'active',
+            ownerVotes: [],
+            ownerToken,
         };
 
         // Use redis.set with JSON.stringify to match the format in socket.ts
         await redis.set(`room:${roomId}`, JSON.stringify(room), { ex: REDIS_TTL.ROOM });
 
-        return NextResponse.json({ roomId });
+        // Return both the roomId and the ownerToken
+        return NextResponse.json({ roomId, ownerToken });
 
     } catch (error) {
         console.error('[API_CREATE_ROOM_ERROR]', error);
