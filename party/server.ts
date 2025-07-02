@@ -40,10 +40,10 @@ interface Room {
 // --- END OF TYPES ---
 
 // Time in milliseconds to wait before marking a user as inactive after disconnect
-const DISCONNECT_TIMEOUT = 10000; // 10 seconds
+const DISCONNECT_TIMEOUT = 5000; // 5 seconds for testing (was 10 seconds)
 
 // Time in milliseconds for owner grace period
-const OWNER_GRACE_PERIOD = 60000; // 1 minute
+const OWNER_GRACE_PERIOD = 120000; // 2 minutes
 
 // Generate a secure random token
 const generateToken = (): string => {
@@ -81,11 +81,11 @@ export default class PokerServer implements Party.Server {
   constructor(readonly room: Party.Room) {}
 
   async onConnect(conn: Party.Connection, ctx: Party.ConnectionContext) {
-    console.log(`[CONNECT] user: ${conn.id} connected to room: ${this.room.id}`);
+    //console.log(`[CONNECT] user: ${conn.id} connected to room: ${this.room.id}`);
   }
   
   async onClose(conn: Party.Connection) {
-    console.log(`[DISCONNECT] user: ${conn.id} disconnected from room: ${this.room.id}`);
+    //console.log(`[DISCONNECT] user: ${conn.id} disconnected from room: ${this.room.id}`);
     
     // Get the current room state
     const roomState = await getRoom(this.room.id);
@@ -96,7 +96,7 @@ export default class PokerServer implements Party.Server {
     
     if (participantIndex !== -1) {
       const participant = roomState.participants[participantIndex];
-      console.log(`[DISCONNECT] Participant: ${participant.name} disconnected from room: ${this.room.id}`);
+      //console.log(`[DISCONNECT] Participant: ${participant.name} disconnected from room: ${this.room.id}`);
       
       // Check if this is the room owner
       const isOwner = participant.name === roomState.owner;
@@ -114,15 +114,19 @@ export default class PokerServer implements Party.Server {
           // Check if they're still disconnected
           const currentParticipant = currentRoomState.participants[currentParticipantIndex];
           if (!currentParticipant.connectionId || currentParticipant.connectionId === conn.id) {
-            console.log(`[TIMEOUT] Marking participant: ${participant.name} as inactive in room: ${this.room.id}`);
+            //console.log(`[TIMEOUT] Marking participant: ${participant.name} as inactive in room: ${this.room.id}`);
             currentRoomState.participants[currentParticipantIndex].status = 'inactive';
             
             // If this is the owner and still in active status, start grace period
             if (isOwner && currentRoomState.ownerStatus === 'active') {
-              console.log(`[OWNER_GRACE] Starting grace period for owner: ${participant.name}`);
+              //console.log(`[OWNER_GRACE] Starting grace period for owner: ${participant.name}`);
               currentRoomState.ownerStatus = 'grace';
               currentRoomState.graceEndTime = Date.now() + OWNER_GRACE_PERIOD;
               currentRoomState.previousOwner = participant.name;
+              
+              //console.log(`[DEBUG_GRACE] Owner status set to: ${currentRoomState.ownerStatus}`);
+              //console.log(`[DEBUG_GRACE] Grace end time set to: ${new Date(currentRoomState.graceEndTime).toISOString()}`);
+              //console.log(`[DEBUG_GRACE] Previous owner set to: ${currentRoomState.previousOwner}`);
               
               // Set a timer to start voting after grace period
               const ownerGraceTimer = setTimeout(async () => {
@@ -131,7 +135,7 @@ export default class PokerServer implements Party.Server {
                 
                 // Only proceed if still in grace period
                 if (updatedRoomState.ownerStatus === 'grace') {
-                  console.log(`[OWNER_VOTING] Grace period ended for owner: ${participant.name}, starting voting`);
+                  //console.log(`[OWNER_VOTING] Grace period ended for owner: ${participant.name}, starting voting`);
                   updatedRoomState.ownerStatus = 'voting';
                   updatedRoomState.ownerVotes = [];
                   await setRoom(this.room.id, updatedRoomState);
@@ -156,6 +160,7 @@ export default class PokerServer implements Party.Server {
               this.ownerGraceTimers.set(this.room.id, ownerGraceTimer);
               
               // Notify participants about grace period
+              //console.log(`[DEBUG_GRACE] Broadcasting owner_grace_started message`);
               this.room.broadcast(JSON.stringify({ 
                 type: "owner_grace_started", 
                 payload: {
@@ -175,6 +180,9 @@ export default class PokerServer implements Party.Server {
             
             // If owner status changed, also broadcast that
             if (isOwner && currentRoomState.ownerStatus !== 'active') {
+              //console.log(`[DEBUG_STATUS] Broadcasting owner_status_changed message with status: ${currentRoomState.ownerStatus}`);
+              //console.log(`[DEBUG_STATUS] Grace end time: ${currentRoomState.graceEndTime ? new Date(currentRoomState.graceEndTime).toISOString() : 'undefined'}`);
+              
               this.room.broadcast(JSON.stringify({ 
                 type: "owner_status_changed", 
                 payload: {
@@ -216,7 +224,7 @@ export default class PokerServer implements Party.Server {
 
       if (!roomState) {
         // Room doesn't exist, send error
-        console.log(`[ERROR] Room ${this.room.id} not found`);
+        //console.log(`[ERROR] Room ${this.room.id} not found`);
         sender.send(JSON.stringify({ 
           type: "room_error", 
           error: "Bu oda mevcut değil. Lütfen doğru oda ID'sini kontrol edin." 
@@ -228,7 +236,7 @@ export default class PokerServer implements Party.Server {
       if (this.disconnectionTimers.has(name)) {
         clearTimeout(this.disconnectionTimers.get(name));
         this.disconnectionTimers.delete(name);
-        console.log(`[INFO] Cleared disconnection timer for ${name}`);
+        //console.log(`[INFO] Cleared disconnection timer for ${name}`);
       }
       
       // Special case: If this is the room owner's first connection, update their connectionId
@@ -238,7 +246,7 @@ export default class PokerServer implements Party.Server {
         );
         
         if (ownerParticipant) {
-          console.log(`[INFO] Room owner "${name}" is connecting for the first time, updating connectionId`);
+          //console.log(`[INFO] Room owner "${name}" is connecting for the first time, updating connectionId`);
           ownerParticipant.connectionId = sender.id;
           ownerParticipant.status = 'active';
           await setRoom(this.room.id, roomState);
@@ -278,7 +286,7 @@ export default class PokerServer implements Party.Server {
       );
       
       if (existingParticipant) {
-        console.log(`[ERROR] Participant with name "${name}" already exists in room ${this.room.id}`);
+        //console.log(`[ERROR] Participant with name "${name}" already exists in room ${this.room.id}`);
         sender.send(JSON.stringify({
           type: "name_error",
           error: "Bu isimde bir katılımcı zaten odada mevcut. Lütfen farklı bir isim seçin."
@@ -291,7 +299,7 @@ export default class PokerServer implements Party.Server {
         (roomState.ownerStatus === 'grace' || roomState.ownerStatus === 'voting');
       
       if (isPreviousOwner) {
-        console.log(`[OWNER_RETURN] Previous owner "${name}" is returning to room ${this.room.id}`);
+        //console.log(`[OWNER_RETURN] Previous owner "${name}" is returning to room ${this.room.id}`);
         
         // Update the owner's connection ID
         const previousOwnerIndex = roomState.participants.findIndex(p => p.name === name);
@@ -356,7 +364,7 @@ export default class PokerServer implements Party.Server {
       );
       
       if (disconnectedParticipant) {
-        console.log(`[INFO] Participant "${name}" is reconnecting to room ${this.room.id}`);
+        //console.log(`[INFO] Participant "${name}" is reconnecting to room ${this.room.id}`);
         disconnectedParticipant.connectionId = sender.id;
         disconnectedParticipant.status = 'active';
         await setRoom(this.room.id, roomState);
@@ -445,16 +453,16 @@ export default class PokerServer implements Party.Server {
 
     if (msg.type === 'update_room_settings') {
       const { votingPreset, timerDuration, autoReveal, ownerName } = msg;
-      console.log(`[UPDATE_SETTINGS] Request from ${ownerName}:`, { votingPreset, timerDuration, autoReveal });
+      //console.log(`[UPDATE_SETTINGS] Request from ${ownerName}:`, { votingPreset, timerDuration, autoReveal });
       
       let roomState = await getRoom(this.room.id);
       
       if (!roomState) {
-        console.log(`[UPDATE_SETTINGS] Room ${this.room.id} not found`);
+        //console.log(`[UPDATE_SETTINGS] Room ${this.room.id} not found`);
         return;
       }
       
-      console.log(`[UPDATE_SETTINGS] Room owner: ${roomState.owner}, Request from: ${ownerName}, State: ${roomState.state}`);
+      //console.log(`[UPDATE_SETTINGS] Room owner: ${roomState.owner}, Request from: ${ownerName}, State: ${roomState.state}`);
       
       if (roomState && roomState.owner === ownerName && (roomState.state === 'lobby' || roomState.state === 'revealed')) {
         roomState.votingPreset = votingPreset;
@@ -462,7 +470,7 @@ export default class PokerServer implements Party.Server {
         roomState.autoReveal = autoReveal;
         
         await setRoom(this.room.id, roomState);
-        console.log(`[UPDATE_SETTINGS] Settings updated successfully`);
+        //console.log(`[UPDATE_SETTINGS] Settings updated successfully`);
         
         const updatedSettings = {
           votingPreset: roomState.votingPreset,
@@ -472,9 +480,9 @@ export default class PokerServer implements Party.Server {
         };
         
         this.room.broadcast(JSON.stringify({ type: 'room_settings_updated', payload: updatedSettings }));
-        console.log(`[UPDATE_SETTINGS] Broadcast sent:`, updatedSettings);
+        //console.log(`[UPDATE_SETTINGS] Broadcast sent:`, updatedSettings);
       } else {
-        console.log(`[UPDATE_SETTINGS] Permission denied or invalid state`);
+        //console.log(`[UPDATE_SETTINGS] Permission denied or invalid state`);
       }
     }
 
@@ -489,7 +497,7 @@ export default class PokerServer implements Party.Server {
       const participantIndex = roomState.participants.findIndex(p => p.name === name);
       
       if (participantIndex !== -1) {
-        console.log(`[LEAVE] Participant "${name}" is leaving room ${this.room.id}`);
+        //console.log(`[LEAVE] Participant "${name}" is leaving room ${this.room.id}`);
         
         // Check if this is the owner
         const isOwner = roomState.owner === name;
@@ -505,7 +513,7 @@ export default class PokerServer implements Party.Server {
         
         // If this is the owner, start grace period immediately
         if (isOwner && roomState.ownerStatus === 'active') {
-          console.log(`[OWNER_GRACE] Owner "${name}" left, starting grace period`);
+          //console.log(`[OWNER_GRACE] Owner "${name}" left, starting grace period`);
           roomState.ownerStatus = 'grace';
           roomState.graceEndTime = Date.now() + OWNER_GRACE_PERIOD;
           roomState.previousOwner = name;
@@ -517,7 +525,7 @@ export default class PokerServer implements Party.Server {
             
             // Only proceed if still in grace period
             if (updatedRoomState.ownerStatus === 'grace') {
-              console.log(`[OWNER_VOTING] Grace period ended for owner: ${name}, starting voting`);
+              //console.log(`[OWNER_VOTING] Grace period ended for owner: ${name}, starting voting`);
               updatedRoomState.ownerStatus = 'voting';
               updatedRoomState.ownerVotes = [];
               await setRoom(this.room.id, updatedRoomState);
@@ -561,6 +569,9 @@ export default class PokerServer implements Party.Server {
         
         // If owner status changed, also broadcast that
         if (isOwner && roomState.ownerStatus !== 'active') {
+          //console.log(`[DEBUG_STATUS] Broadcasting owner_status_changed message with status: ${roomState.ownerStatus}`);
+          //console.log(`[DEBUG_STATUS] Grace end time: ${roomState.graceEndTime ? new Date(roomState.graceEndTime).toISOString() : 'undefined'}`);
+          
           this.room.broadcast(JSON.stringify({ 
             type: "owner_status_changed", 
             payload: {
@@ -588,7 +599,7 @@ export default class PokerServer implements Party.Server {
       
       // Allow reclamation if it's the previous owner during grace/voting OR if the token is valid
       if (isPreviousOwner || isTokenValid) {
-        console.log(`[OWNER_RECLAIM] Previous owner "${name}" is reclaiming ownership`);
+        //console.log(`[OWNER_RECLAIM] Previous owner "${name}" is reclaiming ownership`);
         
         // Restore ownership
         roomState.owner = name;
@@ -670,7 +681,7 @@ export default class PokerServer implements Party.Server {
       
       // If we have a new owner with majority
       if (newOwner) {
-        console.log(`[OWNER_ELECTED] New owner elected: ${newOwner}`);
+        //console.log(`[OWNER_ELECTED] New owner elected: ${newOwner}`);
         
         // First notify all participants about the election result
         this.room.broadcast(JSON.stringify({ 

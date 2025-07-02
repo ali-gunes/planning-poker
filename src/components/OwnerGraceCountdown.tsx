@@ -9,6 +9,8 @@ interface OwnerGraceCountdownProps {
 export function OwnerGraceCountdown({ ownerName, graceEndTime }: OwnerGraceCountdownProps) {
   const [timeLeft, setTimeLeft] = useState<number>(0);
   
+  //console.log("🔴 OwnerGraceCountdown rendered with:", { ownerName, graceEndTime });
+  
   useEffect(() => {
     const calculateTimeLeft = () => {
       const difference = graceEndTime - Date.now();

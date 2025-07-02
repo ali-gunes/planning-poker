@@ -36,6 +36,7 @@ export function OwnerVotingPanel({
   onVote
 }: OwnerVotingPanelProps) {
   const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null);
+  const [isChangingVote, setIsChangingVote] = useState(false);
   const [newOwnerSelected, setNewOwnerSelected] = useState<string | null>(null);
   const [showCoronation, setShowCoronation] = useState(false);
   const [coronationCountdown, setCoronationCountdown] = useState(5);
@@ -79,6 +80,16 @@ export function OwnerVotingPanel({
   const handleVote = () => {
     if (selectedCandidate) {
       onVote(selectedCandidate);
+      setIsChangingVote(false);
+    }
+  };
+  
+  // Handle changing vote
+  const handleChangeVote = () => {
+    setIsChangingVote(true);
+    // Pre-select the current vote
+    if (currentUserVote) {
+      setSelectedCandidate(currentUserVote.candidate);
     }
   };
   
@@ -137,14 +148,14 @@ export function OwnerVotingPanel({
           {previousOwner} krallığı bıraktı!
         </h3>
         
-        {currentUserVote ? (
+        {currentUserVote && !isChangingVote ? (
           <div className="mb-4 text-center">
             <p className="text-yellow-300 text-lg">
               Oyunuzu <span className="font-bold">{currentUserVote.candidate}</span> için kullandınız.
             </p>
             <button 
               className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-              onClick={() => setSelectedCandidate(null)}
+              onClick={handleChangeVote}
             >
               Oyumu Değiştir
             </button>
@@ -152,7 +163,7 @@ export function OwnerVotingPanel({
         ) : (
           <div className="mb-4">
             <p className="text-yellow-300 text-center mb-4 text-lg">
-              Lütfen yeni kralı seçin:
+              {isChangingVote ? "Oyunuzu değiştirin:" : "Lütfen yeni kralı seçin:"}
             </p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -176,16 +187,24 @@ export function OwnerVotingPanel({
               ))}
             </div>
             
-            {selectedCandidate && (
-              <div className="mt-6 text-center">
+            <div className="mt-6 text-center flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                className="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-bold disabled:bg-gray-500 disabled:cursor-not-allowed"
+                onClick={handleVote}
+                disabled={!selectedCandidate}
+              >
+                {isChangingVote ? "Oyumu Güncelle" : "Oyla"}
+              </button>
+              
+              {isChangingVote && (
                 <button
-                  className="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-bold"
-                  onClick={handleVote}
+                  className="px-6 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+                  onClick={() => setIsChangingVote(false)}
                 >
-                  Oyla
+                  İptal
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
       </div>

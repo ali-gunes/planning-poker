@@ -37,7 +37,7 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
       timerDuration: timerMinutes * 60,
       autoReveal,
     };
-    console.log("💾 Settings modal - saving settings:", newSettings);
+    //console.log("💾 Settings modal - saving settings:", newSettings);
     onSave(newSettings);
     onClose();
   };

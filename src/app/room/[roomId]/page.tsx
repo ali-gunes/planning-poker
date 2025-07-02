@@ -86,7 +86,7 @@ export default function RoomPage() {
 
     const handleRevealVotes = useCallback(() => {
         if (socket) {
-            console.log("handleRevealVotes called");
+            //console.log("handleRevealVotes called");
             socket.send(JSON.stringify({ type: "reveal_votes", roomId }));
         }
     }, [socket, roomId]);
@@ -112,10 +112,10 @@ export default function RoomPage() {
         
         const handleMessage = (event: MessageEvent) => {
             const msg = JSON.parse(event.data);
-            console.log("📨 Received message:", msg.type, msg);
+            //console.log("📨 Received message:", msg.type, msg);
             
             if (msg.type === "initial_state") {
-                console.log("🏠 Setting initial room settings:", msg.settings);
+                //console.log("🏠 Setting initial room settings:", msg.settings);
                 setRoomSettings(msg.settings);
                 setParticipants(msg.participants);
                 setGameState(msg.settings.state);
@@ -144,7 +144,7 @@ export default function RoomPage() {
                 setGameState(msg.payload.state);
             }
             if (msg.type === "room_settings_updated") {
-                console.log("Received settings update:", msg.payload);
+                //console.log("Received settings update:", msg.payload);
                 setRoomSettings(prev => ({ ...prev, ...msg.payload }));
                 setGameState(msg.payload.state);
             }
@@ -153,14 +153,14 @@ export default function RoomPage() {
                 router.push(`/?error=${errorParam}`);
             }
             if (msg.type === "name_error") {
-                console.log("Name error:", msg.error);
+                //console.log("Name error:", msg.error);
                 setNameError(msg.error);
                 setIsNameModalOpen(true);
             }
             
             // Special message for returning owner
             if (msg.type === "owner_can_reclaim") {
-                console.log("Owner can reclaim:", msg.payload);
+                //console.log("Owner can reclaim:", msg.payload);
                 // Force update the isPreviousOwner state
                 setRoomSettings(prev => {
                     if (!prev) return prev;
@@ -174,27 +174,31 @@ export default function RoomPage() {
             
             // Owner transfer messages
             if (msg.type === "owner_grace_started") {
-                console.log("Owner grace period started:", msg.payload);
+                //console.log("🔴 Owner grace period started:", msg.payload);
                 setRoomSettings(prev => {
                     if (!prev) return prev;
-                    return { 
+                    const newSettings: RoomSettings = { 
                         ...prev, 
                         ownerStatus: 'grace',
                         graceEndTime: msg.payload.graceEndTime,
                         previousOwner: msg.payload.owner
                     };
+                    //console.log("🔴 Updated room settings for grace period:", newSettings);
+                    return newSettings;
                 });
             }
             
             if (msg.type === "owner_status_changed") {
-                console.log("Owner status changed:", msg.payload);
+                //console.log("🔴 Owner status changed:", msg.payload);
                 setRoomSettings(prev => {
                     if (!prev) return prev;
-                    return { 
+                    const newSettings: RoomSettings = { 
                         ...prev, 
-                        ownerStatus: msg.payload.status,
+                        ownerStatus: msg.payload.status as 'active' | 'grace' | 'voting',
                         graceEndTime: msg.payload.graceEndTime
                     };
+                    //console.log("🔴 Updated room settings for status change:", newSettings);
+                    return newSettings;
                 });
             }
             
@@ -204,7 +208,7 @@ export default function RoomPage() {
             }
             
             if (msg.type === "owner_voting_started") {
-                console.log("Owner voting started:", msg.payload);
+                //console.log("Owner voting started:", msg.payload);
                 setRoomSettings(prev => {
                     if (!prev) return prev;
                     return { 
@@ -219,21 +223,21 @@ export default function RoomPage() {
             }
             
             if (msg.type === "owner_votes_updated") {
-                console.log("Owner votes updated:", msg.payload);
+                //console.log("Owner votes updated:", msg.payload);
                 setOwnerVotes(msg.payload.votes);
                 setOwnerVoteCounts(msg.payload.voteCounts);
                 setRequiredVotes(msg.payload.requiredVotes);
             }
             
             if (msg.type === "owner_elected") {
-                console.log("New owner elected:", msg.payload);
+                //console.log("New owner elected:", msg.payload);
                 // Don't change the owner yet, just update the vote counts
                 // This allows time for the coronation animation
                 setOwnerVoteCounts(msg.payload.voteCounts);
             }
             
             if (msg.type === "owner_change_finalized") {
-                console.log("Owner change finalized:", msg.payload);
+                //console.log("Owner change finalized:", msg.payload);
                 setRoomSettings(prev => {
                     if (!prev) return prev;
                     return { 
@@ -249,7 +253,7 @@ export default function RoomPage() {
             }
             
             if (msg.type === "owner_reclaimed") {
-                console.log("Owner reclaimed:", msg.payload);
+                //console.log("Owner reclaimed:", msg.payload);
                 setRoomSettings(prev => {
                     if (!prev) return prev;
                     return { 
@@ -318,10 +322,10 @@ export default function RoomPage() {
     };
 
     const handleSettingsUpdate = (settings: RoomSettingsUpdate) => {
-        console.log("🔧 handleSettingsUpdate called with:", settings);
-        console.log("🔍 Socket state:", socket ? "connected" : "not connected");
-        console.log("👑 Is owner:", isOwner);
-        console.log("👤 Owner name:", name);
+        //console.log("🔧 handleSettingsUpdate called with:", settings);
+        //console.log("🔍 Socket state:", socket ? "connected" : "not connected");
+        //console.log("👑 Is owner:", isOwner);
+        //console.log("👤 Owner name:", name);
         
         if (socket && isOwner) {
             const message = { 
@@ -329,17 +333,17 @@ export default function RoomPage() {
                 ...settings,
                 ownerName: name
             };
-            console.log("📤 Sending message to PartyKit:", message);
+            //console.log("📤 Sending message to PartyKit:", message);
             socket.send(JSON.stringify(message));
         } else {
-            if (!socket) console.error("❌ No socket connection");
-            if (!isOwner) console.error("❌ Not room owner");
+            if (!socket) console.error("No socket connection");
+            if (!isOwner) console.error("Not room owner");
         }
     };
 
     const handleVoteForOwner = (candidate: string) => {
         if (socket && roomSettings?.ownerStatus === 'voting') {
-            console.log(`Voting for new owner: ${candidate}`);
+            //console.log(`Voting for new owner: ${candidate}`);
             socket.send(JSON.stringify({
                 type: "vote_for_owner",
                 voter: name,
@@ -353,7 +357,7 @@ export default function RoomPage() {
             // Get the owner token from sessionStorage
             const ownerToken = sessionStorage.getItem(`owner_token_${roomId}`);
             
-            console.log("Reclaiming ownership");
+            //console.log("Reclaiming ownership");
             socket.send(JSON.stringify({
                 type: "reclaim_ownership",
                 name,
@@ -524,7 +528,7 @@ export default function RoomPage() {
                                 )}
                                 {(gameState === 'lobby' || gameState === 'revealed') && (
                                     <button onClick={() => {
-                                        console.log("⚙️ Opening settings modal. Current settings:", roomSettings);
+                                        //console.log("⚙️ Opening settings modal. Current settings:", roomSettings);
                                         setIsSettingsModalOpen(true);
                                     }} className="w-full px-6 py-3 bg-purple-500 text-white font-bold rounded-md hover:bg-purple-600 transition-all transform hover:scale-105">
                                         ⚙️ Oda Ayarları
@@ -543,12 +547,33 @@ export default function RoomPage() {
 
                     {/* Right Panel: Voting Area */}
                     <section className="lg:col-span-3 bg-gray-800/50 rounded-lg p-6 md:p-8 flex flex-col items-center justify-center min-h-[50vh] shadow-2xl">
+                        {/* Debug log */}
+                        {(() => { 
+                            //console.log("🔴 Rendering voting area, roomSettings:", JSON.stringify(roomSettings, null, 2));
+                            //console.log("🔴 Owner status:", roomSettings?.ownerStatus);
+                            //console.log("🔴 Grace end time:", roomSettings?.graceEndTime);
+                            //console.log("🔴 Should show grace countdown:", roomSettings?.ownerStatus === 'grace' && !!roomSettings?.graceEndTime);
+                            return null; 
+                        })()}
+                        
                         {/* Owner Grace Period Countdown - Moved to main area */}
-                        {roomSettings?.ownerStatus === 'grace' && roomSettings.graceEndTime && (
+                        {(roomSettings?.ownerStatus === 'grace' && roomSettings.graceEndTime) && (
                             <OwnerGraceCountdown 
                                 ownerName={roomSettings.previousOwner || 'Eski kral'} 
                                 graceEndTime={roomSettings.graceEndTime} 
                             />
+                        )}
+
+                        {/* Fallback for when owner is inactive but grace period hasn't started */}
+                        {roomSettings?.owner && 
+                         participants.find(p => p.name === roomSettings.owner)?.status === 'inactive' && 
+                         roomSettings.ownerStatus === 'active' && (
+                            <div className="bg-red-900/70 p-6 rounded-lg text-center w-full max-w-md animate-pulse">
+                                <div className="text-3xl font-bold text-red-300 mb-4">⚠️ Oda Sahibi Çevrimdışı ⚠️</div>
+                                <p className="text-white">
+                                    Oda sahibi şu anda çevrimdışı. Kısa süre içinde &quot;Kral Düştü&quot; ekranı görünecektir.
+                                </p>
+                            </div>
                         )}
 
                         {/* Owner Voting Panel - Moved to main area */}
