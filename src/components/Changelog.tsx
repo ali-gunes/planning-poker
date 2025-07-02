@@ -3,6 +3,13 @@ import React, { useState, useEffect } from 'react';
 // Define the changelog entries
 const changelogEntries = [
     {
+      version: "v1.1.0",
+      title: "Tema Sistemi 🎨",
+      description: "Modern, Retro 90s, Nordic ve Synthwave temaları eklendi",
+      date: "5 Temmuz 2025",
+      type: "feature"
+    },
+    {
       version: "v1.0.0",
       title: "Kral Düştü! 👑",
       description: "Oda sahibi ayrılırsa, yeni bir kral seçilir!",
