@@ -1,0 +1,196 @@
+/* Local font definition */
+@font-face {
+  font-family: 'VT323';
+  src: url('/VT323-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Theme Selector Styling */
+.theme-selector-btn {
+  background-color: rgb(31, 41, 55);
+  color: white;
+}
+
+.theme-selector-btn:hover {
+  background-color: rgb(55, 65, 81);
+}
+
+.theme-selector-dropdown {
+  background-color: rgb(31, 41, 55);
+  border: 1px solid rgb(55, 65, 81);
+}
+
+.theme-selector-option {
+  color: white;
+}
+
+.theme-selector-option:hover {
+  background-color: rgb(55, 65, 81);
+}
+
+.theme-selector-option-active {
+  background-color: rgba(30, 58, 138, 0.5);
+  border-left: 4px solid rgb(59, 130, 246);
+}
+
+/* Retro 90s Theme */
+.theme-retro90s {
+  /* Custom font for retro theme */
+  font-family: 'VT323', 'Courier New', monospace !important;
+}
+
+.theme-retro90s body {
+  background: linear-gradient(135deg, #000066, #330066) !important;
+  color: #ffffff !important;
+}
+
+/* Retro 90s Theme - Main containers */
+.theme-retro90s div.bg-gradient-to-br {
+  background: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h100v100H0z' fill='none'/%3E%3Cpath d='M0 0h50v50H0z' fill='rgba(255,255,255,0.03)'/%3E%3Cpath d='M50 50h50v50H50z' fill='rgba(255,255,255,0.03)'/%3E%3C/svg%3E") !important;
+}
+
+.theme-retro90s .bg-gray-800\/50,
+.theme-retro90s .bg-gray-900\/50,
+.theme-retro90s .bg-gray-700\/30,
+.theme-retro90s .bg-gray-800,
+.theme-retro90s .bg-gray-900,
+.theme-retro90s .bg-gray-700 {
+  background: rgba(0, 0, 40, 0.7) !important;
+  border: 3px solid #00ffff !important;
+  box-shadow: 0 0 10px #00ffff, inset 0 0 5px rgba(0, 255, 255, 0.5) !important;
+  border-radius: 8px !important;
+}
+
+/* Retro 90s Theme - Headers */
+.theme-retro90s h1, 
+.theme-retro90s h2, 
+.theme-retro90s h3 {
+  color: #ff00ff !important;
+  text-shadow: 2px 2px 0 #00ffff, -2px -2px 0 #0000ff !important;
+  letter-spacing: 1px !important;
+}
+
+/* Retro 90s Theme - Buttons */
+.theme-retro90s button:not(.theme-selector-btn):not(.theme-selector-option) {
+  background: linear-gradient(to bottom, #00ccff, #0066cc) !important;
+  border: 2px solid #ffffff !important;
+  color: #ffffff !important;
+  font-weight: bold !important;
+  text-shadow: 1px 1px 0 #000000 !important;
+  box-shadow: 3px 3px 0 #000000, inset 1px 1px 0 rgba(255, 255, 255, 0.5) !important;
+  transform: none !important;
+  border-radius: 4px !important;
+  transition: all 0.1s !important;
+}
+
+.theme-retro90s button:not(.theme-selector-btn):not(.theme-selector-option):hover {
+  background: linear-gradient(to bottom, #00eeff, #0088ee) !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0 #000000, inset 1px 1px 0 rgba(255, 255, 255, 0.7) !important;
+}
+
+.theme-retro90s button:not(.theme-selector-btn):not(.theme-selector-option):active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0 #000000, inset 1px 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Retro 90s Theme - Inputs */
+.theme-retro90s input[type="text"], 
+.theme-retro90s input[type="number"],
+.theme-retro90s input[type="email"] {
+  background-color: #000033 !important;
+  border: 2px solid #00ffff !important;
+  color: #00ffff !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.3) !important;
+}
+
+.theme-retro90s input[type="text"]:focus,
+.theme-retro90s input[type="number"]:focus,
+.theme-retro90s input[type="email"]:focus {
+  border-color: #ff00ff !important;
+  box-shadow: 0 0 10px #ff00ff, inset 0 0 10px rgba(255, 0, 255, 0.3) !important;
+  outline: none !important;
+}
+
+/* Retro 90s Theme - Cards and panels */
+.theme-retro90s .rounded-lg {
+  border-radius: 4px !important;
+}
+
+.theme-retro90s .border-gray-700,
+.theme-retro90s .border-gray-600 {
+  border-color: #00ffff !important;
+}
+
+/* Retro 90s Theme - Voting cards */
+.theme-retro90s .bg-white {
+  background: linear-gradient(135deg, #ff00ff, #00ffff) !important;
+  color: #000066 !important;
+  font-weight: bold !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 3px 3px 0 #000000 !important;
+}
+
+/* Retro 90s Theme - Theme selector */
+.theme-retro90s .theme-selector-btn {
+  background: linear-gradient(to bottom, #ff00ff, #cc00cc) !important;
+  border: 2px solid #ffffff !important;
+  color: #ffffff !important;
+  text-shadow: 1px 1px 0 #000000 !important;
+  box-shadow: 2px 2px 0 #000000 !important;
+}
+
+.theme-retro90s .theme-selector-dropdown {
+  background-color: #000066 !important;
+  border: 2px solid #00ffff !important;
+  box-shadow: 0 0 10px #00ffff !important;
+}
+
+.theme-retro90s .theme-selector-option {
+  color: #ffffff !important;
+}
+
+.theme-retro90s .theme-selector-option:hover {
+  background-color: rgba(0, 255, 255, 0.2) !important;
+}
+
+.theme-retro90s .theme-selector-option-active {
+  background-color: rgba(255, 0, 255, 0.2) !important;
+  border-left-color: #ff00ff !important;
+}
+
+/* Retro 90s Theme - Special elements */
+.theme-retro90s .text-blue-500,
+.theme-retro90s .text-blue-600 {
+  color: #00ffff !important;
+}
+
+.theme-retro90s .text-green-500,
+.theme-retro90s .text-green-600 {
+  color: #00ff66 !important;
+}
+
+.theme-retro90s .text-red-500,
+.theme-retro90s .text-red-600 {
+  color: #ff6699 !important;
+}
+
+.theme-retro90s .bg-blue-500,
+.theme-retro90s .bg-blue-600 {
+  background-color: #0088ff !important;
+}
+
+.theme-retro90s .bg-green-500,
+.theme-retro90s .bg-green-600 {
+  background-color: #00cc66 !important;
+}
+
+.theme-retro90s .bg-red-500,
+.theme-retro90s .bg-red-600 {
+  background-color: #ff3366 !important;
+} 

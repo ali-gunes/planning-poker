@@ -13,6 +13,7 @@ import { RoomSettingsModal, type RoomSettingsUpdate } from "@/components/RoomSet
 import { ParticipantsList } from "@/components/ParticipantsList";
 import { OwnerGraceCountdown } from "@/components/OwnerGraceCountdown";
 import { OwnerVotingPanel } from "@/components/OwnerVotingPanel";
+import { ThemeSelector } from "@/components/ThemeSelector";
 
 const votingStacks = {
     fibonacci: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
@@ -469,6 +470,8 @@ export default function RoomPage() {
                         <button onClick={handleCopyToClipboard} className="px-4 py-1 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition-all transform hover:scale-105">
                             Davet Et
                         </button>
+                        
+                        <ThemeSelector />
                     </div>
                 </header>
 

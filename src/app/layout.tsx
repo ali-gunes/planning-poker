@@ -1,16 +1,14 @@
-import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
-import "./globals.css";
+import './globals.css'
+import '../styles/themes.css'
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import { ThemeProvider } from '@/contexts/ThemeContext'
 
-// Re-triggering CSS build
-const roboto = Roboto({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: "C&I Planlama Pokeri",
-  description: "Gerçek zamanlı planlama pokeri uygulaması",
+  title: 'Planning Poker',
+  description: 'Real-time Planning Poker for agile teams',
   icons: {
     icon: [
       {
@@ -21,25 +19,27 @@ export const metadata: Metadata = {
     shortcut: '/planning-poker.svg',
     apple: '/planning-poker.svg',
   },
-};
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="tr">
-      <body className={`${roboto.className} bg-gray-900 text-white`}>
-        <div className="flex flex-col min-h-screen">
-          <main className="flex-grow">
-            {children}
-          </main>
-          <footer className="w-full text-center p-4 mt-8 text-gray-500">
-            C&I ekibi için ❤️ ve ☕️ ile yapıldı.
-          </footer>
-        </div>
+    <html lang="en" className={inter.className}>
+      <body>
+        <ThemeProvider>
+          <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+            <main className="flex-grow">
+              {children}
+            </main>
+            <footer className="w-full text-center p-4 mt-8 text-gray-500">
+              C&I ekibi için ❤️ ve ☕️ ile yapıldı.
+            </footer>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }
