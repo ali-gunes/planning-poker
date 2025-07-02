@@ -193,4 +193,1047 @@
 .theme-retro90s .bg-red-500,
 .theme-retro90s .bg-red-600 {
   background-color: #ff3366 !important;
+}
+
+/* Nordic Minimalism Theme */
+.theme-nordic {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  letter-spacing: -0.011em !important;
+}
+
+/* Nordic Theme - Body and main container */
+.theme-nordic body {
+  background-color: #F9F7F7 !important;
+  color: #112D4E !important;
+}
+
+.theme-nordic div.bg-gradient-to-br {
+  background: #F9F7F7 !important;
+}
+
+/* Nordic Theme - Main containers */
+.theme-nordic .bg-gray-800\/50,
+.theme-nordic .bg-gray-900\/50,
+.theme-nordic .bg-gray-700\/30,
+.theme-nordic .bg-gray-800,
+.theme-nordic .bg-gray-900,
+.theme-nordic .bg-gray-700 {
+  background-color: #ffffff !important;
+  border: 1px solid #DBE2EF !important;
+  box-shadow: 0 2px 8px rgba(17, 45, 78, 0.05) !important;
+  border-radius: 8px !important;
+}
+
+/* Nordic Theme - Headers */
+.theme-nordic h1, 
+.theme-nordic h2, 
+.theme-nordic h3 {
+  color: #112D4E !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.022em !important;
+}
+
+/* Nordic Theme - Buttons */
+.theme-nordic button:not(.theme-selector-btn):not(.theme-selector-option) {
+  background-color: #3F72AF !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+  box-shadow: 0 1px 2px rgba(17, 45, 78, 0.1) !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+  padding: 8px 16px !important;
+}
+
+.theme-nordic button:not(.theme-selector-btn):not(.theme-selector-option):hover {
+  background-color: #2c5282 !important;
+  box-shadow: 0 2px 4px rgba(17, 45, 78, 0.15) !important;
+}
+
+.theme-nordic button:not(.theme-selector-btn):not(.theme-selector-option):active {
+  background-color: #1e3a5f !important;
+  box-shadow: 0 1px 2px rgba(17, 45, 78, 0.1) !important;
+}
+
+/* Nordic Theme - Selected buttons (for voting system and timer) */
+.theme-nordic button[class*="border-blue-500"] {
+  background-color: #112D4E !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+  position: relative !important;
+}
+
+.theme-nordic button[class*="border-blue-500"] .text-blue-300,
+.theme-nordic button[class*="border-blue-500"] .text-blue-400,
+.theme-nordic button[class*="border-blue-500"] .text-blue-500 {
+  color: #ffffff !important;
+}
+
+.theme-nordic button[class*="border-blue-500"] .text-gray-400 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Nordic Theme - Inputs */
+.theme-nordic input[type="text"], 
+.theme-nordic input[type="number"],
+.theme-nordic input[type="email"] {
+  background-color: #ffffff !important;
+  border: 1px solid #DBE2EF !important;
+  color: #112D4E !important;
+  border-radius: 6px !important;
+  padding: 8px 12px !important;
+  box-shadow: inset 0 1px 2px rgba(17, 45, 78, 0.05) !important;
+}
+
+.theme-nordic input[type="text"]:focus,
+.theme-nordic input[type="number"]:focus,
+.theme-nordic input[type="email"]:focus {
+  border-color: #3F72AF !important;
+  box-shadow: 0 0 0 2px rgba(63, 114, 175, 0.2) !important;
+  outline: none !important;
+}
+
+/* Nordic Theme - Cards and panels */
+.theme-nordic .rounded-lg {
+  border-radius: 8px !important;
+}
+
+.theme-nordic .border-gray-700,
+.theme-nordic .border-gray-600 {
+  border-color: #DBE2EF !important;
+}
+
+/* Nordic Theme - Voting cards */
+.theme-nordic .bg-white {
+  background-color: #ffffff !important;
+  color: #112D4E !important;
+  font-weight: 500 !important;
+  border: 1px solid #DBE2EF !important;
+  box-shadow: 0 1px 3px rgba(17, 45, 78, 0.05) !important;
+}
+
+/* Nordic Theme - Selected voting card */
+.theme-nordic .ring-2,
+.theme-nordic .ring-4,
+.theme-nordic [class*="ring"] {
+  box-shadow: 0 0 0 2px rgba(63, 114, 175, 0.3) !important;
+  border: 2px solid #3F72AF !important;
+  background-color: #F9F7F7 !important;
+}
+
+/* Nordic Theme - Theme selector */
+.theme-nordic .theme-selector-btn {
+  background-color: #3F72AF !important;
+  border: none !important;
+  color: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(17, 45, 78, 0.1) !important;
+}
+
+.theme-nordic .theme-selector-dropdown {
+  background-color: #ffffff !important;
+  border: 1px solid #DBE2EF !important;
+  box-shadow: 0 4px 12px rgba(17, 45, 78, 0.1) !important;
+}
+
+.theme-nordic .theme-selector-option {
+  color: #112D4E !important;
+}
+
+.theme-nordic .theme-selector-option:hover {
+  background-color: #F9F7F7 !important;
+}
+
+.theme-nordic .theme-selector-option-active {
+  background-color: rgba(63, 114, 175, 0.1) !important;
+  border-left-color: #3F72AF !important;
+}
+
+/* Nordic Theme - Special elements */
+.theme-nordic .text-blue-500,
+.theme-nordic .text-blue-600,
+.theme-nordic .text-blue-400 {
+  color: #3F72AF !important;
+}
+
+.theme-nordic .text-green-500,
+.theme-nordic .text-green-600 {
+  color: #38a169 !important;
+}
+
+.theme-nordic .text-red-500,
+.theme-nordic .text-red-600 {
+  color: #e53e3e !important;
+}
+
+.theme-nordic .text-yellow-200 {
+  color: #d69e2e !important;
+  font-weight: 600 !important;
+}
+
+.theme-nordic .bg-blue-500,
+.theme-nordic .bg-blue-600 {
+  background-color: #3F72AF !important;
+  color: #ffffff !important;
+}
+
+.theme-nordic .bg-green-500,
+.theme-nordic .bg-green-600 {
+  background-color: #38a169 !important;
+  color: #ffffff !important;
+}
+
+.theme-nordic .bg-red-500,
+.theme-nordic .bg-red-600,
+.theme-nordic .bg-red-800 {
+  background-color: #e53e3e !important;
+  color: #ffffff !important;
+}
+
+/* Nordic Theme - Text colors */
+.theme-nordic .text-white {
+  color: #112D4E !important;
+}
+
+.theme-nordic .text-gray-400,
+.theme-nordic .text-gray-500 {
+  color: #4a5568 !important;
+}
+
+.theme-nordic .text-gray-300 {
+  color: #2d3748 !important;
+}
+
+/* Nordic Theme - Room info and labels */
+.theme-nordic .bg-gray-800.px-3.py-1.rounded-md {
+  background-color: #EBF4FF !important;
+  color: #3F72AF !important;
+  border: 1px solid #DBE2EF !important;
+}
+
+.theme-nordic .font-mono.text-blue-400 {
+  color: #3F72AF !important;
+  font-weight: 600 !important;
+  font-family: 'SF Mono', SFMono-Regular, Menlo, monospace !important;
+}
+
+/* Nordic Theme - Section containers */
+.theme-nordic .p-6.bg-gray-900\/50 {
+  background-color: #ffffff !important;
+  border: 1px solid #DBE2EF !important;
+  box-shadow: 0 2px 8px rgba(17, 45, 78, 0.05) !important;
+}
+
+.theme-nordic .text-sm.font-medium.text-gray-400 {
+  color: #112D4E !important;
+  font-weight: 600 !important;
+}
+
+/* Nordic Theme - Player cards and vote results */
+.theme-nordic .text-lg.bg-gray-800 {
+  background-color: #EBF4FF !important;
+  border: 1px solid #DBE2EF !important;
+}
+
+/* Nordic Theme - Player status indicators */
+.theme-nordic .bg-green-500.w-2.h-2.rounded-full {
+  background-color: #38a169 !important;
+  box-shadow: 0 0 0 1px rgba(56, 161, 105, 0.3) !important;
+}
+
+.theme-nordic .bg-yellow-500.w-2.h-2.rounded-full {
+  background-color: #d69e2e !important;
+  box-shadow: 0 0 0 1px rgba(214, 158, 46, 0.3) !important;
+}
+
+.theme-nordic .bg-red-500.w-2.h-2.rounded-full {
+  background-color: #e53e3e !important;
+  box-shadow: 0 0 0 1px rgba(229, 62, 62, 0.3) !important;
+}
+
+/* Nordic Theme - Revealed votes */
+.theme-nordic .bg-blue-500\/20 {
+  background-color: #EBF4FF !important;
+  border: 1px solid #DBE2EF !important;
+}
+
+.theme-nordic .bg-blue-500\/20 .text-blue-300 {
+  color: #3F72AF !important;
+}
+
+/* Nordic Theme - Voting buttons (bottom row colored cards) */
+.theme-nordic button[class*="Kartını Oyna"] {
+  color: white !important;
+  font-weight: 500 !important;
+  box-shadow: 0 1px 3px rgba(17, 45, 78, 0.1) !important;
+  border: none !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Orange card */
+.theme-nordic button[class*="Deniz Kartını Oyna"] {
+  background-color: #ed8936 !important;
+}
+
+/* Green card */
+.theme-nordic button[class*="Ezgi Kartını Oyna"] {
+  background-color: #38a169 !important;
+}
+
+/* Purple card */
+.theme-nordic button[class*="Onur Kartını Oyna"] {
+  background-color: #805ad5 !important;
+}
+
+/* Blue card */
+.theme-nordic button[class*="Kubilay Kartını Oyna"] {
+  background-color: #3F72AF !important;
+}
+
+/* Selected card state */
+.theme-nordic button[class*="Kartını Oyna"].ring,
+.theme-nordic button[class*="Kartını Oyna"].ring-2,
+.theme-nordic button[class*="Kartını Oyna"].ring-white,
+.theme-nordic button[class*="Kartını Oyna"][class*="ring"] {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 6px rgba(17, 45, 78, 0.15) !important;
+  position: relative !important;
+}
+
+/* Add checkmark to selected card */
+.theme-nordic button[class*="Kartını Oyna"].ring::after,
+.theme-nordic button[class*="Kartını Oyna"].ring-2::after,
+.theme-nordic button[class*="Kartını Oyna"].ring-white::after,
+.theme-nordic button[class*="Kartını Oyna"][class*="ring"]::after {
+  content: "✓";
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: #ffffff;
+  color: #112D4E;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 1px 3px rgba(17, 45, 78, 0.2);
+}
+
+/* Hover state for cards */
+.theme-nordic button[class*="Kartını Oyna"]:hover:not([class*="ring"]) {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 5px rgba(17, 45, 78, 0.12) !important;
+}
+
+/* Nordic Theme - More specific selectors for Min/Max/Ortalama texts */
+.theme-nordic .flex.items-center.justify-between span.text-gray-400,
+.theme-nordic .flex.flex-col.items-center span.text-gray-400,
+.theme-nordic .flex.items-center.justify-between div.text-gray-400,
+.theme-nordic .flex.flex-col.items-center div.text-gray-400 {
+  color: #112D4E !important;
+  font-weight: 600 !important;
+}
+
+/* Nordic Theme - Even more specific selectors for Min/Max/Ortalama labels */
+.theme-nordic span.text-gray-400 + span.text-blue-500,
+.theme-nordic span.text-gray-400 + div.text-blue-500 {
+  color: #3F72AF !important;
+  font-weight: 600 !important;
+}
+
+/* Nordic Theme - Direct attribute selectors for specific text elements */
+.theme-nordic [class*="Min"],
+.theme-nordic [class*="Max"],
+.theme-nordic [class*="Ortalama"] {
+  color: #112D4E !important;
+  font-weight: 600 !important;
+}
+
+/* Nordic Theme - Additional specific selectors for vote results section */
+.theme-nordic .flex.flex-col.items-center .text-gray-400 + .text-blue-500,
+.theme-nordic .flex.items-center.justify-between .text-gray-400 + .text-blue-500 {
+  color: #3F72AF !important;
+  font-weight: 600 !important;
+}
+
+/* Nordic Theme - Text inside specific containers */
+.theme-nordic .p-6.bg-gray-900\/50 .text-gray-400,
+.theme-nordic .bg-gray-800\/50 .text-gray-400 {
+  color: #112D4E !important;
+  font-weight: 500 !important;
+}
+
+/* Nordic Theme - Timer display */
+.theme-nordic div[class*="text-xl font-mono bg-red-800"],
+.theme-nordic div[class*="text-xl font-mono bg-blue-800"],
+.theme-nordic div[class*="bg-red-800"],
+.theme-nordic div[class*="bg-blue-800"] {
+  background-color: #FFF5F5 !important;
+  color: #e53e3e !important;
+  border: 1px solid #FED7D7 !important;
+  font-weight: 600 !important;
+}
+
+/* Nordic Theme - Footer */
+.theme-nordic footer {
+  color: #4a5568 !important;
+  border-top: 1px solid #DBE2EF !important;
+  margin-top: 2rem !important;
+  padding-top: 1rem !important;
+}
+
+/* Nordic Theme - Target text labels directly */
+.theme-nordic span.text-gray-400:nth-child(1) {
+  color: #112D4E !important;
+  font-weight: 600 !important;
+}
+
+/* Nordic Theme - Target the labels by their content */
+.theme-nordic .text-gray-400:first-child {
+  color: #112D4E !important;
+  font-weight: 600 !important;
+}
+
+/* Nordic Theme - Target specific spans in vote results section */
+.theme-nordic .flex.justify-between span.text-gray-400 {
+  color: #112D4E !important;
+  font-weight: 600 !important;
+}
+
+/* Nordic Theme - Target text in the voting results container */
+.theme-nordic .space-y-4 .text-gray-400 {
+  color: #112D4E !important;
+  font-weight: 600 !important;
+}
+
+/* Nordic Text Fix - Global text color overrides */
+.nordic-text-fix .text-gray-400 {
+  color: #112D4E !important;
+  font-weight: 500 !important;
+}
+
+.nordic-text-fix .text-gray-300 {
+  color: #112D4E !important;
+  font-weight: 500 !important;
+}
+
+.nordic-text-fix .text-gray-500 {
+  color: #112D4E !important;
+  font-weight: 500 !important;
+}
+
+.nordic-text-fix .text-white {
+  color: #112D4E !important;
+}
+
+/* Override for specific elements that should remain white */
+.nordic-text-fix button:not(.theme-selector-btn) {
+  color: white !important;
+}
+
+.nordic-text-fix .bg-blue-500,
+.nordic-text-fix .bg-green-500,
+.nordic-text-fix .bg-red-500,
+.nordic-text-fix .bg-red-800,
+.nordic-text-fix .bg-blue-800 {
+  color: white !important;
+}
+
+/* Fix for blue text elements */
+.nordic-text-fix .text-blue-500,
+.nordic-text-fix .text-blue-400,
+.nordic-text-fix .text-blue-300 {
+  color: #3F72AF !important;
+}
+
+/* Fix for green text elements */
+.nordic-text-fix .text-green-500,
+.nordic-text-fix .text-green-400 {
+  color: #38a169 !important;
+}
+
+/* Fix for red text elements */
+.nordic-text-fix .text-red-500,
+.nordic-text-fix .text-red-400 {
+  color: #e53e3e !important;
+}
+
+/* Fix for yellow text elements */
+.nordic-text-fix .text-yellow-200 {
+  color: #d69e2e !important;
+  font-weight: 600 !important;
+}
+
+/* Specific fixes for Min/Max/Ortalama in Nordic theme */
+.nordic-text-fix .flex.justify-between span,
+.nordic-text-fix .flex.flex-col.items-center span {
+  color: #112D4E !important;
+  font-weight: 600 !important;
+}
+
+/* Fix for text in specific containers */
+.nordic-text-fix .p-6 span.text-gray-400,
+.nordic-text-fix .p-4 span.text-gray-400,
+.nordic-text-fix .p-3 span.text-gray-400 {
+  color: #112D4E !important;
+  font-weight: 600 !important;
+}
+
+/* Fix for text in vote results */
+.nordic-text-fix .space-y-4 span,
+.nordic-text-fix .space-y-3 span {
+  color: #112D4E !important;
+  font-weight: 500 !important;
+}
+
+/* Fix for specific labels */
+.nordic-text-fix span[class*="Min"],
+.nordic-text-fix span[class*="Max"],
+.nordic-text-fix span[class*="Ortalama"] {
+  color: #112D4E !important;
+  font-weight: 600 !important;
+}
+
+/* Additional fix for specific labels using attribute selectors */
+.nordic-text-fix [class*="Min:"],
+.nordic-text-fix [class*="Max:"],
+.nordic-text-fix [class*="Ortalama:"] {
+  color: #112D4E !important;
+  font-weight: 600 !important;
+}
+
+/* Synthwave Theme */
+.theme-synthwave {
+  --neon-pink: #FF00FF;
+  --neon-blue: #00FFFF;
+  --neon-purple: #9900FF;
+  --dark-bg: #121212;
+  --synthwave-glow: 0 0 10px;
+}
+
+/* Synthwave Theme - Body and main container */
+.theme-synthwave body {
+  background-color: var(--dark-bg) !important;
+  color: #ffffff !important;
+  background-image: 
+    linear-gradient(0deg, rgba(255, 0, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 0, 255, 0.1) 1px, transparent 1px) !important;
+  background-size: 40px 40px !important;
+  background-position: center center !important;
+}
+
+.theme-synthwave div.bg-gradient-to-br {
+  background: linear-gradient(135deg, #121212, #1a0033) !important;
+}
+
+/* Synthwave Theme - Typography */
+.theme-synthwave h1, 
+.theme-synthwave h2, 
+.theme-synthwave h3,
+.theme-synthwave .text-xl,
+.theme-synthwave .text-2xl,
+.theme-synthwave .text-3xl {
+  font-family: var(--font-orbitron), sans-serif !important;
+  color: var(--neon-pink) !important;
+  text-shadow: 0 0 5px var(--neon-pink), 0 0 10px rgba(255, 0, 255, 0.5) !important;
+  letter-spacing: 0.05em !important;
+}
+
+.theme-synthwave,
+.theme-synthwave p,
+.theme-synthwave span,
+.theme-synthwave div {
+  font-family: var(--font-space-mono), monospace !important;
+}
+
+/* Synthwave Theme - Main containers */
+.theme-synthwave .bg-gray-800\/50,
+.theme-synthwave .bg-gray-900\/50,
+.theme-synthwave .bg-gray-700\/30,
+.theme-synthwave .bg-gray-800,
+.theme-synthwave .bg-gray-900,
+.theme-synthwave .bg-gray-700 {
+  background-color: rgba(25, 25, 35, 0.8) !important;
+  border: 1px solid var(--neon-blue) !important;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), inset 0 0 5px rgba(0, 255, 255, 0.2) !important;
+  border-radius: 4px !important;
+  backdrop-filter: blur(5px) !important;
+}
+
+/* Synthwave Theme - Buttons */
+.theme-synthwave button:not(.theme-selector-btn):not(.theme-selector-option) {
+  background-color: var(--dark-bg) !important;
+  border: 1px solid var(--neon-pink) !important;
+  color: var(--neon-pink) !important;
+  font-weight: bold !important;
+  text-shadow: 0 0 5px var(--neon-pink) !important;
+  box-shadow: 0 0 10px rgba(255, 0, 255, 0.3), inset 0 0 5px rgba(255, 0, 255, 0.1) !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
+  transform: skewX(-5deg) !important;
+}
+
+.theme-synthwave button:not(.theme-selector-btn):not(.theme-selector-option):hover {
+  background-color: rgba(255, 0, 255, 0.2) !important;
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.5), inset 0 0 5px rgba(255, 0, 255, 0.2) !important;
+  transform: skewX(-5deg) translateY(-2px) !important;
+}
+
+.theme-synthwave button:not(.theme-selector-btn):not(.theme-selector-option):active {
+  transform: skewX(-5deg) translateY(1px) !important;
+  box-shadow: 0 0 5px rgba(255, 0, 255, 0.3), inset 0 0 5px rgba(255, 0, 255, 0.1) !important;
+}
+
+/* Synthwave Theme - Enhanced selected buttons (for voting system and timer) */
+.theme-synthwave button[class*="border-blue-500"] {
+  background-color: rgba(153, 0, 255, 0.3) !important;
+  border: 1px solid var(--neon-purple) !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 5px var(--neon-purple), 0 0 10px rgba(153, 0, 255, 0.5) !important;
+  box-shadow: 0 0 15px rgba(153, 0, 255, 0.5), inset 0 0 5px rgba(153, 0, 255, 0.2) !important;
+  position: relative !important;
+  overflow: visible !important;
+  z-index: 1 !important;
+}
+
+/* Add retro-style selection indicator */
+.theme-synthwave button[class*="border-blue-500"]::before {
+  content: "▶";
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--neon-pink);
+  font-size: 14px;
+  text-shadow: 0 0 5px var(--neon-pink);
+  animation: blink 1s infinite alternate;
+}
+
+.theme-synthwave button[class*="border-blue-500"]::after {
+  content: "◀";
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--neon-pink);
+  font-size: 14px;
+  text-shadow: 0 0 5px var(--neon-pink);
+  animation: blink 1s infinite alternate;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Synthwave Theme - Enhanced selected voting card */
+.theme-synthwave .ring-2,
+.theme-synthwave .ring-4,
+.theme-synthwave [class*="ring"] {
+  box-shadow: 0 0 15px var(--neon-pink), inset 0 0 5px rgba(255, 0, 255, 0.3) !important;
+  border: 1px solid var(--neon-pink) !important;
+  background-color: rgba(255, 0, 255, 0.2) !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Add cyberpunk-style selection indicator */
+.theme-synthwave .ring-2::before,
+.theme-synthwave .ring-4::before,
+.theme-synthwave [class*="ring"]::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid var(--neon-pink);
+  border-radius: 4px;
+  clip-path: polygon(
+    0% 0%, 
+    15% 0%, 
+    15% 2px, 
+    2px 2px, 
+    2px 15%, 
+    0% 15%,
+    0% 0%,
+    0% 100%,
+    0% 85%,
+    2px 85%,
+    2px 98%,
+    15% 98%,
+    15% 100%,
+    0% 100%,
+    100% 100%,
+    85% 100%,
+    85% 98%,
+    98% 98%,
+    98% 85%,
+    100% 85%,
+    100% 100%,
+    100% 0%,
+    100% 15%,
+    98% 15%,
+    98% 2px,
+    85% 2px,
+    85% 0%
+  );
+  box-shadow: 0 0 10px var(--neon-pink);
+  animation: borderPulse 2s infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes borderPulse {
+  0% {
+    box-shadow: 0 0 5px var(--neon-pink);
+  }
+  100% {
+    box-shadow: 0 0 15px var(--neon-pink);
+  }
+}
+
+/* Enhanced Selected card state */
+.theme-synthwave button[class*="Kartını Oyna"].ring,
+.theme-synthwave button[class*="Kartını Oyna"].ring-2,
+.theme-synthwave button[class*="Kartını Oyna"].ring-white,
+.theme-synthwave button[class*="Kartını Oyna"][class*="ring"] {
+  transform: skewX(-5deg) translateY(-3px) !important;
+  box-shadow: 0 0 20px var(--neon-pink) !important;
+  border-color: var(--neon-pink) !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Add retro arcade selection indicator */
+.theme-synthwave button[class*="Kartını Oyna"].ring::before,
+.theme-synthwave button[class*="Kartını Oyna"].ring-2::before,
+.theme-synthwave button[class*="Kartını Oyna"].ring-white::before,
+.theme-synthwave button[class*="Kartını Oyna"][class*="ring"]::before {
+  content: "SELECTED";
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--neon-pink);
+  color: var(--dark-bg);
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  box-shadow: 0 0 10px var(--neon-pink);
+  animation: glow 1.5s infinite alternate;
+  z-index: 2;
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink);
+  }
+  100% {
+    box-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink), 0 0 30px var(--neon-pink);
+  }
+}
+
+/* Add grid lines to selected card */
+.theme-synthwave button[class*="Kartını Oyna"].ring::after,
+.theme-synthwave button[class*="Kartını Oyna"].ring-2::after,
+.theme-synthwave button[class*="Kartını Oyna"].ring-white::after,
+.theme-synthwave button[class*="Kartını Oyna"][class*="ring"]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(90deg, transparent 50%, rgba(255, 0, 255, 0.5) 50%),
+    linear-gradient(transparent 50%, rgba(255, 0, 255, 0.5) 50%);
+  background-size: 4px 4px;
+  border-radius: 4px;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  opacity: 0.3;
+  z-index: -1;
+}
+
+/* Synthwave Theme - Inputs */
+.theme-synthwave input[type="text"], 
+.theme-synthwave input[type="number"],
+.theme-synthwave input[type="email"] {
+  background-color: rgba(18, 18, 18, 0.8) !important;
+  border: 1px solid var(--neon-blue) !important;
+  color: var(--neon-blue) !important;
+  font-family: var(--font-space-mono), monospace !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  box-shadow: inset 0 0 5px rgba(0, 255, 255, 0.2) !important;
+}
+
+.theme-synthwave input[type="text"]:focus,
+.theme-synthwave input[type="number"]:focus,
+.theme-synthwave input[type="email"]:focus {
+  border-color: var(--neon-pink) !important;
+  box-shadow: 0 0 10px rgba(255, 0, 255, 0.3), inset 0 0 5px rgba(255, 0, 255, 0.2) !important;
+  outline: none !important;
+}
+
+/* Synthwave Theme - Cards and panels */
+.theme-synthwave .rounded-lg {
+  border-radius: 4px !important;
+}
+
+.theme-synthwave .border-gray-700,
+.theme-synthwave .border-gray-600 {
+  border-color: var(--neon-blue) !important;
+}
+
+/* Synthwave Theme - Voting cards */
+.theme-synthwave .bg-white {
+  background-color: var(--dark-bg) !important;
+  color: var(--neon-blue) !important;
+  font-weight: bold !important;
+  border: 1px solid var(--neon-blue) !important;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3) !important;
+  transform: skewX(-5deg) !important;
+}
+
+/* Synthwave Theme - Theme selector */
+.theme-synthwave .theme-selector-btn {
+  background-color: var(--dark-bg) !important;
+  border: 1px solid var(--neon-purple) !important;
+  color: var(--neon-purple) !important;
+  text-shadow: 0 0 5px var(--neon-purple) !important;
+  box-shadow: 0 0 10px rgba(153, 0, 255, 0.3) !important;
+}
+
+.theme-synthwave .theme-selector-dropdown {
+  background-color: rgba(18, 18, 18, 0.95) !important;
+  border: 1px solid var(--neon-blue) !important;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3) !important;
+}
+
+.theme-synthwave .theme-selector-option {
+  color: #ffffff !important;
+}
+
+.theme-synthwave .theme-selector-option:hover {
+  background-color: rgba(0, 255, 255, 0.1) !important;
+}
+
+.theme-synthwave .theme-selector-option-active {
+  background-color: rgba(153, 0, 255, 0.2) !important;
+  border-left-color: var(--neon-purple) !important;
+}
+
+/* Synthwave Theme - Special elements */
+.theme-synthwave .text-blue-500,
+.theme-synthwave .text-blue-600,
+.theme-synthwave .text-blue-400,
+.theme-synthwave .text-blue-300 {
+  color: var(--neon-blue) !important;
+  text-shadow: 0 0 5px var(--neon-blue) !important;
+}
+
+.theme-synthwave .text-green-500,
+.theme-synthwave .text-green-600 {
+  color: #00FF66 !important;
+  text-shadow: 0 0 5px #00FF66 !important;
+}
+
+.theme-synthwave .text-red-500,
+.theme-synthwave .text-red-600 {
+  color: #FF3366 !important;
+  text-shadow: 0 0 5px #FF3366 !important;
+}
+
+.theme-synthwave .text-yellow-200 {
+  color: #FFFF00 !important;
+  text-shadow: 0 0 5px #FFFF00 !important;
+  font-weight: 600 !important;
+}
+
+.theme-synthwave .bg-blue-500,
+.theme-synthwave .bg-blue-600 {
+  background-color: var(--neon-blue) !important;
+  color: var(--dark-bg) !important;
+  box-shadow: 0 0 10px var(--neon-blue) !important;
+}
+
+.theme-synthwave .bg-green-500,
+.theme-synthwave .bg-green-600 {
+  background-color: #00FF66 !important;
+  color: var(--dark-bg) !important;
+  box-shadow: 0 0 10px #00FF66 !important;
+}
+
+.theme-synthwave .bg-red-500,
+.theme-synthwave .bg-red-600,
+.theme-synthwave .bg-red-800 {
+  background-color: #FF3366 !important;
+  color: var(--dark-bg) !important;
+  box-shadow: 0 0 10px #FF3366 !important;
+}
+
+/* Synthwave Theme - Text colors */
+.theme-synthwave .text-white {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.5) !important;
+}
+
+.theme-synthwave .text-gray-400,
+.theme-synthwave .text-gray-500,
+.theme-synthwave .text-gray-300 {
+  color: #c0c0c0 !important;
+}
+
+/* Synthwave Theme - Room info and labels */
+.theme-synthwave .bg-gray-800.px-3.py-1.rounded-md {
+  background-color: rgba(0, 255, 255, 0.1) !important;
+  color: var(--neon-blue) !important;
+  border: 1px solid var(--neon-blue) !important;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2) !important;
+}
+
+.theme-synthwave .font-mono.text-blue-400 {
+  color: var(--neon-blue) !important;
+  font-weight: 600 !important;
+  font-family: var(--font-space-mono), monospace !important;
+  text-shadow: 0 0 5px var(--neon-blue) !important;
+}
+
+/* Synthwave Theme - Player status indicators */
+.theme-synthwave .bg-green-500.w-2.h-2.rounded-full {
+  background-color: #00FF66 !important;
+  box-shadow: 0 0 5px #00FF66 !important;
+}
+
+.theme-synthwave .bg-yellow-500.w-2.h-2.rounded-full {
+  background-color: #FFFF00 !important;
+  box-shadow: 0 0 5px #FFFF00 !important;
+}
+
+.theme-synthwave .bg-red-500.w-2.h-2.rounded-full {
+  background-color: #FF3366 !important;
+  box-shadow: 0 0 5px #FF3366 !important;
+}
+
+/* Synthwave Theme - Revealed votes */
+.theme-synthwave .bg-blue-500\/20 {
+  background-color: rgba(0, 255, 255, 0.1) !important;
+  border: 1px solid var(--neon-blue) !important;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2) !important;
+}
+
+/* Synthwave Theme - Voting buttons (bottom row colored cards) */
+.theme-synthwave button[class*="Kartını Oyna"] {
+  color: white !important;
+  font-weight: 500 !important;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  border-radius: 4px !important;
+  transform: skewX(-5deg) !important;
+  transition: all 0.2s ease !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)) !important;
+  backdrop-filter: blur(5px) !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.theme-synthwave button[class*="Kartını Oyna"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.theme-synthwave button[class*="Kartını Oyna"]:hover::before {
+  left: 100%;
+}
+
+/* Orange card */
+.theme-synthwave button[class*="Deniz Kartını Oyna"] {
+  border-color: #FF6600 !important;
+  box-shadow: 0 0 15px rgba(255, 102, 0, 0.5) !important;
+  text-shadow: 0 0 5px #FF6600 !important;
+}
+
+/* Green card */
+.theme-synthwave button[class*="Ezgi Kartını Oyna"] {
+  border-color: #00FF66 !important;
+  box-shadow: 0 0 15px rgba(0, 255, 102, 0.5) !important;
+  text-shadow: 0 0 5px #00FF66 !important;
+}
+
+/* Purple card */
+.theme-synthwave button[class*="Onur Kartını Oyna"] {
+  border-color: var(--neon-purple) !important;
+  box-shadow: 0 0 15px rgba(153, 0, 255, 0.5) !important;
+  text-shadow: 0 0 5px var(--neon-purple) !important;
+}
+
+/* Blue card */
+.theme-synthwave button[class*="Kubilay Kartını Oyna"] {
+  border-color: var(--neon-blue) !important;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5) !important;
+  text-shadow: 0 0 5px var(--neon-blue) !important;
+}
+
+/* Synthwave Theme - Min/Max/Ortalama texts */
+.theme-synthwave .flex.justify-between span.text-gray-400,
+.theme-synthwave .flex.items-center.justify-between span.text-gray-400,
+.theme-synthwave .flex.flex-col.items-center span.text-gray-400 {
+  color: var(--neon-blue) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5) !important;
+}
+
+/* Synthwave Theme - Timer display */
+.theme-synthwave div[class*="text-xl font-mono bg-red-800"],
+.theme-synthwave div[class*="text-xl font-mono bg-blue-800"],
+.theme-synthwave div[class*="bg-red-800"],
+.theme-synthwave div[class*="bg-blue-800"] {
+  background-color: rgba(255, 51, 102, 0.2) !important;
+  color: #FF3366 !important;
+  border: 1px solid #FF3366 !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 5px #FF3366 !important;
+  box-shadow: 0 0 10px rgba(255, 51, 102, 0.3) !important;
+  font-family: var(--font-space-mono), monospace !important;
+}
+
+/* Synthwave Theme - Footer */
+.theme-synthwave footer {
+  color: #c0c0c0 !important;
+  border-top: 1px solid rgba(0, 255, 255, 0.2) !important;
+  margin-top: 2rem !important;
+  padding-top: 1rem !important;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Restore text color styles for selected buttons */
+.theme-synthwave button[class*="border-blue-500"] .text-blue-300,
+.theme-synthwave button[class*="border-blue-500"] .text-blue-400,
+.theme-synthwave button[class*="border-blue-500"] .text-blue-500 {
+  color: var(--neon-blue) !important;
+  text-shadow: 0 0 5px var(--neon-blue) !important;
+}
+
+/* Restore hover state for cards */
+.theme-synthwave button[class*="Kartını Oyna"]:hover:not([class*="ring"]) {
+  transform: skewX(-5deg) translateY(-2px) !important;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3) !important;
 } 

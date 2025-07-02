@@ -15,7 +15,13 @@ const themeOptions: ThemeOption[] = [
     id: 'default',
     name: 'Modern',
     icon: '🌑',
-    description: 'Şık ve modern arayüz'
+    description: 'Modern koyu tema'
+  },
+  {
+    id: 'synthwave',
+    name: 'Synthwave',
+    icon: '🌃',
+    description: '80\'lerin neon retro-futuristik teması'
   },
   {
     id: 'retro90s',
@@ -23,6 +29,12 @@ const themeOptions: ThemeOption[] = [
     icon: '🌈',
     description: '90\'ların nostaljik teknoloji teması'
   }
+  /*{
+    id: 'nordic',
+    name: 'Nordic',
+    icon: '❄️',
+    description: 'Minimal İskandinav tasarımı'
+  },*/
 ];
 
 export function ThemeSelector() {

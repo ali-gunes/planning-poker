@@ -1,10 +1,27 @@
 import './globals.css'
 import '../styles/themes.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Orbitron, Space_Mono } from 'next/font/google'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap'
+})
+
+const orbitron = Orbitron({
+  subsets: ['latin'],
+  variable: '--font-orbitron',
+  display: 'swap'
+})
+
+const spaceMono = Space_Mono({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  variable: '--font-space-mono',
+  display: 'swap'
+})
 
 export const metadata: Metadata = {
   title: 'Planning Poker',
@@ -12,12 +29,10 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: '/planning-poker.svg',
-        type: 'image/svg+xml',
+        url: '/favicon.png',
+        href: '/favicon.png',
       },
     ],
-    shortcut: '/planning-poker.svg',
-    apple: '/planning-poker.svg',
   },
 }
 
@@ -27,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en" className={`${inter.variable} ${orbitron.variable} ${spaceMono.variable}`}>
       <body>
         <ThemeProvider>
           <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
