@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Changelog } from "@/components/Changelog";
 
 export default function Home() {
   const [name, setName] = useState("");
@@ -283,6 +284,9 @@ export default function Home() {
             </div>
           </div>
         </div>
+        
+        {/* Add the Changelog component */}
+        <Changelog />
     </div>
     </main>
   );
