@@ -8,6 +8,7 @@ interface ThemeOption {
   name: string;
   icon: string;
   description: string;
+  audioDescription: string;
 }
 
 const themeOptions: ThemeOption[] = [
@@ -15,30 +16,34 @@ const themeOptions: ThemeOption[] = [
     id: 'default',
     name: 'Modern',
     icon: '🌑',
-    description: 'Modern koyu tema'
+    description: 'Modern koyu tema',
+    audioDescription: 'Chopin Nocturne Op. 9 No. 2'
   },
   {
     id: 'synthwave',
     name: 'Synthwave',
     icon: '🌃',
-    description: '80\'lerin neon retro-futuristik teması'
+    description: '80\'lerin neon retro-futuristik teması',
+    audioDescription: 'Chill Synthwave'
   },
   {
     id: 'retro90s',
     name: 'Retro 90s',
     icon: '🌈',
-    description: '90\'ların nostaljik teknoloji teması'
-  }
+    description: '90\'ların nostaljik teknoloji teması',
+    audioDescription: 'Midnight Run'
+  },
   /*{
     id: 'nordic',
     name: 'Nordic',
     icon: '❄️',
-    description: 'Minimal İskandinav tasarımı'
+    description: 'Minimal İskandinav tasarımı',
+    audioDescription: 'Minimal ambient müzik'
   },*/
 ];
 
 export function ThemeSelector() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, audioEnabled } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   
   // Debug current theme
@@ -88,6 +93,9 @@ export function ThemeSelector() {
                 <div>
                   <div className="font-medium">{option.name}</div>
                   <div className="text-xs opacity-80">{option.description}</div>
+                  <div className="text-xs mt-1 opacity-70">
+                    {audioEnabled ? '🔊' : '🔇'} {option.audioDescription}
+                  </div>
                 </div>
               </button>
             ))}

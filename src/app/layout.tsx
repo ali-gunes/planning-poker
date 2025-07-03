@@ -3,6 +3,7 @@ import '../styles/themes.css'
 import type { Metadata } from 'next'
 import { Inter, Orbitron, Space_Mono } from 'next/font/google'
 import { ThemeProvider } from '@/contexts/ThemeContext'
+import { AudioPlayer } from '@/components/AudioPlayer'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -52,6 +53,7 @@ export default function RootLayout({
             <footer className="w-full text-center p-4 mt-8 text-gray-500">
               C&I ekibi için ❤️ ve ☕️ ile yapıldı.
             </footer>
+            <AudioPlayer />
           </div>
         </ThemeProvider>
       </body>

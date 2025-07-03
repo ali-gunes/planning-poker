@@ -9,12 +9,16 @@ export type ThemeType = 'default' | 'retro90s' | 'nordic' | 'synthwave';
 interface ThemeContextType {
   theme: ThemeType;
   setTheme: (theme: ThemeType) => void;
+  audioEnabled: boolean;
+  toggleAudio: () => void;
 }
 
 // Create context with default values
 const ThemeContext = createContext<ThemeContextType>({
   theme: 'default',
   setTheme: () => {},
+  audioEnabled: false,
+  toggleAudio: () => {},
 });
 
 // Hook for using the theme context
@@ -24,15 +28,22 @@ export const useTheme = () => useContext(ThemeContext);
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   // Initialize theme from localStorage if available, otherwise use default
   const [theme, setThemeState] = useState<ThemeType>('default');
+  const [audioEnabled, setAudioEnabled] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   
-  // Load theme from localStorage on initial render
+  // Load theme and audio settings from localStorage on initial render
   useEffect(() => {
     try {
       // Check if we're in a browser environment
       if (typeof window !== 'undefined') {
         const savedTheme = localStorage.getItem('planning-poker-theme') as ThemeType;
         console.log('Loading theme from localStorage:', savedTheme);
+        
+        // Load audio preference
+        const savedAudioEnabled = localStorage.getItem('planning-poker-audio-enabled');
+        if (savedAudioEnabled !== null) {
+          setAudioEnabled(savedAudioEnabled === 'true');
+        }
         
         if (savedTheme && (savedTheme === 'default' || savedTheme === 'retro90s' || savedTheme === 'nordic' || savedTheme === 'synthwave')) {
           setThemeState(savedTheme);
@@ -62,6 +73,18 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     
     setIsInitialized(true);
   }, []);
+  
+  // Toggle audio enabled/disabled
+  const toggleAudio = () => {
+    const newAudioEnabled = !audioEnabled;
+    setAudioEnabled(newAudioEnabled);
+    
+    try {
+      localStorage.setItem('planning-poker-audio-enabled', String(newAudioEnabled));
+    } catch (error) {
+      console.error('Error writing audio preference to localStorage:', error);
+    }
+  };
   
   // Save theme to localStorage when it changes
   const setTheme = (newTheme: ThemeType) => {
@@ -100,7 +123,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   }
   
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, audioEnabled, toggleAudio }}>
       {children}
     </ThemeContext.Provider>
   );
