@@ -1,10 +1,15 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface AudioPlayerProps {
   initialVolume?: number; // Initial volume between 0 and 1
+}
+
+// Define a type for the AudioContext constructor
+interface AudioContextConstructor {
+  new(): AudioContext;
 }
 
 export function AudioPlayer({ initialVolume = 0.3 }: AudioPlayerProps) {
@@ -19,15 +24,14 @@ export function AudioPlayer({ initialVolume = 0.3 }: AudioPlayerProps) {
   const [showVolumeControl, setShowVolumeControl] = useState(false);
   const [showVisualizer, setShowVisualizer] = useState(false);
   const volumeControlTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const visualizerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Map themes to audio files
-  const themeAudioMap = {
+  // Map themes to audio files using useMemo to prevent recreation on every render
+  const themeAudioMap = useMemo(() => ({
     default: '/sounds/chopin-nocturne-op-9-no-2.mp3',
     retro90s: '/sounds/midnight-run.mp3',
     nordic: '/sounds/nordic-ambient.mp3',
     synthwave: '/sounds/chill-synthwave.mp3',
-  };
+  }), []);
 
   // Initialize audio context and analyzer
   useEffect(() => {
@@ -37,8 +41,10 @@ export function AudioPlayer({ initialVolume = 0.3 }: AudioPlayerProps) {
       if (!audioRef.current) return;
       
       try {
-        // Create audio context
-        const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+        // Create audio context with proper typing
+        const AudioContext = (window.AudioContext || 
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (window as any).webkitAudioContext) as AudioContextConstructor;
         audioContextRef.current = new AudioContext();
         
         // Create analyzer
@@ -88,7 +94,7 @@ export function AudioPlayer({ initialVolume = 0.3 }: AudioPlayerProps) {
       audioRef.current.pause();
       setIsPlaying(false);
     }
-  }, [theme, audioEnabled]);
+  }, [theme, audioEnabled, themeAudioMap]);
 
   // Update volume when it changes
   useEffect(() => {
