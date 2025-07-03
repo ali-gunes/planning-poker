@@ -53,7 +53,10 @@ export default function RootLayout({
             <footer className="w-full text-center p-4 mt-8 text-gray-500">
               C&I ekibi için ❤️ ve ☕️ ile yapıldı.
             </footer>
-            <AudioPlayer />
+            {/* Hidden audio player that actually plays the audio */}
+            <div className="hidden">
+              <AudioPlayer isMainPlayer={true} />
+            </div>
           </div>
         </ThemeProvider>
       </body>

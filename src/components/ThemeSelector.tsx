@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTheme, ThemeType } from '@/contexts/ThemeContext';
+import { AudioPlayer } from '@/components/AudioPlayer';
 
 interface ThemeOption {
   id: ThemeType;
@@ -99,6 +100,11 @@ export function ThemeSelector() {
                 </div>
               </button>
             ))}
+            
+            {/* Audio Player inside dropdown - visual only */}
+            <div className="mt-2 pt-2 border-t border-gray-600">
+              <AudioPlayer isMainPlayer={false} />
+            </div>
           </div>
         </div>
       )}

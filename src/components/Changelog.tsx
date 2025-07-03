@@ -4,16 +4,16 @@ import React, { useState, useEffect } from 'react';
 const changelogEntries = [
     {
       version: "v1.2.0",
-      title: "Tema Müzikleri 🎵",
+      title: "Tema Radyo 🎵",
       description: "Her temaya özel arka plan müziği eklendi",
-      date: "10 Temmuz 2025",
+      date: "3 Temmuz 2025",
       type: "feature"
     },
     {
       version: "v1.1.0",
       title: "Tema Sistemi 🎨",
       description: "Modern, Retro 90s, Nordic ve Synthwave temaları eklendi",
-      date: "5 Temmuz 2025",
+      date: "2 Temmuz 2025",
       type: "feature"
     },
     {

@@ -11,6 +11,8 @@ interface ThemeContextType {
   setTheme: (theme: ThemeType) => void;
   audioEnabled: boolean;
   toggleAudio: () => void;
+  volume: number;
+  setVolume: (volume: number) => void;
 }
 
 // Create context with default values
@@ -19,6 +21,8 @@ const ThemeContext = createContext<ThemeContextType>({
   setTheme: () => {},
   audioEnabled: false,
   toggleAudio: () => {},
+  volume: 0.3,
+  setVolume: () => {},
 });
 
 // Hook for using the theme context
@@ -28,7 +32,8 @@ export const useTheme = () => useContext(ThemeContext);
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   // Initialize theme from localStorage if available, otherwise use default
   const [theme, setThemeState] = useState<ThemeType>('default');
-  const [audioEnabled, setAudioEnabled] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(false); // Always start with audio disabled
+  const [volume, setVolumeState] = useState(0.3); // Default volume
   const [isInitialized, setIsInitialized] = useState(false);
   
   // Load theme and audio settings from localStorage on initial render
@@ -39,11 +44,8 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         const savedTheme = localStorage.getItem('planning-poker-theme') as ThemeType;
         console.log('Loading theme from localStorage:', savedTheme);
         
-        // Load audio preference
-        const savedAudioEnabled = localStorage.getItem('planning-poker-audio-enabled');
-        if (savedAudioEnabled !== null) {
-          setAudioEnabled(savedAudioEnabled === 'true');
-        }
+        // We intentionally don't load audio preference here
+        // Audio will always start disabled for better user experience
         
         if (savedTheme && (savedTheme === 'default' || savedTheme === 'retro90s' || savedTheme === 'nordic' || savedTheme === 'synthwave')) {
           setThemeState(savedTheme);
@@ -66,6 +68,12 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
             document.documentElement.style.removeProperty('--theme-background');
           }
         }
+        
+        // Load saved volume
+        const savedVolume = localStorage.getItem('planning-poker-audio-volume');
+        if (savedVolume !== null) {
+          setVolumeState(parseFloat(savedVolume));
+        }
       }
     } catch (error) {
       console.error('Error accessing localStorage:', error);
@@ -83,6 +91,17 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem('planning-poker-audio-enabled', String(newAudioEnabled));
     } catch (error) {
       console.error('Error writing audio preference to localStorage:', error);
+    }
+  };
+  
+  // Set volume and save to localStorage
+  const setVolume = (newVolume: number) => {
+    setVolumeState(newVolume);
+    
+    try {
+      localStorage.setItem('planning-poker-audio-volume', String(newVolume));
+    } catch (error) {
+      console.error('Error writing volume to localStorage:', error);
     }
   };
   
@@ -123,7 +142,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   }
   
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, audioEnabled, toggleAudio }}>
+    <ThemeContext.Provider value={{ theme, setTheme, audioEnabled, toggleAudio, volume, setVolume }}>
       {children}
     </ThemeContext.Provider>
   );

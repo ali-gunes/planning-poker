@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface AudioPlayerProps {
   initialVolume?: number; // Initial volume between 0 and 1
+  isMainPlayer?: boolean; // Whether this is the main player that actually plays audio
 }
 
 // Define a type for the AudioContext constructor
@@ -12,18 +13,22 @@ interface AudioContextConstructor {
   new(): AudioContext;
 }
 
-export function AudioPlayer({ initialVolume = 0.3 }: AudioPlayerProps) {
-  const { theme, audioEnabled, toggleAudio } = useTheme();
+// Define window with webkitAudioContext
+interface WindowWithWebkitAudioContext extends Window {
+  webkitAudioContext?: typeof AudioContext;
+}
+
+export function AudioPlayer({ isMainPlayer = false }: AudioPlayerProps) {
+  const { theme, audioEnabled, toggleAudio, volume, setVolume } = useTheme();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(initialVolume);
-  const [showVolumeControl, setShowVolumeControl] = useState(false);
   const [showVisualizer, setShowVisualizer] = useState(false);
-  const volumeControlTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [hasShownInitialHint, setHasShownInitialHint] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   // Map themes to audio files using useMemo to prevent recreation on every render
   const themeAudioMap = useMemo(() => ({
@@ -35,7 +40,7 @@ export function AudioPlayer({ initialVolume = 0.3 }: AudioPlayerProps) {
 
   // Initialize audio context and analyzer
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || !isMainPlayer) return;
     
     const initAudioAnalyzer = () => {
       if (!audioRef.current) return;
@@ -43,8 +48,7 @@ export function AudioPlayer({ initialVolume = 0.3 }: AudioPlayerProps) {
       try {
         // Create audio context with proper typing
         const AudioContext = (window.AudioContext || 
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (window as any).webkitAudioContext) as AudioContextConstructor;
+          (window as WindowWithWebkitAudioContext).webkitAudioContext) as AudioContextConstructor;
         audioContextRef.current = new AudioContext();
         
         // Create analyzer
@@ -76,11 +80,11 @@ export function AudioPlayer({ initialVolume = 0.3 }: AudioPlayerProps) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, []);
+  }, [isMainPlayer]);
 
   // Update audio source when theme changes
   useEffect(() => {
-    if (!audioRef.current) return;
+    if (!audioRef.current || !isMainPlayer) return;
     
     const audioPath = themeAudioMap[theme];
     audioRef.current.src = audioPath;
@@ -90,41 +94,39 @@ export function AudioPlayer({ initialVolume = 0.3 }: AudioPlayerProps) {
         console.error('Error playing audio:', err);
       });
       setIsPlaying(true);
+      // Show visualizer when audio is enabled
+      setShowVisualizer(true);
     } else {
       audioRef.current.pause();
       setIsPlaying(false);
     }
-  }, [theme, audioEnabled, themeAudioMap]);
+  }, [theme, audioEnabled, themeAudioMap, isMainPlayer]);
 
   // Update volume when it changes
   useEffect(() => {
-    if (audioRef.current) {
+    if (audioRef.current && isMainPlayer) {
       audioRef.current.volume = volume;
     }
-    
-    // Save volume preference to localStorage
-    try {
-      localStorage.setItem('planning-poker-audio-volume', String(volume));
-    } catch (error) {
-      console.error('Error saving volume to localStorage:', error);
-    }
-  }, [volume]);
-  
-  // Load saved volume from localStorage on initial render
+  }, [volume, isMainPlayer]);
+
+  // Show a hint to the user about audio on first render
   useEffect(() => {
-    try {
-      const savedVolume = localStorage.getItem('planning-poker-audio-volume');
-      if (savedVolume !== null) {
-        setVolume(parseFloat(savedVolume));
-      }
-    } catch (error) {
-      console.error('Error loading volume from localStorage:', error);
+    if (!hasShownInitialHint && !isMainPlayer) {
+      setShowHint(true);
+      setHasShownInitialHint(true);
+      
+      // Hide the hint after 6 seconds
+      const timer = setTimeout(() => {
+        setShowHint(false);
+      }, 6000);
+      
+      return () => clearTimeout(timer);
     }
-  }, []);
+  }, [hasShownInitialHint, isMainPlayer]);
 
   // Draw visualizer animation
   useEffect(() => {
-    if (!canvasRef.current || !analyserRef.current || !isPlaying || !showVisualizer) {
+    if (!canvasRef.current || !analyserRef.current || !isPlaying || !showVisualizer || !isMainPlayer) {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
         animationRef.current = null;
@@ -172,7 +174,7 @@ export function AudioPlayer({ initialVolume = 0.3 }: AudioPlayerProps) {
         animationRef.current = null;
       }
     };
-  }, [isPlaying, showVisualizer, theme]);
+  }, [isPlaying, showVisualizer, theme, isMainPlayer]);
 
   // Visualizer drawing functions
   const drawDefaultVisualizer = (
@@ -349,87 +351,115 @@ export function AudioPlayer({ initialVolume = 0.3 }: AudioPlayerProps) {
     setVolume(parseFloat(e.target.value));
   };
   
-  const handleMouseEnter = () => {
-    if (volumeControlTimeoutRef.current) {
-      clearTimeout(volumeControlTimeoutRef.current);
-      volumeControlTimeoutRef.current = null;
-    }
-    setShowVolumeControl(true);
-  };
-  
-  const handleMouseLeave = () => {
-    volumeControlTimeoutRef.current = setTimeout(() => {
-      setShowVolumeControl(false);
-    }, 2000);
-  };
-  
-  const handleToggleVisualizer = () => {
-    setShowVisualizer(prev => !prev);
-  };
-  
   // Format volume as percentage
   const volumePercentage = Math.round(volume * 100);
 
+  // For visual-only player in the dropdown, simulate the visualizer
+  const drawDemoVisualizer = useCallback(() => {
+    if (!canvasRef.current || !audioEnabled) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Create demo data for visualizer
+    const bufferLength = 128;
+    const dataArray = new Uint8Array(bufferLength);
+    
+    // Fill with demo data
+    for (let i = 0; i < bufferLength; i++) {
+      // Create a wave pattern
+      dataArray[i] = 50 + Math.sin(i / 10) * 30 + Math.sin(Date.now() / 500 + i / 5) * 20;
+    }
+    
+    // Draw based on theme
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    switch (theme) {
+      case 'retro90s':
+        drawRetro90sVisualizer(ctx, canvas, dataArray, bufferLength);
+        break;
+      case 'nordic':
+        drawNordicVisualizer(ctx, canvas, dataArray, bufferLength);
+        break;
+      case 'synthwave':
+        drawSynthwaveVisualizer(ctx, canvas, dataArray, bufferLength);
+        break;
+      default:
+        drawDefaultVisualizer(ctx, canvas, dataArray, bufferLength);
+    }
+  }, [audioEnabled, theme, canvasRef]);
+  
+  // Animate demo visualizer for dropdown
+  useEffect(() => {
+    if (isMainPlayer || !audioEnabled) return;
+    
+    const animateDemoVisualizer = () => {
+      drawDemoVisualizer();
+      animationRef.current = requestAnimationFrame(animateDemoVisualizer);
+    };
+    
+    animationRef.current = requestAnimationFrame(animateDemoVisualizer);
+    
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [isMainPlayer, audioEnabled, theme, drawDemoVisualizer]);
+
   return (
-    <div 
-      className={`audio-player ${showVisualizer ? 'audio-player-expanded' : ''}`}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <audio 
-        ref={audioRef}
-        loop
-        preload="auto"
-      />
+    <div className="audio-player-container">
+      {isMainPlayer && (
+        <audio 
+          ref={audioRef}
+          loop
+          preload="none" // Changed from 'auto' to 'none' to prevent any preloading
+          muted={!audioEnabled} // Ensure audio is muted when not enabled
+        />
+      )}
       
-      {/* Audio visualizer */}
-      {showVisualizer && isPlaying && (
-        <div className="audio-visualizer">
-          <canvas 
-            ref={canvasRef}
-            width={200}
-            height={80}
-            className="visualizer-canvas"
-          />
+      {/* Audio hint tooltip */}
+      {showHint && (
+        <div className="audio-hint">
+          {audioEnabled ? 'Music enabled! 🎵' : 'Click to enable theme music 🎵'}
         </div>
       )}
       
-      {/* Volume slider - appears when hovering */}
-      <div className={`volume-control ${showVolumeControl ? 'volume-control-visible' : ''}`}>
-        <div className="volume-display">{volumePercentage}%</div>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={volume}
-          onChange={handleVolumeChange}
-          className="volume-slider"
+      {/* Audio visualizer */}
+      <div className={`audio-visualizer ${!audioEnabled ? 'audio-visualizer-hidden' : ''}`}>
+        <canvas 
+          ref={canvasRef}
+          width={200}
+          height={60}
+          className="visualizer-canvas"
         />
       </div>
       
-      <div className="audio-controls">
+      {/* Audio controls */}
+      <div className="audio-controls-row">
         <button 
           onClick={handleToggleAudio}
           className="audio-control-btn"
-          aria-label={isPlaying ? 'Mute music' : 'Play music'}
-          title={isPlaying ? 'Mute music' : 'Play music'}
+          aria-label={audioEnabled ? 'Pause music' : 'Play music'}
+          title={audioEnabled ? 'Pause music' : 'Play music'}
         >
-          {isPlaying ? (
-            volume > 0.7 ? '🔊' : volume > 0.3 ? '🔉' : volume > 0 ? '🔈' : '🔇'
-          ) : '🔇'}
+          {audioEnabled ? '⏸️' : '▶️'}
         </button>
         
-        {isPlaying && (
-          <button
-            onClick={handleToggleVisualizer}
-            className="visualizer-toggle-btn"
-            aria-label={showVisualizer ? 'Hide visualizer' : 'Show visualizer'}
-            title={showVisualizer ? 'Hide visualizer' : 'Show visualizer'}
-          >
-            {showVisualizer ? '📊' : '📈'}
-          </button>
-        )}
+        <div className="volume-control-container">
+          <div className="volume-slider-row">
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={volume}
+              onChange={handleVolumeChange}
+              className="volume-slider"
+            />
+            <div className="volume-percentage">{volumePercentage}%</div>
+          </div>
+        </div>
       </div>
     </div>
   );
