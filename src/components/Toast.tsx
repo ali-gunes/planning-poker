@@ -44,7 +44,7 @@ export function Toast({
   if (!isVisible) return null;
 
   // Get theme-specific styles
-  const themeStyles = getThemeStyles(theme, type);
+  const themeStyles = getThemeStyles(theme);
 
   // Define styles based on type
   const styles = {
@@ -113,7 +113,7 @@ export function Toast({
   );
 }
 
-function getThemeStyles(theme: ThemeType, type: string) {
+function getThemeStyles(theme: ThemeType) {
   const baseStyles = {
     bg: 'bg-gray-800',
     textClass: 'text-gray-100',
