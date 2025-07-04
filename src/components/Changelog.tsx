@@ -3,6 +3,20 @@ import React, { useState, useEffect } from 'react';
 // Define the changelog entries
 const changelogEntries = [
     {
+      version: "v1.3.2",
+      title: "Bildirim Pozisyonları 📍",
+      description: "Özel bildirimlerin konumları artık özelleştirilebilir (6 farklı pozisyon).",
+      date: "4 Temmuz 2025",
+      type: "improvement"
+    },
+    {
+      version: "v1.3.1",
+      title: "Özel Bildirimler 🔔",
+      description: "Tarayıcı uyarıları yerine özel, tema uyumlu bildirimler eklendi.",
+      date: "4 Temmuz 2025",
+      type: "improvement"
+    },
+    {
       version: "v1.3.0",
       title: "Katılımcı Rolleri 👥👁️",
       description: "Artık kullanıcılar 'Katılımcı' veya 'Gözlemci' rolü seçebilir. Gözlemciler oy kullanamaz ve ortalama hesaplamalarına dahil edilmez.",

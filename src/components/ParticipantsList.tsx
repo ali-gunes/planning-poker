@@ -52,7 +52,7 @@ export function ParticipantsList({ participants, currentUser, ownerName }: Parti
                                     participant.status === 'inactive' 
                                         ? 'Çevrimdışı' 
                                         : participant.role === 'participant' && participant.hasVoted
-                                            ? 'Oy kullandı'
+                                            ? 'Oy'
                                             : 'Çevrimiçi ancak oy kullanmadı'
                                 }></div>
                                 <span className={`font-medium ${participant.name === currentUser ? 'text-blue-400' : ''}`}>

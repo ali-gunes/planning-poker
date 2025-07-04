@@ -2,8 +2,8 @@ import './globals.css'
 import '../styles/themes.css'
 import type { Metadata } from 'next'
 import { Inter, Orbitron, Space_Mono } from 'next/font/google'
-import { ThemeProvider } from '@/contexts/ThemeContext'
 import { AudioPlayer } from '@/components/AudioPlayer'
+import { ClientProviders } from '@/components/ClientProviders'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -45,7 +45,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${orbitron.variable} ${spaceMono.variable}`}>
       <body>
-        <ThemeProvider>
+        <ClientProviders>
           <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
             <main className="flex-grow">
               {children}
@@ -58,7 +58,7 @@ export default function RootLayout({
               <AudioPlayer isMainPlayer={true} />
             </div>
           </div>
-        </ThemeProvider>
+        </ClientProviders>
       </body>
     </html>
   )

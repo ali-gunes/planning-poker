@@ -14,6 +14,7 @@ import { ParticipantsList } from "@/components/ParticipantsList";
 import { OwnerGraceCountdown } from "@/components/OwnerGraceCountdown";
 import { OwnerVotingPanel } from "@/components/OwnerVotingPanel";
 import { ThemeSelector } from "@/components/ThemeSelector";
+import { useToast } from '@/contexts/ToastContext';
 
 const votingStacks = {
     fibonacci: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
@@ -77,6 +78,8 @@ export default function RoomPage() {
     const isOwner = roomSettings?.owner === name;
     const isPreviousOwner = roomSettings?.previousOwner === name;
     const votingCards = roomSettings ? votingStacks[roomSettings.votingPreset] : [];
+
+    const { showToast } = useToast();
 
     useEffect(() => {
         const storedName = sessionStorage.getItem("username");
@@ -314,7 +317,7 @@ export default function RoomPage() {
 
     const handleCopyToClipboard = () => {
         navigator.clipboard.writeText(window.location.href).then(() => {
-            alert("Davet linki panoya kopyalandı!");
+            showToast("Davet linki panoya kopyalandı!", "success", 3000, "bottom-center");
         });
     };
 
