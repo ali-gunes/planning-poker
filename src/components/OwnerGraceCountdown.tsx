@@ -38,7 +38,7 @@ export function OwnerGraceCountdown({ ownerName, graceEndTime }: OwnerGraceCount
   
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto my-8 animate-pulse">
-      <div className="text-4xl md:text-5xl font-bold text-red-500 mb-4">👑 KRALIN DÜŞÜŞÜ! 👑</div>
+      <div className="text-4xl md:text-5xl font-bold text-red-500 mb-4">👑 KRALIN DÜŞÜŞÜ!</div>
       
       <div className="relative w-full max-w-md mb-6">
         <Image 

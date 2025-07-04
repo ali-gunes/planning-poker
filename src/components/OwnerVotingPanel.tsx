@@ -97,7 +97,7 @@ export function OwnerVotingPanel({
   if (showCoronation && newOwnerSelected) {
     return (
       <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto my-8">
-        <div className="text-4xl md:text-5xl font-bold text-yellow-500 mb-4">👑 YENİ KRAL SEÇİLDİ! 👑</div>
+        <div className="text-4xl md:text-5xl font-bold text-yellow-500 mb-4">YENİ KRAL 👑</div>
         
         <div className="relative w-full max-w-md mb-6">
           <Image 
@@ -130,7 +130,7 @@ export function OwnerVotingPanel({
   // Regular voting UI
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto my-8">
-      <div className="text-4xl md:text-5xl font-bold text-blue-500 mb-4">👑 YENİ KRAL SEÇİMİ 👑</div>
+      <div className="text-4xl md:text-5xl font-bold text-blue-500 mb-4">YENİ KRAL 👑</div>
       
       <div className="relative w-full max-w-md mb-6">
         <Image 

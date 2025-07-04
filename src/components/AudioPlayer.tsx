@@ -421,7 +421,7 @@ export function AudioPlayer({ isMainPlayer = false }: AudioPlayerProps) {
       {/* Audio hint tooltip */}
       {showHint && (
         <div className="audio-hint">
-          {audioEnabled ? 'Music enabled! 🎵' : 'Click to enable theme music 🎵'}
+          {audioEnabled ? 'Müzik çalıyor! 🎧' : 'Müziği çalmak için tıklayın 🎧'}
         </div>
       )}
       
@@ -440,8 +440,8 @@ export function AudioPlayer({ isMainPlayer = false }: AudioPlayerProps) {
         <button 
           onClick={handleToggleAudio}
           className="audio-control-btn"
-          aria-label={audioEnabled ? 'Pause music' : 'Play music'}
-          title={audioEnabled ? 'Pause music' : 'Play music'}
+          aria-label={audioEnabled ? 'Müziği durdur' : 'Müziği çal'}
+          title={audioEnabled ? 'Müziği durdur' : 'Müziği çal'}
         >
           {audioEnabled ? '⏸️' : '▶️'}
         </button>
