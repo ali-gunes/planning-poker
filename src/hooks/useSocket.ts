@@ -1,10 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import PartySocket from "partysocket";
 
-export const useSocket = (roomId: string, name: string) => {
+export const useSocket = (roomId: string, name: string, role: 'participant' | 'observer' = 'participant') => {
     const [socket, setSocket] = useState<PartySocket | null>(null);
     const nameRef = useRef(name);
     nameRef.current = name;
+    const roleRef = useRef(role);
+    roleRef.current = role;
     const socketRef = useRef<PartySocket | null>(null);
 
     useEffect(() => {
@@ -32,7 +34,11 @@ export const useSocket = (roomId: string, name: string) => {
             // Only join if we have a name
             if (nameRef.current) {
                 //console.log(`📤 Sending join_room message for: ${nameRef.current}`);
-                newSocket.send(JSON.stringify({ type: "join_room", name: nameRef.current }));
+                newSocket.send(JSON.stringify({ 
+                    type: "join_room", 
+                    name: nameRef.current,
+                    role: roleRef.current
+                }));
             }
         };
 
@@ -76,9 +82,13 @@ export const useSocket = (roomId: string, name: string) => {
     useEffect(() => {
         // When the name is finally available (after the modal), join the room
         if (socket && socket.readyState === WebSocket.OPEN && name) {
-            socket.send(JSON.stringify({ type: "join_room", name }));
+            socket.send(JSON.stringify({ 
+                type: "join_room", 
+                name,
+                role
+            }));
         }
-    }, [name, socket]);
+    }, [name, socket, role]);
 
 
     return socket;

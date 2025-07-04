@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 
 interface CreateRoomRequest {
     name: string;
+    role: 'participant' | 'observer';
     votingPreset: 'fibonacci' | 'days' | 'hours' | 'yesno';
     timerDuration: number;
     autoReveal: boolean;
@@ -18,7 +19,7 @@ const generateToken = (): string => {
 
 export async function POST(request: Request) {
     try {
-        const { name, votingPreset, timerDuration, autoReveal } = (await request.json()) as CreateRoomRequest;
+        const { name, role = 'participant', votingPreset, timerDuration, autoReveal } = (await request.json()) as CreateRoomRequest;
 
         if (!name) {
             return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -33,7 +34,13 @@ export async function POST(request: Request) {
             timerDuration,
             autoReveal,
             state: "lobby", // initial state
-            participants: [{ name, hasVoted: false, connectionId: "pending", status: 'active' }],
+            participants: [{ 
+                name, 
+                hasVoted: false, 
+                connectionId: "pending", 
+                status: 'active',
+                role: role
+            }],
             votes: [{ name, vote: null }],
             ownerStatus: 'active',
             ownerVotes: [],

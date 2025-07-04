@@ -17,6 +17,7 @@ export default function Home() {
   const [votingPreset, setVotingPreset] = useState("hours");
   const [timerMinutes, setTimerMinutes] = useState(0);
   const [autoReveal, setAutoReveal] = useState(false);
+  const [role, setRole] = useState<'participant' | 'observer'>('participant');
 
   // When timer is selected, automatically set autoReveal to true
   // When timer is set to 0 (no timer), set autoReveal to false
@@ -49,6 +50,7 @@ export default function Home() {
 
     setIsLoading(true);
     sessionStorage.setItem("username", name.trim());
+    sessionStorage.setItem("userRole", role);
 
     try {
       const res = await fetch("/api/rooms", {
@@ -58,6 +60,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           name,
+          role,
           // Pass new settings to the API
           votingPreset,
           timerDuration: timerMinutes * 60, // send as seconds
@@ -95,6 +98,7 @@ export default function Home() {
     }
     setJoinError("");
     sessionStorage.setItem("username", name.trim());
+    sessionStorage.setItem("userRole", role);
     router.push(`/room/${roomIdToJoin.trim()}`);
   };
 
@@ -134,6 +138,36 @@ export default function Home() {
               className="w-full px-4 py-3 rounded-md bg-gray-900/70 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
               disabled={isLoading}
             />
+            
+            <div className="mt-4">
+              <label className="block text-lg font-medium text-gray-300 mb-2 text-center">Rolünüz</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setRole('participant')}
+                  className={`p-3 rounded-lg border-2 transition-all text-center ${
+                    role === 'participant'
+                      ? "border-blue-500 bg-blue-500/20 text-blue-300"
+                      : "border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500"
+                  }`}
+                >
+                  {/*<div className="font-bold">👥</div>*/}
+                  <div className="text-md font-bold">Katılımcı</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole('observer')}
+                  className={`p-3 rounded-lg border-2 transition-all text-center ${
+                    role === 'observer'
+                      ? "border-blue-500 bg-blue-500/20 text-blue-300"
+                      : "border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500"
+                  }`}
+                >
+                  {/* <div className="font-bold">👁️</div> */}
+                  <div className="text-md font-bold">Gözlemci</div>
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-8">

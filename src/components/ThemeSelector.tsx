@@ -49,20 +49,20 @@ export function ThemeSelector() {
   
   // Debug current theme
   useEffect(() => {
-    console.log('Current theme:', theme);
-    console.log('Body classes:', document.body.classList.toString());
+    //console.log('Current theme:', theme);
+    //console.log('Body classes:', document.body.classList.toString());
   }, [theme]);
   
   const toggleDropdown = () => setIsOpen(!isOpen);
   
   const handleThemeChange = (newTheme: ThemeType) => {
-    console.log('Changing theme to:', newTheme);
+    //console.log('Changing theme to:', newTheme);
     setTheme(newTheme);
     setIsOpen(false);
     
     // Debug after theme change
     setTimeout(() => {
-      console.log('Body classes after change:', document.body.classList.toString());
+      //console.log('Body classes after change:', document.body.classList.toString());
     }, 100);
   };
   

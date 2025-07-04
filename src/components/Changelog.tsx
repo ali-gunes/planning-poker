@@ -3,6 +3,34 @@ import React, { useState, useEffect } from 'react';
 // Define the changelog entries
 const changelogEntries = [
     {
+      version: "v1.3.0",
+      title: "Katılımcı Rolleri 👥👁️",
+      description: "Artık kullanıcılar 'Katılımcı' veya 'Gözlemci' rolü seçebilir. Gözlemciler oy kullanamaz ve ortalama hesaplamalarına dahil edilmez.",
+      date: "4 Temmuz 2025",
+      type: "feature"
+    },
+    {
+      version: "v1.2.7",
+      title: "Katılımcı Listesi İyileştirmeleri",
+      description: "Rol simgeleri ve oy durumu göstergeleri daha doğru şekilde görüntüleniyor.",
+      date: "3 Temmuz 2025",
+      type: "improvement"
+    },
+    {
+      version: "v1.2.6",
+      title: "Oda Oluşturma Hatası Düzeltildi",
+      description: "Oda oluşturan kullanıcıların 'bu isim zaten kullanılıyor' hatasıyla karşılaşması sorunu giderildi.",
+      date: "3 Temmuz 2025",
+      type: "bugfix"
+    },
+    {
+      version: "v1.2.5",
+      title: "Zamanlayıcı İyileştirmeleri ⏱️",
+      description: "Zamanlayıcı seçeneklerine 'Süresiz' seçeneği eklendi ve otomatik gösterme ayarı basitleştirildi.",
+      date: "3 Temmuz 2025",
+      type: "improvement"
+    },
+    {
       version: "v1.2.0",
       title: "Tema Radyo 🎵",
       description: "Her temaya özel arka plan müziği eklendi",

@@ -26,6 +26,7 @@ interface Participant {
     name: string; 
     hasVoted: boolean; 
     status?: 'active' | 'inactive';
+    role?: 'participant' | 'observer';
 }
 
 interface Vote { name: string; vote: number | string; }
@@ -51,7 +52,8 @@ export default function RoomPage() {
     const router = useRouter();
     const roomId = params ? (params.roomId as string) : "";
     const [name, setName] = useState("");
-    const socket = useSocket(roomId, name);
+    const [role, setRole] = useState<'participant' | 'observer'>('participant');
+    const socket = useSocket(roomId, name, role);
     
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [isNameModalOpen, setIsNameModalOpen] = useState(false);
@@ -78,10 +80,14 @@ export default function RoomPage() {
 
     useEffect(() => {
         const storedName = sessionStorage.getItem("username");
+        const storedRole = sessionStorage.getItem("userRole") as 'participant' | 'observer' | null;
         if (storedName) {
             setName(storedName);
         } else {
             setIsNameModalOpen(true);
+        }
+        if (storedRole) {
+            setRole(storedRole);
         }
     }, []);
 
@@ -277,18 +283,24 @@ export default function RoomPage() {
         }
     }, [socket, roomSettings, router]);
   
-    const handleNameSubmit = (submittedName: string) => {
+    const handleNameSubmit = (submittedName: string, submittedRole: 'participant' | 'observer') => {
         const trimmedName = submittedName.trim();
         setName(trimmedName);
+        setRole(submittedRole);
         sessionStorage.setItem("username", trimmedName);
+        sessionStorage.setItem("userRole", submittedRole);
         setNameError(null);
         setIsNameModalOpen(false);
     };
 
     const handleVote = (vote: number | string) => {
-        if (socket && gameState === 'voting') {
+        // Only allow participants (not observers) to vote
+        if (socket && gameState === 'voting' && role === 'participant') {
+            //console.log(`Sending vote: ${vote} for user ${name} with role ${role}`);
             setSelectedVote(vote);
-            socket.send(JSON.stringify({ type: "user_voted", roomId, name, vote }));
+            socket.send(JSON.stringify({ type: "user_voted", roomId, name, vote, role }));
+        } else {
+            console.log(`Cannot vote: socket=${!!socket}, gameState=${gameState}, role=${role}`);
         }
     };
 
@@ -369,7 +381,14 @@ export default function RoomPage() {
 
     const voteCounts = useMemo(() => {
         if (gameState !== 'revealed') return { average: 0, min: 0, max: 0, consensus: false, hugeDifference: false, isYesNo: false, majority: false, majorityValue: null };
-        const allVotes = votes.map(v => v.vote);
+        
+        // Filter out observers' votes for calculation
+        const participantVotes = votes.filter(v => {
+            const participant = participants.find(p => p.name === v.name);
+            return participant && participant.role !== 'observer';
+        });
+        
+        const allVotes = participantVotes.map(v => v.vote);
         if (allVotes.length === 0) return { average: 0, min: 0, max: 0, consensus: false, hugeDifference: false, isYesNo: false, majority: false, majorityValue: null };
         
         const consensus = new Set(allVotes).size === 1;
@@ -411,7 +430,7 @@ export default function RoomPage() {
         const hugeDifference = min > 0 && max >= min * 3; // Check if max is at least 3x min
         
         return { average: average.toFixed(1), min, max, consensus, hugeDifference, isYesNo, majority, majorityValue };
-    }, [votes, gameState, roomSettings?.votingPreset]);
+    }, [votes, gameState, roomSettings?.votingPreset, participants]);
 
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -711,9 +730,11 @@ export default function RoomPage() {
                                             <button
                                                 key={value}
                                                 onClick={() => handleVote(value)}
-                                                disabled={gameState !== 'voting'}
+                                                disabled={gameState !== 'voting' || role === 'observer'}
                                                 className={`w-28 h-40 rounded-xl flex items-center justify-center text-4xl font-bold transition-all duration-200 shadow-lg
                                                     ${ gameState !== 'voting'
+                                                        ? "bg-gray-700 cursor-not-allowed text-gray-500"
+                                                        : role === 'observer'
                                                         ? "bg-gray-700 cursor-not-allowed text-gray-500"
                                                         : selectedVote === value
                                                         ? "bg-blue-600 text-white ring-4 ring-blue-400 transform -translate-y-2"
@@ -723,6 +744,11 @@ export default function RoomPage() {
                                                 {value}
                                             </button>
                                         ))}
+                                    </div>
+                                )}
+                                {role === 'observer' && (
+                                    <div className="mt-4 text-center text-gray-400">
+                                        <p>Gözlemci rolündesiniz. Oy kullanamazsınız.</p>
                                     </div>
                                 )}
                             </>
