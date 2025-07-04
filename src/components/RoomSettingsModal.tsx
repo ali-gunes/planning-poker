@@ -31,6 +31,13 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
     setAutoReveal(currentSettings.autoReveal);
   }, [currentSettings]);
 
+  // When timer is selected, automatically set autoReveal to true
+  // When timer is set to 0 (no timer), set autoReveal to false
+  const handleTimerSelect = (minutes: number) => {
+    setTimerMinutes(minutes);
+    setAutoReveal(minutes > 0);
+  };
+
   const handleSave = () => {
     const newSettings = {
       votingPreset: votingPreset as 'fibonacci' | 'days' | 'hours' | 'yesno',
@@ -114,10 +121,21 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
             <label className="block text-sm font-medium text-gray-400 mb-3 text-center">
               Tur Zamanlayıcısı
             </label>
+            <button
+              type="button"
+              onClick={() => handleTimerSelect(0)}
+              className={`p-3 rounded-lg border-2 transition-all text-center w-full mb-2 ${
+                timerMinutes === 0
+                  ? "border-blue-500 bg-blue-500/20 text-blue-300"
+                  : "border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500"
+              }`}
+            >
+              <div className="text-xs font-medium">Süresiz</div>
+            </button>
             <div className="grid grid-cols-4 gap-2">
               <button
                 type="button"
-                onClick={() => setTimerMinutes(0.5)}
+                onClick={() => handleTimerSelect(0.5)}
                 className={`p-3 rounded-lg border-2 transition-all text-center ${
                   timerMinutes === 0.5
                     ? "border-blue-500 bg-blue-500/20 text-blue-300"
@@ -128,7 +146,7 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
               </button>
               <button
                 type="button"
-                onClick={() => setTimerMinutes(1)}
+                onClick={() => handleTimerSelect(1)}
                 className={`p-3 rounded-lg border-2 transition-all text-center ${
                   timerMinutes === 1
                     ? "border-blue-500 bg-blue-500/20 text-blue-300"
@@ -139,7 +157,7 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
               </button>
               <button
                 type="button"
-                onClick={() => setTimerMinutes(2)}
+                onClick={() => handleTimerSelect(2)}
                 className={`p-3 rounded-lg border-2 transition-all text-center ${
                   timerMinutes === 2
                     ? "border-blue-500 bg-blue-500/20 text-blue-300"
@@ -150,7 +168,7 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
               </button>
               <button
                 type="button"
-                onClick={() => setTimerMinutes(3)}
+                onClick={() => handleTimerSelect(3)}
                 className={`p-3 rounded-lg border-2 transition-all text-center ${
                   timerMinutes === 3
                     ? "border-blue-500 bg-blue-500/20 text-blue-300"
@@ -160,20 +178,11 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
                 <div className="text-xs font-medium">3 dk</div>
               </button>
             </div>
-          </div>
-
-          {/* Auto Reveal Settings */}
-          <div className="flex items-center gap-3">
-            <input 
-              type="checkbox" 
-              id="auto-reveal-modal" 
-              checked={autoReveal} 
-              onChange={e => setAutoReveal(e.target.checked)} 
-              className="h-4 w-4 rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-600" 
-            />
-            <label htmlFor="auto-reveal-modal" className="text-sm font-medium text-gray-300">
-              Zamanlayıcı bittiğinde oyları otomatik göster
-            </label>
+            <div className="text-center mt-2 text-xs text-gray-400">
+              {timerMinutes > 0 ? 
+                "Zamanlayıcı bittiğinde oylar otomatik gösterilecek" : 
+                "Zamanlayıcı kullanılmayacak"}
+            </div>
           </div>
         </div>
 

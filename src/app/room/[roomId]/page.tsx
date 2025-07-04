@@ -133,12 +133,12 @@ export default function RoomPage() {
                 setVotes([]);
                 setSelectedVote(null);
                 setParticipants(msg.payload);
-                if (roomSettings) setTimer(roomSettings.timerDuration);
+                if (roomSettings && roomSettings.timerDuration > 0) setTimer(roomSettings.timerDuration);
             }
             if (msg.type === "round_started") {
                 setGameState("voting");
                 setSelectedVote(null);
-                if (roomSettings) setTimer(roomSettings.timerDuration);
+                if (roomSettings && roomSettings.timerDuration > 0) setTimer(roomSettings.timerDuration);
             }
             if (msg.type === "room_settings") {
                 setRoomSettings(prev => ({ ...prev, ...msg.payload }));
@@ -490,9 +490,13 @@ export default function RoomPage() {
                                         {roomSettings.votingPreset === 'hours' && '⏰ Saatler'}
                                         {roomSettings.votingPreset === 'yesno' && '✅ Evet/Hayır'}
                                     </div>
-                                    {roomSettings.timerDuration > 0 && (
+                                    {roomSettings.timerDuration > 0 ? (
                                         <div className="text-sm text-blue-400 mt-1">
                                             ⏱️ {roomSettings.timerDuration < 60 ? `${roomSettings.timerDuration} sn` : `${Math.floor(roomSettings.timerDuration / 60)} dk`}
+                                        </div>
+                                    ) : (
+                                        <div className="text-sm text-gray-400 mt-1">
+                                            ⏱️ Süresiz
                                         </div>
                                     )}
                                 </div>
