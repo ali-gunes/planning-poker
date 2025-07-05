@@ -1,0 +1,508 @@
+{
+  "teamName": "C&I Ekibi",
+  "teamDescription": "Kanal ve Entegrasyon",
+  "settings": {
+    "showOnGeneral": true,
+    "showOnMedianLow": true,
+    "showOnMedianHigh": true,
+    "showOnConsensus": true,
+    "showOnHugeDifference": true,
+    "quoteProbability": 1
+  },
+  "medianLowQuotes": [
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Hayret... Ezgi eforlara itiraz etmedi!",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "2'şer saat yazıyorum o zaman...",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Ben itiraz edersiniz sandım.",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Arkadaşlar test eforunu ayrı alacağız",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "ezgi",
+      "name": "Ezgi",
+      "role": "Tester",
+      "quote": "Bu kadar az olamaz Deniz ya, minimum 3 gün!",
+      "phrase": "Kalite için yeterli zaman! 🛡️",
+      "animation": "dodge.gif",
+      "color": "from-green-500 to-emerald-600"
+    },
+    {
+      "id": "ezgi",
+      "name": "Ezgi",
+      "role": "Tester",
+      "quote": "Bence 2 katına çıkaralım eforları.",
+      "phrase": "Kalite için yeterli zaman! 🛡️",
+      "animation": "dodge.gif",
+      "color": "from-green-500 to-emerald-600"
+    },
+    {
+      "id": "ezgi",
+      "name": "Ezgi",
+      "role": "Tester",
+      "quote": "Test raporu yazma süremiz yok mu?",
+      "phrase": "Kalite için yeterli zaman! 🛡️",
+      "animation": "dodge.gif",
+      "color": "from-green-500 to-emerald-600"
+    },
+    {
+      "id": "ezgi",
+      "name": "Ezgi",
+      "role": "Tester",
+      "quote": "İnsaf yani Deniz, bu kadar verilir mi?!",
+      "phrase": "Kalite için yeterli zaman! 🛡️",
+      "animation": "dodge.gif",
+      "color": "from-green-500 to-emerald-600"
+    },
+    {
+      "id": "ezgi",
+      "name": "Ezgi",
+      "role": "Tester",
+      "quote": "Deniz biz bi de test dökümanı yazıyoruz yani.",
+      "phrase": "Kalite için yeterli zaman! 🛡️",
+      "animation": "dodge.gif",
+      "color": "from-green-500 to-emerald-600"
+    },
+    {
+      "id": "ezgi",
+      "name": "Ezgi",
+      "role": "Tester",
+      "quote": "Deniz şimdi sen böyle diyorsun ama test ortamında sonradan problemler çıkabiliyor.",
+      "phrase": "Kalite için yeterli zaman! 🛡️",
+      "animation": "dodge.gif",
+      "color": "from-green-500 to-emerald-600"
+    },
+    {
+      "id": "kubilay",
+      "name": "Kubilay",
+      "role": "DevOps",
+      "quote": "Benim efor belli zaten, yaz 12 saat.",
+      "phrase": "DevOps tecrübesi! 🚀",
+      "animation": "gandalf.gif",
+      "color": "from-blue-600 to-cyan-500"
+    }
+  ],
+  "medianHighQuotes": [
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Arkadaşlar bilirsiniz ben eforlara karışan biri değilim normalde ama...",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Arkadaşlar test eforunu ayrı alacağız",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "onur",
+      "name": "Onur",
+      "role": "Developer",
+      "quote": "Arkadaşlar bende her şeyin kaydı var sakin olun.",
+      "phrase": "Developer gerçekleri! 💻",
+      "animation": "cool-spongebob.gif",
+      "color": "from-purple-500 to-indigo-600"
+    },
+    {
+      "id": "onur",
+      "name": "Onur",
+      "role": "Developer",
+      "quote": "Ayrı ayrı maddeler açalım abi böyle olmaz!",
+      "phrase": "Developer gerçekleri! 💻",
+      "animation": "cool-spongebob.gif",
+      "color": "from-purple-500 to-indigo-600"
+    }
+  ],
+  "generalQuotes": [
+    {
+      "id": "elif",
+      "name": "Elif",
+      "role": "Analist",
+      "quote": "Ben bi' müşteriye mail atıp geliyorum arkadaşlar.",
+      "phrase": "Bu iş ekip işi! 🤝",
+      "animation": "team-dance.gif",
+      "color": "from-blue-600 to-cyan-500"
+    },
+    {
+      "id": "elif",
+      "name": "Elif",
+      "role": "Analist",
+      "quote": "İnternetimde bir sorun var arkadaşlar Çeşme'de altyapı bu maalesef",
+      "phrase": "Bu iş ekip işi! 🤝",
+      "animation": "team-dance.gif",
+      "color": "from-blue-600 to-cyan-500"
+    },
+    {
+      "id": "ece",
+      "name": "Ece",
+      "role": "Analist",
+      "quote": "Ama bunu konuşmuştuk Deniz.",
+      "phrase": "Bu iş ekip işi! 🤝",
+      "animation": "team-dance.gif",
+      "color": "from-blue-600 to-cyan-500"
+    },
+    {
+      "id": "elcin",
+      "name": "Elçin",
+      "role": "Tester",
+      "quote": "Ya Deniz ya...",
+      "phrase": "Bu iş ekip işi! 🤝",
+      "animation": "team-dance.gif",
+      "color": "from-green-500 to-emerald-600"
+    },
+    {
+      "id": "elcin",
+      "name": "Elçin",
+      "role": "Tester",
+      "quote": "Ben de Ezgi'ye katılıyorum!",
+      "phrase": "Bu iş ekip işi! 🤝",
+      "animation": "team-dance.gif",
+      "color": "from-green-500 to-emerald-600"
+    },
+    {
+      "id": "berat",
+      "name": "Berat",
+      "role": "Tester",
+      "quote": "Şimdi şöyle biz oraya baktık...",
+      "phrase": "Bu iş ekip işi! 🤝",
+      "animation": "team-dance.gif",
+      "color": "from-green-500 to-emerald-600"
+    },
+    {
+      "id": "berat",
+      "name": "Berat",
+      "role": "Tester",
+      "quote": "Preprod linki var mı abi?",
+      "phrase": "Bu iş ekip işi! 🤝",
+      "animation": "team-dance.gif",
+      "color": "from-green-500 to-emerald-600"
+    },
+    {
+      "id": "bora",
+      "name": "Bora",
+      "role": "Developer",
+      "quote": "Arkadaşlar <Magnum reklam filmi> geliştirme eforlarını konuş- <Algida> -tuk mu?",
+      "phrase": "Bu iş ekip işi! 🤝",
+      "animation": "team-dance.gif",
+      "color": "from-green-500 to-emerald-600"
+    },
+    {
+      "id": "yusuf",
+      "name": "Yusuf",
+      "role": "Developer",
+      "quote": "Konu yine bana nasıl geldi ya...",
+      "phrase": "Bu iş ekip işi! 🤝",
+      "animation": "team-dance.gif",
+      "color": "from-green-500 to-emerald-600"
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Gittim kendime lüks kuruyemiş aldım, tabi siz bilmezsiniz...",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Arkadaşlar biliyorsunuz ben ırkçı değilim, ama...",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Arkadaşlar biliyorsunuz ben cinsiyetçi değilim, ama...",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "İlhan bana bi şey demedi arkadaşlar.",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Son durumları çekiyorum arkadaşlar, Task eforları güncel mi?",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Bunun Acceptance Criteria'si niye boş kalmış?",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Ben bunu kabul edemem arkadaşlar Solution Note'u doldurulmamış.",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "ezgi",
+      "name": "Ezgi",
+      "role": "Tester",
+      "quote": "Test eforunu almayı unuttunuz ama...",
+      "phrase": "Kalite için yeterli zaman! 🛡️",
+      "animation": "dodge.gif",
+      "color": "from-green-500 to-emerald-600"
+    },
+    {
+      "id": "ezgi",
+      "name": "Ezgi",
+      "role": "Tester",
+      "quote": "Ben Deniz'le aynı fikirde değilim.",
+      "phrase": "Kalite için yeterli zaman! 🛡️",
+      "animation": "dodge.gif",
+      "color": "from-green-500 to-emerald-600"
+    },
+    {
+      "id": "onur",
+      "name": "Onur",
+      "role": "Developer",
+      "quote": "Ya ben bi rapor alıp geleyim...",
+      "phrase": "Developer gerçekleri! 💻",
+      "animation": "cool-spongebob.gif",
+      "color": "from-purple-500 to-indigo-600"
+    },
+    {
+      "id": "onur",
+      "name": "Onur",
+      "role": "Developer",
+      "quote": "Ah Rize'm canım Rize'm...",
+      "phrase": "Developer gerçekleri! 💻",
+      "animation": "cool-spongebob.gif",
+      "color": "from-purple-500 to-indigo-600"
+    },
+    {
+      "id": "onur",
+      "name": "Onur",
+      "role": "Developer",
+      "quote": "Bu uygulamayı bi refactor edelim bence.",
+      "phrase": "Developer gerçekleri! 💻",
+      "animation": "cool-spongebob.gif",
+      "color": "from-purple-500 to-indigo-600"
+    },
+    {
+      "id": "onur",
+      "name": "Onur",
+      "role": "Developer",
+      "quote": "Aklımdayken bi izin gireyim ben...",
+      "phrase": "Developer gerçekleri! 💻",
+      "animation": "cool-spongebob.gif",
+      "color": "from-purple-500 to-indigo-600"
+    },
+    {
+      "id": "onur",
+      "name": "Onur",
+      "role": "Developer",
+      "quote": "Ya benim başıma Metropol'de de benzer bi olay gelmişti... durun anlatayım.",
+      "phrase": "Developer gerçekleri! 💻",
+      "animation": "cool-spongebob.gif",
+      "color": "from-purple-500 to-indigo-600"
+    },
+    {
+      "id": "onur",
+      "name": "Onur",
+      "role": "Developer",
+      "quote": "Arkadaşlar evlilik çok güzel bir şey, herkes evlensin, hemen evlenin!",
+      "phrase": "Developer gerçekleri! 💻",
+      "animation": "cool-spongebob.gif",
+      "color": "from-purple-500 to-indigo-600"
+    },
+    {
+      "id": "kubilay",
+      "name": "Kubilay",
+      "role": "DevOps",
+      "quote": "Benim tarifem hep aynı...",
+      "phrase": "DevOps tecrübesi! 🚀",
+      "animation": "gandalf.gif",
+      "color": "from-blue-600 to-cyan-500"
+    },
+    {
+      "id": "kubilay",
+      "name": "Kubilay",
+      "role": "DevOps",
+      "quote": "Bu hata 2 senedir geliyor, refinementta bi konuşalım.",
+      "phrase": "DevOps tecrübesi! 🚀",
+      "animation": "gandalf.gif",
+      "color": "from-blue-600 to-cyan-500"
+    },
+    {
+      "id": "kubilay",
+      "name": "Kubilay",
+      "role": "DevOps",
+      "quote": "Ben onun bilgisini gruptan yazmıştım.",
+      "phrase": "DevOps tecrübesi! 🚀",
+      "animation": "gandalf.gif",
+      "color": "from-blue-600 to-cyan-500"
+    },
+    {
+      "id": "kubilay",
+      "name": "Kubilay",
+      "role": "DevOps",
+      "quote": "PR'lar complete edilmemiş daha...",
+      "phrase": "DevOps tecrübesi! 🚀",
+      "animation": "gandalf.gif",
+      "color": "from-blue-600 to-cyan-500"
+    },
+    {
+      "id": "kubilay",
+      "name": "Kubilay",
+      "role": "DevOps",
+      "quote": "Bu config'leri appSettings'e taşımamız lazım.",
+      "phrase": "DevOps tecrübesi! 🚀",
+      "animation": "gandalf.gif",
+      "color": "from-blue-600 to-cyan-500"
+    },
+    {
+      "id": "kubilay",
+      "name": "Kubilay",
+      "role": "DevOps",
+      "quote": "Preprod ortamında test ettiniz mi bunu?",
+      "phrase": "DevOps tecrübesi! 🚀",
+      "animation": "gandalf.gif",
+      "color": "from-blue-600 to-cyan-500"
+    },
+    {
+      "id": "kubilay",
+      "name": "Kubilay",
+      "role": "DevOps",
+      "quote": "2015'ten kalan bi Workflow var zaten bu işi yapan.",
+      "phrase": "DevOps tecrübesi! 🚀",
+      "animation": "gandalf.gif",
+      "color": "from-blue-600 to-cyan-500"
+    }
+  ],
+  "consensusQuotes": [
+    {
+      "id": "ezgi",
+      "name": "Ezgi",
+      "role": "Tester",
+      "quote": "Hepimiz aynı fikirde miyiz? Bu bir ilk olabilir!",
+      "phrase": "Sprint 42",
+      "animation": "cat.gif",
+      "color": "from-purple-500 to-pink-600"
+    },
+    {
+      "id": "onur",
+      "name": "Onur",
+      "role": "Developer",
+      "quote": "Herkes aynı oy vermiş, bu bir mucize!",
+      "phrase": "Sprint 42",
+      "animation": "typing.gif",
+      "color": "from-blue-500 to-cyan-600"
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Hayret... Ezgi eforlara itiraz etmedi!",
+      "phrase": "Sprint 42",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "kubilay",
+      "name": "Kubilay",
+      "role": "DevOps",
+      "quote": "Herkes anlaşmış, dünya tersine mi dönüyor?",
+      "phrase": "Sprint 42",
+      "animation": "gandalf.gif",
+      "color": "from-blue-600 to-cyan-500"
+    }
+  ],
+  "hugeDifferenceQuotes": [
+    {
+      "id": "ezgi",
+      "name": "Ezgi",
+      "role": "Tester",
+      "quote": "Bu kadar fark olması normal mi?",
+      "phrase": "Sprint 42",
+      "animation": "cat.gif",
+      "color": "from-purple-500 to-pink-600"
+    },
+    {
+      "id": "onur",
+      "name": "Onur",
+      "role": "Developer",
+      "quote": "Sanırım task'ı farklı anlamışız.",
+      "phrase": "Sprint 42",
+      "animation": "typing.gif",
+      "color": "from-blue-500 to-cyan-600"
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Bunun Acceptance Criteria'si niye boş kalmış?",
+      "phrase": "Sprint 42",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "kubilay",
+      "name": "Kubilay",
+      "role": "DevOps",
+      "quote": "PR'lar complete edilmemiş daha...",
+      "phrase": "Sprint 42",
+      "animation": "gandalf.gif",
+      "color": "from-blue-600 to-cyan-500"
+    }
+  ]
+} 

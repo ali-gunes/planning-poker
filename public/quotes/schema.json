@@ -1,0 +1,161 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Planning Poker Quotes",
+  "description": "Schema for team quotes in Planning Poker application",
+  "type": "object",
+  "required": [
+    "teamName",
+    "teamDescription",
+    "settings",
+    "medianLowQuotes",
+    "medianHighQuotes",
+    "generalQuotes",
+    "consensusQuotes",
+    "hugeDifferenceQuotes"
+  ],
+  "properties": {
+    "teamName": {
+      "type": "string",
+      "description": "Name of the team",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "teamDescription": {
+      "type": "string",
+      "description": "Description of the team",
+      "maxLength": 200
+    },
+    "settings": {
+      "type": "object",
+      "description": "Quote display settings",
+      "required": [
+        "showOnGeneral",
+        "showOnMedianLow",
+        "showOnMedianHigh",
+        "showOnConsensus",
+        "showOnHugeDifference",
+        "quoteProbability"
+      ],
+      "properties": {
+        "showOnGeneral": {
+          "type": "boolean",
+          "description": "Whether to show quotes in general cases"
+        },
+        "showOnMedianLow": {
+          "type": "boolean",
+          "description": "Whether to show quotes when average is below median"
+        },
+        "showOnMedianHigh": {
+          "type": "boolean",
+          "description": "Whether to show quotes when average is above median"
+        },
+        "showOnConsensus": {
+          "type": "boolean",
+          "description": "Whether to show quotes when there's consensus"
+        },
+        "showOnHugeDifference": {
+          "type": "boolean",
+          "description": "Whether to show quotes when there's a huge difference in votes"
+        },
+        "quoteProbability": {
+          "type": "number",
+          "description": "Probability of showing a quote (0.0-1.0)",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "medianLowQuotes": {
+      "type": "array",
+      "description": "Quotes to show when average is below median",
+      "items": {
+        "$ref": "#/definitions/quote"
+      },
+      "minItems": 1
+    },
+    "medianHighQuotes": {
+      "type": "array",
+      "description": "Quotes to show when average is above median",
+      "items": {
+        "$ref": "#/definitions/quote"
+      },
+      "minItems": 1
+    },
+    "generalQuotes": {
+      "type": "array",
+      "description": "Quotes to show in general cases",
+      "items": {
+        "$ref": "#/definitions/quote"
+      },
+      "minItems": 1
+    },
+    "consensusQuotes": {
+      "type": "array",
+      "description": "Quotes to show when there's consensus",
+      "items": {
+        "$ref": "#/definitions/quote"
+      },
+      "minItems": 1
+    },
+    "hugeDifferenceQuotes": {
+      "type": "array",
+      "description": "Quotes to show when there's a huge difference in votes",
+      "items": {
+        "$ref": "#/definitions/quote"
+      },
+      "minItems": 1
+    }
+  },
+  "definitions": {
+    "quote": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "role",
+        "quote",
+        "animation",
+        "color"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the team member",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name of the team member",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        "role": {
+          "type": "string",
+          "description": "Role of the team member",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        "quote": {
+          "type": "string",
+          "description": "The quote text",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "animation": {
+          "type": "string",
+          "description": "Filename of the animation GIF",
+          "pattern": "^[a-zA-Z0-9_-]+\\.gif$"
+        },
+        "color": {
+          "type": "string",
+          "description": "Gradient colors for the modal background",
+          "pattern": "^from-[a-z]+-[0-9]+ to-[a-z]+-[0-9]+$"
+        },
+        "phrase": {
+          "type": "string"
+        }
+      }
+    }
+  }
+} 

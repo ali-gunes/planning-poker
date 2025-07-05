@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { QuoteSystemSelector } from "./QuoteSystemSelector";
 
 interface RoomSettingsModalProps {
   isOpen: boolean;
@@ -184,6 +185,9 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
                 "Zamanlayıcı kullanılmayacak"}
             </div>
           </div>
+          
+          {/* Quote System Selector */}
+          <QuoteSystemSelector />
         </div>
 
         {/* Action Buttons */}

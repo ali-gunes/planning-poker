@@ -15,6 +15,7 @@ import { OwnerGraceCountdown } from "@/components/OwnerGraceCountdown";
 import { OwnerVotingPanel } from "@/components/OwnerVotingPanel";
 import { ThemeSelector } from "@/components/ThemeSelector";
 import { useToast } from '@/contexts/ToastContext';
+import { useQuoteSystem } from '@/contexts/QuoteContext';
 
 const votingStacks = {
     fibonacci: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
@@ -46,6 +47,8 @@ interface RoomSettings {
     ownerStatus?: 'active' | 'grace' | 'voting';
     graceEndTime?: number;
     previousOwner?: string;
+    quoteSystemType?: string;
+    customQuotes?: string[];
 }
 
 export default function RoomPage() {
@@ -80,6 +83,7 @@ export default function RoomPage() {
     const votingCards = roomSettings ? votingStacks[roomSettings.votingPreset] : [];
 
     const { showToast } = useToast();
+    const { showQuoteForType, setQuoteSystemType, uploadCustomQuotes } = useQuoteSystem();
 
     useEffect(() => {
         const storedName = sessionStorage.getItem("username");
@@ -121,138 +125,148 @@ export default function RoomPage() {
         if (!socket) return;
         
         const handleMessage = (event: MessageEvent) => {
-            const msg = JSON.parse(event.data);
-            //console.log("📨 Received message:", msg.type, msg);
+            const data = JSON.parse(event.data);
+            //console.log("📥 Received message:", data);
             
-            if (msg.type === "initial_state") {
-                //console.log("🏠 Setting initial room settings:", msg.settings);
-                setRoomSettings(msg.settings);
-                setParticipants(msg.participants);
-                setGameState(msg.settings.state);
+            if (data.type === "initial_state") {
+                //console.log("🏠 Setting initial room settings:", data.settings);
+                setRoomSettings(data.settings);
+                setParticipants(data.participants);
+                setGameState(data.settings.state);
+                // Apply quote system from room settings
+                if (data.settings.quoteSystemType) {
+                    if (data.settings.quoteSystemType === 'custom' && data.settings.customQuotes) {
+                        uploadCustomQuotes(JSON.stringify(data.settings.customQuotes));
+                    } else {
+                        setQuoteSystemType(data.settings.quoteSystemType);
+                    }
+                }
             }
-            if (msg.type === "update_participants") {
-                setParticipants(msg.payload);
+            if (data.type === "update_participants") {
+                setParticipants(data.payload);
             }
-            if (msg.type === "votes_revealed") {
-                setVotes(msg.payload);
+            if (data.type === "votes_revealed") {
+                setVotes(data.payload);
                 setGameState("revealed");
             }
-            if (msg.type === "new_round_started") {
+            if (data.type === "new_round_started") {
                 setGameState("voting");
                 setVotes([]);
                 setSelectedVote(null);
-                setParticipants(msg.payload);
+                setParticipants(data.payload);
                 if (roomSettings && roomSettings.timerDuration > 0) setTimer(roomSettings.timerDuration);
+                
+                // We'll show quotes in the start_round handler instead
             }
-            if (msg.type === "round_started") {
+            if (data.type === "round_started") {
                 setGameState("voting");
                 setSelectedVote(null);
                 if (roomSettings && roomSettings.timerDuration > 0) setTimer(roomSettings.timerDuration);
             }
-            if (msg.type === "room_settings") {
-                setRoomSettings(prev => ({ ...prev, ...msg.payload }));
-                setGameState(msg.payload.state);
+            if (data.type === "room_settings") {
+                setRoomSettings(prev => ({ ...prev, ...data.payload }));
+                setGameState(data.payload.state);
             }
-            if (msg.type === "room_settings_updated") {
-                //console.log("Received settings update:", msg.payload);
-                setRoomSettings(prev => ({ ...prev, ...msg.payload }));
-                setGameState(msg.payload.state);
+            if (data.type === "room_settings_updated") {
+                //console.log("Received settings update:", data.payload);
+                setRoomSettings(prev => ({ ...prev, ...data.payload }));
+                setGameState(data.payload.state);
             }
-            if (msg.type === "room_error") {
-                const errorParam = encodeURIComponent(msg.error);
+            if (data.type === "room_error") {
+                const errorParam = encodeURIComponent(data.error);
                 router.push(`/?error=${errorParam}`);
             }
-            if (msg.type === "name_error") {
-                //console.log("Name error:", msg.error);
-                setNameError(msg.error);
+            if (data.type === "name_error") {
+                //console.log("Name error:", data.error);
+                setNameError(data.error);
                 setIsNameModalOpen(true);
             }
             
             // Special message for returning owner
-            if (msg.type === "owner_can_reclaim") {
-                //console.log("Owner can reclaim:", msg.payload);
+            if (data.type === "owner_can_reclaim") {
+                //console.log("Owner can reclaim:", data.payload);
                 // Force update the isPreviousOwner state
                 setRoomSettings(prev => {
                     if (!prev) return prev;
                     return {
                         ...prev,
-                        previousOwner: msg.payload.previousOwner,
-                        graceEndTime: msg.payload.graceEndTime
+                        previousOwner: data.payload.previousOwner,
+                        graceEndTime: data.payload.graceEndTime
                     };
                 });
             }
             
             // Owner transfer messages
-            if (msg.type === "owner_grace_started") {
-                //console.log("🔴 Owner grace period started:", msg.payload);
+            if (data.type === "owner_grace_started") {
+                //console.log("🔴 Owner grace period started:", data.payload);
                 setRoomSettings(prev => {
                     if (!prev) return prev;
                     const newSettings: RoomSettings = { 
                         ...prev, 
                         ownerStatus: 'grace',
-                        graceEndTime: msg.payload.graceEndTime,
-                        previousOwner: msg.payload.owner
+                        graceEndTime: data.payload.graceEndTime,
+                        previousOwner: data.payload.owner
                     };
                     //console.log("🔴 Updated room settings for grace period:", newSettings);
                     return newSettings;
                 });
             }
             
-            if (msg.type === "owner_status_changed") {
-                //console.log("🔴 Owner status changed:", msg.payload);
+            if (data.type === "owner_status_changed") {
+                //console.log("🔴 Owner status changed:", data.payload);
                 setRoomSettings(prev => {
                     if (!prev) return prev;
                     const newSettings: RoomSettings = { 
                         ...prev, 
-                        ownerStatus: msg.payload.status as 'active' | 'grace' | 'voting',
-                        graceEndTime: msg.payload.graceEndTime
+                        ownerStatus: data.payload.status as 'active' | 'grace' | 'voting',
+                        graceEndTime: data.payload.graceEndTime
                     };
                     //console.log("🔴 Updated room settings for status change:", newSettings);
                     return newSettings;
                 });
             }
             
-            if (msg.type === "reclaim_error") {
-                console.error("Reclaim error:", msg.error);
-                alert(msg.error);
+            if (data.type === "reclaim_error") {
+                console.error("Reclaim error:", data.error);
+                alert(data.error);
             }
             
-            if (msg.type === "owner_voting_started") {
-                //console.log("Owner voting started:", msg.payload);
+            if (data.type === "owner_voting_started") {
+                //console.log("Owner voting started:", data.payload);
                 setRoomSettings(prev => {
                     if (!prev) return prev;
                     return { 
                         ...prev, 
                         ownerStatus: 'voting',
-                        previousOwner: msg.payload.previousOwner
+                        previousOwner: data.payload.previousOwner
                     };
                 });
                 setOwnerVotes([]);
                 setOwnerVoteCounts({});
-                setRequiredVotes(Math.floor(msg.payload.participants.length / 2) + 1);
+                setRequiredVotes(Math.floor(data.payload.participants.length / 2) + 1);
             }
             
-            if (msg.type === "owner_votes_updated") {
-                //console.log("Owner votes updated:", msg.payload);
-                setOwnerVotes(msg.payload.votes);
-                setOwnerVoteCounts(msg.payload.voteCounts);
-                setRequiredVotes(msg.payload.requiredVotes);
+            if (data.type === "owner_votes_updated") {
+                //console.log("Owner votes updated:", data.payload);
+                setOwnerVotes(data.payload.votes);
+                setOwnerVoteCounts(data.payload.voteCounts);
+                setRequiredVotes(data.payload.requiredVotes);
             }
             
-            if (msg.type === "owner_elected") {
-                //console.log("New owner elected:", msg.payload);
+            if (data.type === "owner_elected") {
+                //console.log("New owner elected:", data.payload);
                 // Don't change the owner yet, just update the vote counts
                 // This allows time for the coronation animation
-                setOwnerVoteCounts(msg.payload.voteCounts);
+                setOwnerVoteCounts(data.payload.voteCounts);
             }
             
-            if (msg.type === "owner_change_finalized") {
-                //console.log("Owner change finalized:", msg.payload);
+            if (data.type === "owner_change_finalized") {
+                //console.log("Owner change finalized:", data.payload);
                 setRoomSettings(prev => {
                     if (!prev) return prev;
                     return { 
                         ...prev, 
-                        owner: msg.payload.owner,
+                        owner: data.payload.owner,
                         ownerStatus: 'active',
                         previousOwner: undefined,
                         graceEndTime: undefined
@@ -262,13 +276,13 @@ export default function RoomPage() {
                 setOwnerVoteCounts({});
             }
             
-            if (msg.type === "owner_reclaimed") {
-                //console.log("Owner reclaimed:", msg.payload);
+            if (data.type === "owner_reclaimed") {
+                //console.log("Owner reclaimed:", data.payload);
                 setRoomSettings(prev => {
                     if (!prev) return prev;
                     return { 
                         ...prev, 
-                        owner: msg.payload.owner,
+                        owner: data.payload.owner,
                         ownerStatus: 'active',
                         previousOwner: undefined,
                         graceEndTime: undefined
@@ -276,6 +290,35 @@ export default function RoomPage() {
                 });
                 setOwnerVotes([]);
                 setOwnerVoteCounts({});
+            }
+
+            if (data.type === "reveal_votes") {
+                setGameState('revealed');
+                setVotes(data.votes);
+                
+                // Show quote based on the server-provided quote type
+                if (data.quoteType) {
+                    showQuoteForType(data.quoteType);
+                }
+            }
+
+            if (data.type === "new_round") {
+                // Don't show quotes on new round, only when voting begins
+                setGameState('waiting');
+                setVotes([]);
+                setSelectedVote(null);
+                setTimer(0);
+            }
+
+            if (data.type === "start_round") {
+                setGameState('voting');
+                setVotes([]);
+                setSelectedVote(null);
+                
+                // Show quote based on the server-provided quote type
+                if (data.quoteType) {
+                    showQuoteForType(data.quoteType);
+                }
             }
         };
 
@@ -284,7 +327,7 @@ export default function RoomPage() {
         return () => {
           socket.removeEventListener("message", handleMessage);
         }
-    }, [socket, roomSettings, router]);
+    }, [socket, roomSettings, router, showQuoteForType]);
   
     const handleNameSubmit = (submittedName: string, submittedRole: 'participant' | 'observer') => {
         const trimmedName = submittedName.trim();
@@ -425,7 +468,10 @@ export default function RoomPage() {
         }
         
         // For numeric votes
-        const numericVotes = allVotes as number[];
+        const numericVotes = allVotes.filter((v): v is number => typeof v === 'number');
+        if (numericVotes.length === 0) {
+            return { average: 0, min: 0, max: 0, consensus, hugeDifference: false, isYesNo, majority, majorityValue };
+        }
         const sum = numericVotes.reduce((acc, v) => acc + v, 0);
         const average = sum / numericVotes.length;
         const min = Math.min(...numericVotes);
@@ -698,33 +744,7 @@ export default function RoomPage() {
                                             </div>
                                         )}
                                         
-                                        {/* Character Cards */}
-                                        <div className="mt-6 flex flex-wrap justify-center gap-4">
-                                            <button
-                                                onClick={handleDenizCard}
-                                                className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold rounded-lg hover:from-orange-600 hover:to-red-700 transition-all transform hover:scale-105 shadow-lg"
-                                            >
-                                                ⚔ Deniz Kartını Oyna
-                                            </button>
-                                            <button
-                                                onClick={handleEzgiCard}
-                                                className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105 shadow-lg"
-                                            >
-                                                🛡️ Ezgi Kartını Oyna
-                                            </button>
-                                            <button
-                                                onClick={handleOnurCard}
-                                                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold rounded-lg hover:from-purple-600 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-lg"
-                                            >
-                                                💻 Onur Kartını Oyna
-                                            </button>
-                                            <button
-                                                onClick={handleKubilayCard}
-                                                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-lg hover:from-blue-700 hover:to-cyan-600 transition-all transform hover:scale-105 shadow-lg"
-                                            >
-                                                🚀 Kubilay Kartını Oyna
-                                            </button>
-                                        </div>
+                                        {/* Character card buttons removed as per new requirements */}
                                     </div>
                                 ) : (
                                 /* Voting State */

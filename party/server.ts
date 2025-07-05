@@ -37,6 +37,8 @@ interface Room {
   ownerVotes: OwnerVote[]; // Votes for new owner
   previousOwner?: string; // Store previous owner name for reclamation
   ownerToken?: string; // Secure token for owner authentication
+  quoteSystemType: string;
+  customQuotes: any;
 }
 // --- END OF TYPES ---
 
@@ -73,6 +75,65 @@ const setRoom = (roomId: string, roomData: Room | object) => {
   // Set the room data with a TTL from constants
   return redis.set(`room:${roomId}`, roomData, { ex: REDIS_TTL.ROOM });
 };
+
+// Add a function to select a random quote type based on voting results
+function selectQuoteType(votes: Vote[], votingPreset: string): string {
+  // Filter out observers' votes and convert to numeric
+  const numericVotes = votes
+    .filter(vote => typeof vote.vote === 'number')
+    .map(vote => vote.vote as number);
+  
+  if (numericVotes.length === 0) {
+    return 'general';
+  }
+  
+  // Check for consensus
+  const uniqueVotes = new Set(numericVotes);
+  if (uniqueVotes.size === 1) {
+    return 'consensus';
+  }
+  
+  // Check for huge difference
+  const min = Math.min(...numericVotes);
+  const max = Math.max(...numericVotes);
+  if (min > 0 && max >= min * 3) {
+    return 'hugeDifference';
+  }
+  
+  // Get the voting stack to find the median
+  const votingStacks = {
+    fibonacci: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
+    days: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    hours: [4, 8, 12, 16, 20, 24, 28, 32, 36, 40],
+    yesno: ['Evet', 'Hayır']
+  };
+  
+  if (votingPreset === 'yesno') {
+    return 'general';
+  }
+  
+  const numericStack = votingStacks[votingPreset as keyof typeof votingStacks] as number[];
+  
+  // Find the median of the voting stack
+  const sortedStack = [...numericStack].sort((a, b) => a - b);
+  const midIndex = Math.floor(sortedStack.length / 2);
+  const median = sortedStack.length % 2 === 0
+    ? (sortedStack[midIndex - 1] + sortedStack[midIndex]) / 2
+    : sortedStack[midIndex];
+  
+  // Calculate average of votes
+  const sum = numericVotes.reduce((acc, v) => acc + v, 0);
+  const average = sum / numericVotes.length;
+  
+  // Check if average is above or below median
+  if (average > median) {
+    return 'medianHigh';
+  } else if (average < median) {
+    return 'medianLow';
+  }
+  
+  return 'general';
+}
 
 export default class PokerServer implements Party.Server {
   // Store disconnection timers and owner grace period timers
@@ -263,7 +324,9 @@ export default class PokerServer implements Party.Server {
                 state: roomState.state,
                 ownerStatus: roomState.ownerStatus,
                 graceEndTime: roomState.graceEndTime,
-                previousOwner: roomState.previousOwner
+                previousOwner: roomState.previousOwner,
+                quoteSystemType: roomState.quoteSystemType,
+                customQuotes: roomState.customQuotes
               }, 
               participants: roomState.participants 
             }));
@@ -336,7 +399,9 @@ export default class PokerServer implements Party.Server {
             state: roomState.state,
             ownerStatus: roomState.ownerStatus,
             graceEndTime: roomState.graceEndTime,
-            previousOwner: roomState.previousOwner
+            previousOwner: roomState.previousOwner,
+            quoteSystemType: roomState.quoteSystemType,
+            customQuotes: roomState.customQuotes
           }, 
           participants: roomState.participants 
         }));
@@ -397,52 +462,22 @@ export default class PokerServer implements Party.Server {
         return;
       }
 
-      // Handle reveal votes message
-      if (msg.type === "reveal_votes") {
-        let roomState = await getRoom(this.room.id);
-        if (!roomState) return;
-        
-        // Get the sender's name
-        const senderParticipant = roomState.participants.find(p => p.connectionId === sender.id);
-        if (!senderParticipant) return;
-        const senderName = senderParticipant.name;
-        
-        // Only owner can reveal votes
-        if (roomState.owner !== senderName) {
-          return;
-        }
-        
-        // Make sure we're in voting state
-        if (roomState.state !== 'voting') {
-          return;
-        }
-        
-        // Filter out observers' votes
-        const participantVotes = roomState.votes.filter(vote => {
-          const participant = roomState.participants.find(p => p.name === vote.name);
-          return participant && participant.role !== 'observer';
-        });
-        
-        // Update room state
-        roomState.state = 'revealed';
-        await setRoom(this.room.id, roomState);
-        
-        // Broadcast revealed votes to everyone
-        this.room.broadcast(JSON.stringify({ 
-          type: "votes_revealed", 
-          payload: participantVotes 
-        }));
-        
-        return;
-      }
-
+      // Handle start_round message
       if (msg.type === 'start_round') {
         let roomState = await getRoom(this.room.id);
         if (roomState && roomState.state === 'lobby') {
           roomState.state = 'voting';
           // Timer logic can be re-introduced here if needed
           await setRoom(this.room.id, roomState);
+          
+          // Send the round_started event for UI updates
           this.room.broadcast(JSON.stringify({ type: 'round_started', payload: { state: roomState.state }}));
+          
+          // Send the start_round event with quoteType for the quote system
+          this.room.broadcast(JSON.stringify({ 
+            type: 'start_round',
+            quoteType: 'general'
+          }));
         }
       }
       
@@ -738,6 +773,58 @@ export default class PokerServer implements Party.Server {
             }
           }));
         }
+      }
+
+      // Handle reveal votes message
+      if (msg.type === "reveal_votes") {
+        let roomState = await getRoom(this.room.id);
+        if (!roomState) return;
+        
+        // Get the sender's name
+        const senderParticipant = roomState.participants.find(p => p.connectionId === sender.id);
+        if (!senderParticipant) return;
+        const senderName = senderParticipant.name;
+        
+        // Only owner can reveal votes
+        if (roomState.owner !== senderName) {
+          return;
+        }
+        
+        // Make sure we're in voting state
+        if (roomState.state !== 'voting') {
+          return;
+        }
+        
+        // Filter out observers' votes
+        const participantVotes = roomState.votes.filter(vote => {
+          const participant = roomState.participants.find(p => p.name === vote.name);
+          return participant && participant.role !== 'observer';
+        });
+        
+        // Update room state
+        roomState.state = 'revealed';
+        await setRoom(this.room.id, roomState);
+        
+        // Select the appropriate quote type based on voting results
+        const quoteType = selectQuoteType(participantVotes, roomState.votingPreset);
+        
+        // Broadcast revealed votes to everyone
+        this.room.broadcast(JSON.stringify({ 
+          type: "votes_revealed", 
+          payload: participantVotes 
+        }));
+        
+        // Send the reveal_votes event with selected quoteType for the quote system
+        this.room.broadcast(JSON.stringify({ 
+          type: "reveal_votes", 
+          votes: participantVotes,
+          roomSettings: {
+            votingPreset: roomState.votingPreset
+          },
+          quoteType: quoteType
+        }));
+        
+        return;
       }
     } catch (e) {
       console.error(`[ERROR] Error processing message:`, e);

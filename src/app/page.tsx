@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Changelog } from "@/components/Changelog";
 import { ThemeSelector } from "@/components/ThemeSelector";
+import { QuoteSystemSelector } from '@/components/QuoteSystemSelector';
+import { useQuoteSystem } from '@/contexts/QuoteContext';
 
 export default function Home() {
   const [name, setName] = useState("");
@@ -18,6 +20,8 @@ export default function Home() {
   const [timerMinutes, setTimerMinutes] = useState(0);
   const [autoReveal, setAutoReveal] = useState(false);
   const [role, setRole] = useState<'participant' | 'observer'>('participant');
+
+  const { quoteSystemType } = useQuoteSystem();
 
   // When timer is selected, automatically set autoReveal to true
   // When timer is set to 0 (no timer), set autoReveal to false
@@ -52,6 +56,8 @@ export default function Home() {
     sessionStorage.setItem("username", name.trim());
     sessionStorage.setItem("userRole", role);
 
+    const customQuotesString = quoteSystemType === 'custom' ? localStorage.getItem('custom-quotes') : null;
+
     try {
       const res = await fetch("/api/rooms", {
         method: "POST",
@@ -61,10 +67,11 @@ export default function Home() {
         body: JSON.stringify({
           name,
           role,
-          // Pass new settings to the API
           votingPreset,
-          timerDuration: timerMinutes * 60, // send as seconds
+          timerDuration: timerMinutes * 60,
           autoReveal,
+          quoteSystemType,
+          customQuotes: customQuotesString ? JSON.parse(customQuotesString) : null,
         }),
       });
 
@@ -245,7 +252,7 @@ export default function Home() {
                               ? "border-blue-500 bg-blue-500/20 text-blue-300"
                               : "border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500"
                       }`}
-                  >
+        >
                       <div className="text-xs font-medium">Süresiz</div>
                   </button>
                   <div className="grid grid-cols-4 gap-2">
@@ -301,12 +308,21 @@ export default function Home() {
                   </div>
               </div>
 
+              {/* Quote System Selector */}
+              <div className="w-full mt-2">
+                <QuoteSystemSelector />
+              </div>
+
               <button
-                onClick={handleCreateRoom}
-                className="w-full px-4 py-3 mt-4 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition-all transform hover:scale-105 disabled:bg-blue-900/50 disabled:cursor-not-allowed"
-                disabled={isLoading || !name.trim()}
+                  onClick={handleCreateRoom}
+                  disabled={!name || isLoading}
+                  className={`w-full mt-4 py-3 px-4 rounded-md font-medium transition-colors ${
+                      !name || isLoading
+                          ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+                          : "bg-blue-600 hover:bg-blue-700 text-white"
+                  }`}
               >
-                {isLoading ? "Oluşturuluyor..." : "Oda Oluştur"}
+                  {isLoading ? "Oda Oluşturuluyor..." : "Oda Oluştur"}
               </button>
             </div>
 

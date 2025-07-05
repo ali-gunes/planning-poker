@@ -1,0 +1,103 @@
+{
+  "teamName": "Your Team Name",
+  "teamDescription": "Your Team Description",
+  "settings": {
+    "showOnGeneral": true,
+    "showOnMedianLow": true,
+    "showOnMedianHigh": true,
+    "showOnConsensus": true,
+    "showOnHugeDifference": true,
+    "quoteProbability": 0.7
+  },
+  "medianLowQuotes": [
+    {
+      "id": "member1",
+      "name": "Team Member 1",
+      "role": "Role 1",
+      "quote": "This is a low estimate quote",
+      "animation": "animation1.gif",
+      "color": "from-blue-500 to-cyan-600"
+    },
+    {
+      "id": "member2",
+      "name": "Team Member 2",
+      "role": "Role 2",
+      "quote": "Another low estimate quote",
+      "animation": "animation2.gif",
+      "color": "from-green-500 to-emerald-600"
+    }
+  ],
+  "medianHighQuotes": [
+    {
+      "id": "member1",
+      "name": "Team Member 1",
+      "role": "Role 1",
+      "quote": "This is a high estimate quote",
+      "animation": "animation1.gif",
+      "color": "from-blue-500 to-cyan-600"
+    },
+    {
+      "id": "member2",
+      "name": "Team Member 2",
+      "role": "Role 2",
+      "quote": "Another high estimate quote",
+      "animation": "animation2.gif",
+      "color": "from-green-500 to-emerald-600"
+    }
+  ],
+  "generalQuotes": [
+    {
+      "id": "member1",
+      "name": "Team Member 1",
+      "role": "Role 1",
+      "quote": "This is a general quote",
+      "animation": "animation1.gif",
+      "color": "from-blue-500 to-cyan-600"
+    },
+    {
+      "id": "member2",
+      "name": "Team Member 2",
+      "role": "Role 2",
+      "quote": "Another general quote",
+      "animation": "animation2.gif",
+      "color": "from-green-500 to-emerald-600"
+    }
+  ],
+  "consensusQuotes": [
+    {
+      "id": "member1",
+      "name": "Team Member 1",
+      "role": "Role 1",
+      "quote": "This is a consensus quote",
+      "animation": "animation1.gif",
+      "color": "from-blue-500 to-cyan-600"
+    },
+    {
+      "id": "member2",
+      "name": "Team Member 2",
+      "role": "Role 2",
+      "quote": "Another consensus quote",
+      "animation": "animation2.gif",
+      "color": "from-green-500 to-emerald-600"
+    }
+  ],
+  "hugeDifferenceQuotes": [
+    {
+      "id": "member1",
+      "name": "Team Member 1",
+      "role": "Role 1",
+      "quote": "This is a huge difference quote",
+      "animation": "animation1.gif",
+      "color": "from-blue-500 to-cyan-600",
+      "phrase": "Sprint Demo #12"
+    },
+    {
+      "id": "member2",
+      "name": "Team Member 2",
+      "role": "Role 2",
+      "quote": "Another huge difference quote",
+      "animation": "animation2.gif",
+      "color": "from-green-500 to-emerald-600"
+    }
+  ]
+} 
