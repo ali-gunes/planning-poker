@@ -3,6 +3,13 @@ import React, { useState, useEffect } from 'react';
 // Define the changelog entries
 const changelogEntries = [
     {
+      version: "v1.4.0",
+      title: "Dinamik Alıntı Sistemi 💬",
+      description: "Genel tur başlangıcı ve oylama sonuçlarına göre durum bağlı alıntılar eklendi. C&I Hatırası veya özel JSON yükleme desteğiyle ekip anıları oylama ekranına geliyor.",
+      date: "5 Temmuz 2025",
+      type: "feature"
+    },
+    {
       version: "v1.3.2",
       title: "Bildirim Pozisyonları 📍",
       description: "Özel bildirimlerin konumları artık özelleştirilebilir (6 farklı pozisyon).",
@@ -123,7 +130,7 @@ export function Changelog() {
           setActiveIndex((prevIndex) => (prevIndex + 1) % changelogEntries.length);
           setIsAnimating(false);
         }, 500);
-      }, 5000);
+      }, 7000);
       
       return () => clearInterval(interval);
     }

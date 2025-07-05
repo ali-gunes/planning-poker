@@ -16,6 +16,7 @@ import { OwnerVotingPanel } from "@/components/OwnerVotingPanel";
 import { ThemeSelector } from "@/components/ThemeSelector";
 import { useToast } from '@/contexts/ToastContext';
 import { useQuoteSystem } from '@/contexts/QuoteContext';
+import { InlineQuoteCard } from '@/components/InlineQuoteCard';
 
 const votingStacks = {
     fibonacci: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
@@ -744,30 +745,35 @@ export default function RoomPage() {
                                             </div>
                                         )}
                                         
-                                        {/* Character card buttons removed as per new requirements */}
+                                        {/* Inline quote card below result GIFs */}
+                                        <InlineQuoteCard variant="revealed" />
                                     </div>
                                 ) : (
                                 /* Voting State */
-                                    <div className="flex flex-wrap justify-center gap-4">
+                                    <>
+                                      <div className="flex flex-wrap justify-center gap-4">
                                         {votingCards.map((value) => (
-                                            <button
-                                                key={value}
-                                                onClick={() => handleVote(value)}
-                                                disabled={gameState !== 'voting' || role === 'observer'}
-                                                className={`w-28 h-40 rounded-xl flex items-center justify-center text-4xl font-bold transition-all duration-200 shadow-lg
-                                                    ${ gameState !== 'voting'
-                                                        ? "bg-gray-700 cursor-not-allowed text-gray-500"
-                                                        : role === 'observer'
-                                                        ? "bg-gray-700 cursor-not-allowed text-gray-500"
-                                                        : selectedVote === value
-                                                        ? "bg-blue-600 text-white ring-4 ring-blue-400 transform -translate-y-2"
-                                                        : "bg-gray-800 text-blue-400 hover:bg-gray-700 hover:-translate-y-1"
-                                                    }`}
-                                            >
-                                                {value}
-                                            </button>
+                                          <button
+                                            key={value}
+                                            onClick={() => handleVote(value)}
+                                            disabled={gameState !== 'voting' || role === 'observer'}
+                                            className={`w-28 h-40 rounded-xl flex items-center justify-center text-4xl font-bold transition-all duration-200 shadow-lg
+                                                ${ gameState !== 'voting'
+                                                    ? "bg-gray-700 cursor-not-allowed text-gray-500"
+                                                    : role === 'observer'
+                                                    ? "bg-gray-700 cursor-not-allowed text-gray-500"
+                                                    : selectedVote === value
+                                                    ? "bg-blue-600 text-white ring-4 ring-blue-400 transform -translate-y-2"
+                                                    : "bg-gray-800 text-blue-400 hover:bg-gray-700 hover:-translate-y-1"
+                                                }`}
+                                          >
+                                            {value}
+                                          </button>
                                         ))}
-                                    </div>
+                                      </div>
+                                      {/* General quote card below voting cards */}
+                                      <InlineQuoteCard variant="voting" />
+                                    </>
                                 )}
                                 {role === 'observer' && (
                                     <div className="mt-4 text-center text-gray-400">

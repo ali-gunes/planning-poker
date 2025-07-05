@@ -71,7 +71,7 @@ export function OwnerVotingPanel({
         // Hide coronation after 5 seconds
         setTimeout(() => {
           setShowCoronation(false);
-        }, 5000);
+        }, 7000);
       }
     });
   }, [voteCounts, requiredVotes, newOwnerSelected, showCoronation]);

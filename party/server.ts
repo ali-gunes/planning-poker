@@ -43,7 +43,7 @@ interface Room {
 // --- END OF TYPES ---
 
 // Time in milliseconds to wait before marking a user as inactive after disconnect
-const DISCONNECT_TIMEOUT = 5000; // 5 seconds for testing (was 10 seconds)
+const DISCONNECT_TIMEOUT = 10000; // 5 seconds for testing (was 10 seconds)
 
 // Time in milliseconds for owner grace period
 const OWNER_GRACE_PERIOD = 120000; // 2 minutes

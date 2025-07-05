@@ -11,6 +11,15 @@ interface QuoteContextType {
   quoteSystem: QuoteSystem | null;
   uploadCustomQuotes: (jsonData: string) => Promise<boolean>;
   showQuoteForType: (quoteType: QuoteType) => void;
+  currentQuote: {
+    quote: string;
+    name: string;
+    role: string;
+    phrase?: string;
+    animation: string;
+    color: string;
+  } | null;
+  lastQuoteType: QuoteType | null;
 }
 
 const QuoteContext = createContext<QuoteContextType | undefined>(undefined);
@@ -27,6 +36,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     animation: string;
     color: string;
   } | null>(null);
+  const [lastQuoteType, setLastQuoteType] = useState<QuoteType | null>(null);
   
   const { showToast } = useToast();
 
@@ -175,11 +185,11 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
         animation: randomQuote.animation,
         color: randomQuote.color
       });
-      setIsModalOpen(true);
-      if (dismissTimeoutRef.current) clearTimeout(dismissTimeoutRef.current);
-      dismissTimeoutRef.current = setTimeout(() => {
-        closeModal();
-      }, 4000);
+      setLastQuoteType(quoteType);
+
+      // We previously used a top overlay for general quotes; now we display them inline
+      // below the voting cards, so no modal is needed. Ensure modal is closed.
+      setIsModalOpen(false);
     }
   };
 
@@ -198,15 +208,17 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
       setQuoteSystemType, 
       quoteSystem, 
       uploadCustomQuotes,
-      showQuoteForType
+      showQuoteForType,
+      currentQuote,
+      lastQuoteType
     }}>
       {children}
       
       {/* Quote Modal */}
-      {isModalOpen && (
+      {isModalOpen && lastQuoteType === 'general' && (
         <div className="fixed inset-0 bg-black/75 z-40 pointer-events-none animate-fade-in"></div>
       )}
-      {isModalOpen && currentQuote && (
+      {isModalOpen && currentQuote && lastQuoteType === 'general' && (
         <div className="fixed left-1/2 top-16 -translate-x-1/2 z-50 pointer-events-none">
           <div className={`pointer-events-auto bg-gradient-to-br ${currentQuote.color} rounded-xl p-6 max-w-md w-full shadow-2xl animate-fade-in-down`}>
             <div className="text-center">

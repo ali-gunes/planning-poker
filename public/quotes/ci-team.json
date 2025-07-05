@@ -5,8 +5,8 @@
     "showOnGeneral": true,
     "showOnMedianLow": true,
     "showOnMedianHigh": true,
-    "showOnConsensus": true,
-    "showOnHugeDifference": true,
+    "showOnConsensus": false,
+    "showOnHugeDifference": false,
     "quoteProbability": 1
   },
   "medianLowQuotes": [
