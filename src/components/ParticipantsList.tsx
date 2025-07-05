@@ -1,19 +1,35 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 interface Participant {
     name: string;
     hasVoted: boolean;
     status?: 'active' | 'inactive';
     role?: 'participant' | 'observer';
+    muted?: boolean;
 }
 
 interface ParticipantsListProps {
     participants: Participant[];
     currentUser: string;
     ownerName?: string;
+    onToggleMute?: (name:string)=>void;
 }
 
-export function ParticipantsList({ participants, currentUser, ownerName }: ParticipantsListProps) {
+export function ParticipantsList({ participants, currentUser, ownerName, onToggleMute }: ParticipantsListProps) {
+    const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null);
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    // Close menu on click outside
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+                setMenuOpenFor(null);
+            }
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, []);
+
     // Sort participants: owner first, then active, then inactive
     const sortedParticipants = [...participants].sort((a, b) => {
         if (a.name === ownerName) return -1;
@@ -68,8 +84,35 @@ export function ParticipantsList({ participants, currentUser, ownerName }: Parti
                                 {/* {participant.role === 'observer' && (
                                     <span className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded">Gözlemci</span>
                                 )} */}
-                                {participant.role === 'participant' && participant.hasVoted && (
+                                {participant.muted && (
+                                    <span className="text-red-400" title="Susturuldu">🔇</span>
+                                )}
+                                {!participant.muted && participant.role === 'participant' && participant.hasVoted && (
                                     <span className="text-green-500" title="Oy kullandı">✓</span>
+                                )}
+                                {currentUser === ownerName && participant.name !== ownerName && (
+                                    <div className="relative" ref={menuRef}>
+                                        <button
+                                            onClick={() => setMenuOpenFor(menuOpenFor === participant.name ? null : participant.name)}
+                                            className="text-gray-400 hover:text-gray-200 px-1"
+                                            title="Aksiyonlar"
+                                        >
+                                            ⋯
+                                        </button>
+                                        {menuOpenFor === participant.name && (
+                                            <div className="absolute right-0 mt-1 w-40 bg-gray-800 border border-gray-700 rounded shadow-lg z-50">
+                                                <button
+                                                    onClick={() => {
+                                                        onToggleMute?.(participant.name);
+                                                        setMenuOpenFor(null);
+                                                    }}
+                                                    className="w-full text-left px-3 py-2 text-sm hover:bg-gray-700"
+                                                >
+                                                    {participant.muted ? '🔊 Suskunluğu Bitir' : '🔇 Kullanıcıyı Sustur'}
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         </div>

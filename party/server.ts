@@ -10,6 +10,7 @@ interface Participant {
   connectionId?: string; // Track connection ID
   status: 'active' | 'inactive'; // Track participant status
   role: 'participant' | 'observer'; // Track participant role
+  muted: boolean;
 }
 
 interface Vote {
@@ -385,7 +386,8 @@ export default class PokerServer implements Party.Server {
                 hasVoted: false, 
                 connectionId: sender.id,
                 status: 'active',
-                role: role || 'participant'
+                role: role || 'participant',
+                muted: false
               });
               if (!roomState.votes.some(v => v.name === name)) {
                   roomState.votes.push({ name, vote: null });
@@ -441,8 +443,8 @@ export default class PokerServer implements Party.Server {
         // Find the participant
         const participant = roomState.participants.find(p => p.name === name);
         
-        // Only allow participants (not observers) to vote
-        if (!participant || participant.role === 'observer') {
+        // Only allow participants who are not observers and not muted
+        if (!participant || participant.role === 'observer' || participant.muted) {
           return;
         }
         
@@ -541,23 +543,17 @@ export default class PokerServer implements Party.Server {
         
         if (!roomState) return;
         
-        // Find and remove the participant
-        const participantIndex = roomState.participants.findIndex(p => p.name === name);
-        
-        if (participantIndex !== -1) {
-          //console.log(`[LEAVE] Participant "${name}" is leaving room ${this.room.id}`);
-          
-          // Check if this is the owner
+        const participant = roomState.participants.find(p => p.name === name);
+        if (participant) {
+          //console.log(`[LEAVE] Participant "${name}" marked inactive in room ${this.room.id}`);
+
           const isOwner = roomState.owner === name;
-          
-          // Remove participant from the list
-          roomState.participants.splice(participantIndex, 1);
-          
-          // Remove their vote as well
-          const voteIndex = roomState.votes.findIndex(v => v.name === name);
-          if (voteIndex !== -1) {
-            roomState.votes.splice(voteIndex, 1);
-          }
+
+          participant.status = 'inactive';
+          participant.connectionId = undefined;
+          participant.hasVoted = false;
+          // Clear vote
+          roomState.votes = roomState.votes.filter(v => v.name !== name);
           
           // If this is the owner, start grace period immediately
           if (isOwner && roomState.ownerStatus === 'active') {
@@ -831,6 +827,53 @@ export default class PokerServer implements Party.Server {
         }));
         
         return;
+      }
+
+      // Owner toggles mute state for a participant
+      if (msg.type === "toggle_mute_user") {
+        const { target } = msg;
+        if (typeof target !== 'string') return;
+
+        const roomState = await getRoom(this.room.id);
+        if (!roomState) return;
+
+        // Identify sender as participant
+        const senderParticipant = roomState.participants.find(p => p.connectionId === sender.id);
+        if (!senderParticipant || senderParticipant.name !== roomState.owner) {
+          // Not authorized
+          sender.send(JSON.stringify({ type: "mute_error", error: "Yetkisiz istek" }));
+          return;
+        }
+
+        // Can't mute self (owner)
+        if (target === roomState.owner) return;
+
+        // Find target participant
+        const targetIndex = roomState.participants.findIndex(p => p.name === target);
+        if (targetIndex === -1) return;
+
+        const participant = roomState.participants[targetIndex];
+        participant.muted = !participant.muted;
+
+        if (participant.muted) {
+          // Clear any existing vote
+          participant.hasVoted = false;
+          roomState.votes = roomState.votes.filter(v => v.name !== target);
+        }
+
+        await setRoom(this.room.id, roomState);
+
+        // Notify everyone
+        this.room.broadcast(JSON.stringify({ type: "update_participants", payload: roomState.participants }));
+
+        // Notify target user
+        if (participant.connectionId) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const targetConn = (this.room as any).get?.(participant.connectionId);
+          if (targetConn) {
+            targetConn.send(JSON.stringify({ type: participant.muted ? "silenced" : "unsilenced" }));
+          }
+        }
       }
     } catch (e) {
       console.error(`[ERROR] Error processing message:`, e);

@@ -32,6 +32,7 @@ interface Participant {
     hasVoted: boolean; 
     status?: 'active' | 'inactive';
     role?: 'participant' | 'observer';
+    muted?: boolean;
 }
 
 interface Vote { name: string; vote: number | string; }
@@ -81,9 +82,11 @@ export default function RoomPage() {
     const [ownerVoteCounts, setOwnerVoteCounts] = useState<{[candidate: string]: number}>({});
     const [requiredVotes, setRequiredVotes] = useState(0);
 
+    // Computed helper: is the current user the room owner?
     const isOwner = roomSettings?.owner === name;
     const isPreviousOwner = roomSettings?.previousOwner === name;
     const votingCards = roomSettings ? votingStacks[roomSettings.votingPreset] : [];
+    const isMuted = participants.find(p=>p.name===name)?.muted;
 
     const { showToast } = useToast();
     const { showQuoteForType, setQuoteSystemType, uploadCustomQuotes } = useQuoteSystem();
@@ -323,6 +326,13 @@ export default function RoomPage() {
                     showQuoteForType(data.quoteType);
                 }
             }
+
+            if (data.type === "kicked") {
+                showToast("Oda sahibi tarafından çıkarıldınız.", "error", 5000, "top-center");
+                router.push("/");
+                socket?.close();
+                return;
+            }
         };
 
         socket.addEventListener("message", handleMessage);
@@ -343,8 +353,8 @@ export default function RoomPage() {
     };
 
     const handleVote = (vote: number | string) => {
-        // Only allow participants (not observers) to vote
-        if (socket && gameState === 'voting' && role === 'participant') {
+        const isMuted = participants.find(p=>p.name===name)?.muted;
+        if (socket && gameState === 'voting' && role === 'participant' && !isMuted) {
             //console.log(`Sending vote: ${vote} for user ${name} with role ${role}`);
             setSelectedVote(vote);
             socket.send(JSON.stringify({ type: "user_voted", roomId, name, vote, role }));
@@ -426,6 +436,11 @@ export default function RoomPage() {
                 ownerToken
             }));
         }
+    };
+
+    const handleToggleMuteParticipant = (target: string) => {
+        if (!socket || !isOwner) return;
+        socket.send(JSON.stringify({ type: 'toggle_mute_user', target }));
     };
 
     const voteCounts = useMemo(() => {
@@ -629,6 +644,7 @@ export default function RoomPage() {
                             participants={participants} 
                             currentUser={name} 
                             ownerName={roomSettings?.owner}
+                            onToggleMute={handleToggleMuteParticipant}
                         />
                     </aside>
 
@@ -767,7 +783,7 @@ export default function RoomPage() {
                                           <button
                                             key={value}
                                             onClick={() => handleVote(value)}
-                                            disabled={gameState !== 'voting' || role === 'observer'}
+                                            disabled={gameState !== 'voting' || role === 'observer' || isMuted}
                                             className={`w-28 h-40 rounded-xl flex items-center justify-center text-4xl font-bold transition-all duration-200 shadow-lg
                                                 ${ gameState !== 'voting'
                                                     ? "bg-gray-700 cursor-not-allowed text-gray-500"
@@ -786,11 +802,17 @@ export default function RoomPage() {
                                       <InlineQuoteCard variant="voting" />
                                     </>
                                 )}
-                                {role === 'observer' && (
+                                {(role === 'observer' || isMuted) && (
                                     <div className="mt-4 text-center text-gray-400">
-                                        <p>Gözlemci rolündesiniz. Oy kullanamazsınız.</p>
+                                        {role === 'observer' && (
+                                            <p>Gözlemci rolündesiniz. Oy kullanamazsınız.</p>
+                                        )}
+                                        {isMuted && (
+                                            <p>Oda sahibi tarafından susturuldunuz. Oy kullanamazsınız.</p>
+                                        )}
                                     </div>
                                 )}
+                                
                             </>
                         )}
                     </section>
