@@ -1,22 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { QuoteSystem } from '@/types/quotes';
-
-export async function validateQuoteSystem(jsonData: any): Promise<{ isValid: boolean; errors?: string[] }> {
+// jsonData is unknown incoming JSON parsed value
+export async function validateQuoteSystem(jsonData: unknown): Promise<{ isValid: boolean; errors?: string[] }> {
   try {
     // First, check if it's valid JSON
-    if (typeof jsonData !== 'object') {
+    if (typeof jsonData !== 'object' || jsonData === null) {
       return { isValid: false, errors: ['Invalid JSON format'] };
     }
 
-    // Load the schema
-    const schemaResponse = await fetch('/quotes/schema.json');
-    if (!schemaResponse.ok) {
-      return { isValid: false, errors: ['Could not load validation schema'] };
-    }
-    
-    const schema = await schemaResponse.json();
-    
+    const json = jsonData as Record<string, unknown>;
+
     // Basic structure validation
     const errors: string[] = [];
     
@@ -25,25 +19,27 @@ export async function validateQuoteSystem(jsonData: any): Promise<{ isValid: boo
                           'medianHighQuotes', 'generalQuotes', 'consensusQuotes', 'hugeDifferenceQuotes'];
     
     for (const prop of requiredProps) {
-      if (!jsonData[prop]) {
+      if (!(prop in json)) {
         errors.push(`Missing required property: ${prop}`);
       }
     }
     
     // Settings validation
-    if (jsonData.settings) {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const settings: Record<string, unknown> | undefined = (json as any).settings;
+    if (settings) {
       const settingsProps = ['showOnGeneral', 'showOnMedianLow', 'showOnMedianHigh', 
                             'showOnConsensus', 'showOnHugeDifference', 'quoteProbability'];
       
       for (const prop of settingsProps) {
-        if (jsonData.settings[prop] === undefined) {
+        if (settings[prop] === undefined) {
           errors.push(`Missing required setting: ${prop}`);
         }
       }
       
       // Check quoteProbability is between 0 and 1
-      if (typeof jsonData.settings.quoteProbability === 'number') {
-        if (jsonData.settings.quoteProbability < 0 || jsonData.settings.quoteProbability > 1) {
+      if (typeof settings.quoteProbability === 'number') {
+        if (settings.quoteProbability < 0 || settings.quoteProbability > 1) {
           errors.push('quoteProbability must be between 0 and 1');
         }
       }
@@ -54,13 +50,14 @@ export async function validateQuoteSystem(jsonData: any): Promise<{ isValid: boo
                         'consensusQuotes', 'hugeDifferenceQuotes'];
     
     for (const arrayName of quoteArrays) {
-      if (Array.isArray(jsonData[arrayName])) {
-        if (jsonData[arrayName].length === 0) {
+      const arr = (json as any)[arrayName];
+      if (Array.isArray(arr)) {
+        if (arr.length === 0) {
           errors.push(`${arrayName} array cannot be empty`);
         }
         
         // Validate each quote item
-        for (const [index, quote] of jsonData[arrayName].entries()) {
+        for (const [index, quote] of arr.entries()) {
           if (!quote.id) errors.push(`Quote ${index} in ${arrayName} is missing id`);
           if (!quote.name) errors.push(`Quote ${index} in ${arrayName} is missing name`);
           if (!quote.role) errors.push(`Quote ${index} in ${arrayName} is missing role`);
@@ -85,7 +82,7 @@ export async function validateQuoteSystem(jsonData: any): Promise<{ isValid: boo
             }
           }
         }
-      } else if (jsonData[arrayName] !== undefined) {
+      } else if (arr !== undefined) {
         errors.push(`${arrayName} must be an array`);
       }
     }

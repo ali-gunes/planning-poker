@@ -10,7 +10,7 @@ interface CreateRoomRequest {
     timerDuration: number;
     autoReveal: boolean;
     quoteSystemType: 'none' | 'ci-team' | 'custom';
-    customQuotes?: any;
+    customQuotes?: Record<string, unknown>;
 }
 
 // Generate a secure random token

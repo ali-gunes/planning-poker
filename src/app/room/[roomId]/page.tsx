@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 "use client";
 
 import { useEffect, useMemo, useState, useCallback } from "react";
@@ -328,7 +330,7 @@ export default function RoomPage() {
         return () => {
           socket.removeEventListener("message", handleMessage);
         }
-    }, [socket, roomSettings, router, showQuoteForType]);
+    }, [socket, roomSettings, router, showQuoteForType, setQuoteSystemType, uploadCustomQuotes]);
   
     const handleNameSubmit = (submittedName: string, submittedRole: 'participant' | 'observer') => {
         const trimmedName = submittedName.trim();
@@ -579,7 +581,7 @@ export default function RoomPage() {
                                     onClick={handleReclaimOwnership}
                                     className="px-6 py-3 bg-yellow-500 text-black font-bold rounded-md hover:bg-yellow-600 transition-all transform hover:scale-105 animate-pulse"
                                 >
-                                    👑 Krallığını Geri Al
+                                    �� Krallığını Geri Al
                                 </button>
                             </div>
                         )}

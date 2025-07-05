@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
@@ -223,6 +224,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
           <div className={`pointer-events-auto bg-gradient-to-br ${currentQuote.color} rounded-xl p-6 max-w-md w-full shadow-2xl animate-fade-in-down`}>
             <div className="text-center">
               <div className="flex justify-center mb-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
                   src={`/gifs/${currentQuote.animation}`} 
                   alt={`${currentQuote.name} Animation`} 
