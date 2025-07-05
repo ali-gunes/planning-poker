@@ -35,6 +35,11 @@ A real-time planning poker application for agile teams to estimate tasks collabo
   * Quote object template.
   * Live preview card.
 
+### Moderation 🔇 *(v1.5+)*
+* Room owner can mute / un-mute participants via kebab menu.
+* Muted users stay in the list with a red 🔇 icon, cannot vote, and see a warning message.
+* Mute status is persisted in Redis, so refresh / reconnect does not bypass it.
+
 ### Themes & Audio
 * Built-in themes: **Modern**, **Retro 90s**, **Synthwave** (toggle via palette icon).
 * Theme-aware components (buttons, cards, toasts, etc.).

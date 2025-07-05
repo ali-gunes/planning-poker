@@ -3,6 +3,13 @@ import React, { useState, useEffect } from 'react';
 // Define the changelog entries
 const changelogEntries = [
     {
+      version: "v1.5.0",
+      title: "Katılımcı Susturma & Yönetim Menüsü 🔇",
+      description: "Oda sahibi artık katılımcıları susturabilir; susturulan kullanıcılar oy veremez ve satırlarında 🔇 simgesi gösterilir. Kebab menüsü (⋯) ile susturma / suskunluğu bitir seçenekleri eklendi.",
+      date: "6 Temmuz 2025",
+      type: "feature"
+    },
+    {
       version: "v1.4.0",
       title: "Dinamik Alıntı Sistemi 💬",
       description: "Genel tur başlangıcı ve oylama sonuçlarına göre durum bağlı alıntılar eklendi. C&I Hatırası veya özel JSON yükleme desteğiyle ekip anıları oylama ekranına geliyor.",
