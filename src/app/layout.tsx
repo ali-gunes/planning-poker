@@ -48,7 +48,7 @@ export default function RootLayout({
         <ClientProviders>
           <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
             <main className="flex-grow">
-              {children}
+        {children}
             </main>
             <footer className="w-full text-center p-4 mt-8 text-gray-500">
               C&I ekibi için ❤️ ve ☕️ ile yapıldı.

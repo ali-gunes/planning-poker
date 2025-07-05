@@ -4,36 +4,50 @@ A real-time planning poker application for agile teams to estimate tasks collabo
 
 ![Planning Poker App](public/planning-poker.svg)
 
-## Features
+## Key Features
 
-- **Room Management**
-  - Create private planning poker rooms
-  - Join existing rooms via invite links
-  - Verify room existence before joining
-  - Room owner controls for managing the session
-  - Automatic room expiration after 6 hours (Redis TTL)
+### Room Management
+* Create private rooms and share invite links.
+* Owner dashboard with session controls.
+* Rooms auto-expire after 6 h using Redis TTL.
 
-- **Voting System**
-  - Multiple voting presets (Fibonacci, days, hours, yes/no)
-  - Real-time voting with immediate feedback
-  - Hidden votes until reveal phase
-  - Statistical analysis (average, min, max, consensus detection)
+### Voting System
+* Presets: Fibonacci, Days, Hours, Yes/No.
+* Real-time hidden voting with reveal & stats.
 
-- **Room Ownership System**
-  - Intelligent handling of disconnections vs. refreshes
-  - 2-minute grace period when room owner disconnects
-  - Visual "Kral Düştü" (King has fallen) notification with countdown
-  - Democratic voting system for new owner selection
-  - Secure token-based owner authentication
-  - Visual coronation ceremony for newly elected owners
+### Ownership Transfer
+* 2-minute grace timer when the owner leaves.
+* "Kral Düştü" notification + live countdown.
+* Democratic election if the owner doesn't return.
+* Animated coronation for the new owner.
 
-- **User Experience**
-  - Clean, responsive interface for desktop and mobile
-  - Character cards with team-specific quotes
-  - Non-repetitive quote selection algorithm
-  - Simple, intuitive controls for all participants
-  - Visual indicators for offline/inactive users
-  - Animated transitions for owner changes
+### Quote System 💬 *(v1.4+)*
+* Three modes selectable via *Alıntı Sistemi* panel:
+  * **Yok** – disabled.
+  * **C&I Hatırası** – built-in nostalgia pack.
+  * **Özel** – upload your own JSON pack.
+* Quotes appear inline while voting or after reveal (based on result).
+* Smart selection (medianLow / medianHigh / consensus / hugeDifference / general).
+* JSON uploads are validated client-side and stored in `localStorage`.
+* Progress/status indicator below the *Upload JSON* button.
+* Dedicated guide page at `/help/custom-quotes` with:
+  * Gallery of available GIFs (`/public/gifs`).
+  * Quote object template.
+  * Live preview card.
+
+### Themes & Audio
+* Built-in themes: **Modern**, **Retro 90s**, **Synthwave** (toggle via palette icon).
+* Theme-aware components (buttons, cards, toasts, etc.).
+* Optional background music per theme with a tiny Visualizer.
+
+### Reliability
+* WebSocket heartbeat (25 s ping/pong) to survive Cloudflare idle timeouts.
+* Optional `lightningcss-linux-x64-gnu` dependency fixes Vercel builds on ARM.
+
+### Developer UX
+* Custom toast system & changelog component.
+* ESLint/TypeScript strict mode – no `any`s.
+* Dev & prod parity via PartyKit `npm run dev`.
 
 ## Technologies
 

@@ -25,7 +25,6 @@ export async function validateQuoteSystem(jsonData: unknown): Promise<{ isValid:
     }
     
     // Settings validation
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const settings: Record<string, unknown> | undefined = (json as any).settings;
     if (settings) {
       const settingsProps = ['showOnGeneral', 'showOnMedianLow', 'showOnMedianHigh', 

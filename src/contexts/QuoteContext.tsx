@@ -62,21 +62,22 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
           return;
         }
         
-        // For custom quotes, check localStorage
+        // For custom quotes, check localStorage. If none exist yet, we'll keep the
+        // quoteSystemType as "custom" so the UI can prompt the user to upload a pack.
         if (quoteSystemType === 'custom') {
           const customQuotesJson = localStorage.getItem('custom-quotes');
           if (!customQuotesJson) {
-            setQuoteSystemType('none');
+            setQuoteSystem(null);
             return;
           }
-          
+
           try {
             const customQuotes = JSON.parse(customQuotesJson);
             setQuoteSystem(customQuotes);
           } catch (error) {
             console.error('Failed to parse custom quotes:', error);
             showToast('Özel alıntılar yüklenemedi', 'error');
-            setQuoteSystemType('none');
+            setQuoteSystem(null);
           }
         }
       } catch (error) {
