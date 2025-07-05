@@ -75,7 +75,7 @@ export function QuoteSystemSelector() {
       {isExpanded && (
         <div className="mt-4 space-y-4">
           <p className="text-gray-300 text-sm">
-            Oylama sonuçlarına göre gösterilecek alıntı sistemini seçin.
+            Oylama sonuçlarına göre gösterilecek alıntı sistemini seçin:
           </p>
           
           <div className="grid grid-cols-3 gap-3">

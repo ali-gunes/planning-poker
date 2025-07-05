@@ -525,7 +525,7 @@ export default function RoomPage() {
                             height={40}
                             className="w-8 h-8 md:w-10 md:h-10" 
                         />
-                        <h1 className="text-2xl md:text-3xl font-bold">C&I Planlama Pokeri</h1>
+                        <h1 className="text-2xl md:text-3xl font-bold">Planlama Pokeri</h1>
                     </div>
                     
                     {/* Room info and controls */}
@@ -570,9 +570,18 @@ export default function RoomPage() {
                                             ⏱️ Süresiz
                                         </div>
                                     )}
+                                    
+                                   
+                                        <div className="text-sm text-blue-400 mt-1">
+                                            {(!roomSettings.quoteSystemType || roomSettings.quoteSystemType === 'none') && '🚫 Kapalı'}
+                                            {roomSettings.quoteSystemType === 'ci-team' && '🍔 C&I Hatırası'}
+                                            {roomSettings.quoteSystemType === 'custom' && '📁 Özel'}
+                                        </div>
+                                    
                                 </div>
                             </div>
                         )}
+                        
                         
                         {/* Owner Reclaim Button */}
                         {isPreviousOwner && (roomSettings?.ownerStatus === 'grace' || roomSettings?.ownerStatus === 'voting') && (
@@ -581,7 +590,7 @@ export default function RoomPage() {
                                     onClick={handleReclaimOwnership}
                                     className="px-6 py-3 bg-yellow-500 text-black font-bold rounded-md hover:bg-yellow-600 transition-all transform hover:scale-105 animate-pulse"
                                 >
-                                    �� Krallığını Geri Al
+                                    👑 Krallığını Geri Al
                                 </button>
                             </div>
                         )}

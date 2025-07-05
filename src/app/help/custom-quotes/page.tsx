@@ -32,7 +32,7 @@ export default function CustomQuotesGuidePage() {
 
       <p className="text-gray-300 mb-8">
         Aşağıdaki GIF&apos;leri ve alıntı JSON şablonunu kullanarak ekibinize özel eğlenceli bir alıntı paketi oluşturabilirsiniz. JSON dosyasını aşağıdaki buton yardımıyla indirip
-        düzenledikten sonra oda yaratıren alıntı sistemi butonlarından &quot;Özel&quot; seçeneği ile yükleyebilirsiniz.
+        düzenledikten sonra oda yaratırken alıntı sistemi butonlarından &quot;Özel&quot; seçeneği ile yükleyebilirsiniz.
       </p>
 
       <h2 className="text-2xl font-semibold text-white mb-4">Mevcut GIF&apos;ler</h2>

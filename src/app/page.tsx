@@ -116,7 +116,7 @@ export default function Home() {
       </div>
       <div className="w-full max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-1">
             <Image
               src="/planning-poker.svg" 
               alt="Planlama Pokeri Logo" 
@@ -126,7 +126,7 @@ export default function Home() {
             />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
-            C&I Planlama Pokeri
+            Planlama Pokeri
           </h1>
           <p className="text-lg text-gray-400 mt-4 max-w-2xl mx-auto">
             Bir oda oluşturun ve ekibinizi görevleri gerçek zamanlı olarak tahmin etmeye davet edin.
