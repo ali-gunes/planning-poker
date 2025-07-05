@@ -6,6 +6,7 @@ interface Participant {
     status?: 'active' | 'inactive';
     role?: 'participant' | 'observer';
     muted?: boolean;
+    chips?: number;
 }
 
 interface ParticipantsListProps {
@@ -81,9 +82,7 @@ export function ParticipantsList({ participants, currentUser, ownerName, onToggl
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
-                                {/* {participant.role === 'observer' && (
-                                    <span className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded">Gözlemci</span>
-                                )} */}
+                                {/* Chip balance removed to declutter list */}
                                 {participant.muted && (
                                     <span className="text-red-400" title="Susturuldu">🔇</span>
                                 )}

@@ -9,6 +9,7 @@ interface CreateRoomRequest {
     votingPreset: 'fibonacci' | 'days' | 'hours' | 'yesno';
     timerDuration: number;
     autoReveal: boolean;
+    auctionEnabled?: boolean;
     quoteSystemType: 'none' | 'ci-team' | 'custom';
     customQuotes?: Record<string, unknown>;
 }
@@ -21,7 +22,7 @@ const generateToken = (): string => {
 
 export async function POST(request: Request) {
     try {
-        const { name, role = 'participant', votingPreset, timerDuration, autoReveal, quoteSystemType = 'ci-team', customQuotes } = (await request.json()) as CreateRoomRequest;
+        const { name, role = 'participant', votingPreset, timerDuration, autoReveal, auctionEnabled = false, quoteSystemType = 'ci-team', customQuotes } = (await request.json()) as CreateRoomRequest;
 
         if (!name) {
             return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -35,6 +36,7 @@ export async function POST(request: Request) {
             votingPreset,
             timerDuration,
             autoReveal,
+            auctionEnabled,
             quoteSystemType,
             customQuotes: quoteSystemType === 'custom' ? customQuotes ?? null : null,
             state: "lobby", // initial state
@@ -43,7 +45,10 @@ export async function POST(request: Request) {
                 hasVoted: false, 
                 connectionId: "pending", 
                 status: 'active',
-                role: role
+                role: role,
+                muted: false,
+                chips: 5,
+                wager: 0
             }],
             votes: [{ name, vote: null }],
             ownerStatus: 'active',

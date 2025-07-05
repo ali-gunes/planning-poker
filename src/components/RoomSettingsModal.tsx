@@ -11,6 +11,7 @@ interface RoomSettingsModalProps {
     votingPreset: string;
     timerDuration: number;
     autoReveal: boolean;
+    auctionEnabled?: boolean;
   };
 }
 
@@ -18,18 +19,22 @@ export interface RoomSettingsUpdate {
   votingPreset: 'fibonacci' | 'days' | 'hours' | 'yesno';
   timerDuration: number;
   autoReveal: boolean;
+  auctionEnabled?: boolean;
 }
 
 export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: RoomSettingsModalProps) {
   const [votingPreset, setVotingPreset] = useState(currentSettings.votingPreset);
   const [timerMinutes, setTimerMinutes] = useState(Math.floor(currentSettings.timerDuration / 60));
   const [autoReveal, setAutoReveal] = useState(currentSettings.autoReveal);
+  const [auctionEnabled, setAuctionEnabled] = useState(currentSettings.auctionEnabled ?? false);
+  const [showAuctionInfo, setShowAuctionInfo] = useState(false);
 
   // Update internal state when currentSettings change
   useEffect(() => {
     setVotingPreset(currentSettings.votingPreset);
     setTimerMinutes(Math.floor(currentSettings.timerDuration / 60));
     setAutoReveal(currentSettings.autoReveal);
+    setAuctionEnabled(currentSettings.auctionEnabled ?? false);
   }, [currentSettings]);
 
   // When timer is selected, automatically set autoReveal to true
@@ -44,6 +49,7 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
       votingPreset: votingPreset as 'fibonacci' | 'days' | 'hours' | 'yesno',
       timerDuration: timerMinutes * 60,
       autoReveal,
+      auctionEnabled,
     };
     //console.log("💾 Settings modal - saving settings:", newSettings);
     onSave(newSettings);
@@ -188,6 +194,37 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
           
           {/* Quote System Selector */}
           {/*<QuoteSystemSelector />*/}
+
+          {/* Confidence Auction Toggle */}
+          <div className="pt-4 border-t border-gray-700">
+            <div className="flex items-center justify-between">
+              <button
+                type="button"
+                onClick={()=>setShowAuctionInfo(!showAuctionInfo)}
+                className="text-gray-300 text-sm flex items-center gap-1 focus:outline-none"
+              >
+                <span className="underline">Güven Bahsi</span>
+                <span className="text-blue-400">{showAuctionInfo? '▲':'▼'}</span>
+              </button>
+
+              <label className="relative inline-flex items-center cursor-pointer select-none">
+                <input type="checkbox" checked={auctionEnabled} onChange={()=>setAuctionEnabled(!auctionEnabled)} className="sr-only peer" />
+                <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer-checked:bg-green-500 transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+              </label>
+            </div>
+            {showAuctionInfo && (
+              <p className="mt-2 text-xs text-gray-400 leading-relaxed">
+              Efor tahminine güveniyor musun? <br/> Güven Bahsi modu, kart seçiminin yanında 0-3 çip arası bir bahis oynamanı sağlar.
+              Tur sonunda verilen oyların kırpılmış ortalamasına göre:<br/><br/>
+              • Tam isabet ⇒ bahsin 2 katı ödül 🎉<br/>
+              • 1 kart mesafe ⇒ bahsin kadar ödül 👍<br/>
+              • 2 kart mesafe ⇒ ne kazanır ne kaybedersin 😐<br/>
+              • Daha uzakta / soru kartı ⇒ bahsini kaybedersin 💸<br/>
+              • Her oyuncu en fazla 10 çip borçlanabilir. <br/><br />
+              Özelliği dilediğin gibi açıp kapatabilirsin.
+            </p>
+            )}
+          </div>
         </div>
 
         {/* Action Buttons */}

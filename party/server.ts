@@ -11,6 +11,8 @@ interface Participant {
   status: 'active' | 'inactive'; // Track participant status
   role: 'participant' | 'observer'; // Track participant role
   muted: boolean;
+  chips: number; // 💰 chip balance for Confidence Auction
+  wager: number; // current wager for this round (0–3)
 }
 
 interface Vote {
@@ -40,6 +42,7 @@ interface Room {
   ownerToken?: string; // Secure token for owner authentication
   quoteSystemType: string;
   customQuotes: any;
+  auctionEnabled?: boolean; // Confidence Auction toggle
 }
 // --- END OF TYPES ---
 
@@ -316,6 +319,8 @@ export default class PokerServer implements Party.Server {
           // This is the owner connecting for the first time
           const ownerParticipant = roomState.participants.find(p => p.name === name);
           if (ownerParticipant) {
+            if (ownerParticipant.chips === undefined) ownerParticipant.chips = 5;
+            if (ownerParticipant.wager === undefined) ownerParticipant.wager = 0;
             ownerParticipant.connectionId = sender.id;
             ownerParticipant.role = role;
             await setRoom(this.room.id, roomState);
@@ -328,6 +333,7 @@ export default class PokerServer implements Party.Server {
                 votingPreset: roomState.votingPreset,
                 timerDuration: roomState.timerDuration,
                 autoReveal: roomState.autoReveal,
+                auctionEnabled: roomState.auctionEnabled ?? false,
                 state: roomState.state,
                 ownerStatus: roomState.ownerStatus,
                 graceEndTime: roomState.graceEndTime,
@@ -376,6 +382,8 @@ export default class PokerServer implements Party.Server {
           disconnectedParticipant.connectionId = sender.id;
           disconnectedParticipant.status = 'active';
           disconnectedParticipant.role = role || disconnectedParticipant.role || 'participant';
+          if (disconnectedParticipant.chips === undefined) disconnectedParticipant.chips = 5;
+          if (disconnectedParticipant.wager === undefined) disconnectedParticipant.wager = 0;
           await setRoom(this.room.id, roomState);
         } else {
           // This is a new participant
@@ -387,7 +395,9 @@ export default class PokerServer implements Party.Server {
                 connectionId: sender.id,
                 status: 'active',
                 role: role || 'participant',
-                muted: false
+                muted: false,
+                chips: 5,
+                wager: 0
               });
               if (!roomState.votes.some(v => v.name === name)) {
                   roomState.votes.push({ name, vote: null });
@@ -404,6 +414,7 @@ export default class PokerServer implements Party.Server {
             votingPreset: roomState.votingPreset,
             timerDuration: roomState.timerDuration,
             autoReveal: roomState.autoReveal,
+            auctionEnabled: roomState.auctionEnabled ?? false,
             state: roomState.state,
             ownerStatus: roomState.ownerStatus,
             graceEndTime: roomState.graceEndTime,
@@ -502,7 +513,7 @@ export default class PokerServer implements Party.Server {
       }
 
       if (msg.type === 'update_room_settings') {
-        const { votingPreset, timerDuration, autoReveal, ownerName } = msg;
+        const { votingPreset, timerDuration, autoReveal, auctionEnabled, ownerName } = msg;
         //console.log(`[UPDATE_SETTINGS] Request from ${ownerName}:`, { votingPreset, timerDuration, autoReveal });
         
         let roomState = await getRoom(this.room.id);
@@ -518,6 +529,7 @@ export default class PokerServer implements Party.Server {
           roomState.votingPreset = votingPreset;
           roomState.timerDuration = timerDuration;
           roomState.autoReveal = autoReveal;
+          roomState.auctionEnabled = auctionEnabled ?? roomState.auctionEnabled ?? false;
           
           await setRoom(this.room.id, roomState);
           //console.log(`[UPDATE_SETTINGS] Settings updated successfully`);
@@ -526,6 +538,7 @@ export default class PokerServer implements Party.Server {
             votingPreset: roomState.votingPreset,
             timerDuration: roomState.timerDuration,
             autoReveal: roomState.autoReveal,
+            auctionEnabled: roomState.auctionEnabled,
             state: roomState.state,
           };
           
@@ -826,6 +839,111 @@ export default class PokerServer implements Party.Server {
           quoteType: quoteType
         }));
         
+        // ------------------ Confidence Auction Payout ------------------
+        if (roomState.auctionEnabled && roomState.votingPreset !== 'yesno') {
+          const deckMap: Record<string, number[]> = {
+            fibonacci: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
+            days: [1,2,3,4,5,6,7,8,9,10],
+            hours: [4,8,12,16,20,24,28,32,36,40]
+          };
+
+          const deck = deckMap[roomState.votingPreset] || deckMap['fibonacci'];
+
+          const numericVotes = participantVotes
+            .filter(v => typeof v.vote === 'number')
+            .map(v => v.vote as number);
+
+          if (numericVotes.length) {
+            // Compute trimmed mean or median
+            let centralValue = 0;
+            const sorted = [...numericVotes].sort((a,b)=>a-b);
+            if (numericVotes.length >= 5) {
+              const trimmed = sorted.slice(1, -1); // drop one lowest + one highest
+              centralValue = trimmed.reduce((sum,v)=>sum+v,0) / trimmed.length;
+            } else {
+              const mid = Math.floor(sorted.length/2);
+              centralValue = sorted.length % 2 === 0 ? (sorted[mid-1]+sorted[mid])/2 : sorted[mid];
+            }
+
+            // Round to nearest deck card
+            const roundedMean = deck.reduce((prev, curr) => Math.abs(curr - centralValue) < Math.abs(prev - centralValue) ? curr : prev);
+
+            const meanIdx = deck.indexOf(roundedMean);
+
+            // Update participant chips
+            const deltas: {name:string; chips:number; delta:number}[] = [];
+
+            for (const participant of roomState.participants) {
+              const wager = participant.wager || 0;
+              if (wager === 0) { participant.wager = 0; continue; }
+
+              // Observers / muted get wager reset with no change
+              if (participant.role === 'observer' || participant.muted) {
+                participant.wager = 0;
+                continue;
+              }
+
+              const pVote = participantVotes.find(v => v.name === participant.name);
+              let delta = 0;
+              if (pVote && typeof pVote.vote === 'number') {
+                const voteIdx = deck.indexOf(pVote.vote as number);
+                if (voteIdx !== -1) {
+                  const distance = Math.abs(voteIdx - meanIdx);
+                  if (distance === 0) delta = wager * 2;
+                  else if (distance === 1) delta = wager;
+                  else if (distance === 2) delta = 0;
+                  else delta = -wager;
+                } else {
+                  delta = -wager; // vote not in deck
+                }
+              } else {
+                // Non-numeric vote is a miss
+                delta = -wager;
+              }
+
+              participant.chips = (participant.chips ?? 0) + delta;
+              deltas.push({ name: participant.name, chips: participant.chips, delta });
+              participant.wager = 0; // reset for next round
+            }
+
+            await setRoom(this.room.id, roomState);
+
+            this.room.broadcast(JSON.stringify({
+              type: 'chip_update',
+              payload: deltas
+            }));
+          }
+        }
+      }
+
+      // Handle confidence wager message
+      if (msg.type === "confidence_wager") {
+        const { amount } = msg;
+        let roomState = await getRoom(this.room.id);
+        if (!roomState) return;
+
+        // Only allow during numeric voting rounds
+        if (!roomState.auctionEnabled || roomState.state !== 'voting' || roomState.votingPreset === 'yesno') return;
+
+        const participant = roomState.participants.find(p => p.connectionId === sender.id);
+        if (!participant || participant.role === 'observer' || participant.muted) return;
+
+        // Negative balance limit
+        if (participant.chips <= -10) {
+          participant.wager = 0;
+          return; // cannot place positive wager
+        }
+
+        let wagerAmount = Math.max(0, Math.min(3, Number(amount)));
+
+        // Ensure debt limit of -10
+        if ((participant.chips ?? 0) - wagerAmount < -10) {
+          wagerAmount = Math.max(0, (participant.chips ?? 0) + 10);
+        }
+
+        participant.wager = wagerAmount;
+
+        await setRoom(this.room.id, roomState);
         return;
       }
 

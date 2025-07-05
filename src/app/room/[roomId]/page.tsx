@@ -19,6 +19,7 @@ import { ThemeSelector } from "@/components/ThemeSelector";
 import { useToast } from '@/contexts/ToastContext';
 import { useQuoteSystem } from '@/contexts/QuoteContext';
 import { InlineQuoteCard } from '@/components/InlineQuoteCard';
+import { ChipLeaderboard } from "@/components/ChipLeaderboard";
 
 const votingStacks = {
     fibonacci: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
@@ -33,6 +34,7 @@ interface Participant {
     status?: 'active' | 'inactive';
     role?: 'participant' | 'observer';
     muted?: boolean;
+    chips?: number;
 }
 
 interface Vote { name: string; vote: number | string; }
@@ -47,6 +49,7 @@ interface RoomSettings {
     votingPreset: keyof typeof votingStacks;
     timerDuration: number;
     autoReveal: boolean;
+    auctionEnabled?: boolean;
     state: string;
     ownerStatus?: 'active' | 'grace' | 'voting';
     graceEndTime?: number;
@@ -81,6 +84,7 @@ export default function RoomPage() {
     const [ownerVotes, setOwnerVotes] = useState<OwnerVote[]>([]);
     const [ownerVoteCounts, setOwnerVoteCounts] = useState<{[candidate: string]: number}>({});
     const [requiredVotes, setRequiredVotes] = useState(0);
+    const [wager, setWager] = useState<number>(0);
 
     // Computed helper: is the current user the room owner?
     const isOwner = roomSettings?.owner === name;
@@ -154,6 +158,7 @@ export default function RoomPage() {
             if (data.type === "votes_revealed") {
                 setVotes(data.payload);
                 setGameState("revealed");
+                setWager(0);
             }
             if (data.type === "new_round_started") {
                 setGameState("voting");
@@ -313,6 +318,7 @@ export default function RoomPage() {
                 setGameState('waiting');
                 setVotes([]);
                 setSelectedVote(null);
+                setWager(0);
                 setTimer(0);
             }
 
@@ -332,6 +338,20 @@ export default function RoomPage() {
                 router.push("/");
                 socket?.close();
                 return;
+            }
+
+            if (data.type === "chip_update") {
+                setParticipants(prev => prev.map(p => {
+                    const updated = data.payload.find((u: {name:string; chips:number})=>u.name===p.name);
+                    return updated ? { ...p, chips: updated.chips } : p;
+                }));
+
+                const transactions = data.payload.filter((u: {delta:number})=>u.delta!==0);
+                transactions.forEach((u: {name:string; delta:number}, idx: number) => {
+                    setTimeout(()=>{
+                        showToast(`${u.name} ${u.delta>0?'+':'-'}${Math.abs(u.delta)} çip ${u.delta>0?'kazandı':'kaybetti'}`, u.delta>0?'success':'error', 1500, 'top-center');
+                    }, idx*600);
+                });
             }
         };
 
@@ -393,7 +413,7 @@ export default function RoomPage() {
         setIsKubilayModalOpen(true);
     };
 
-    const handleSettingsUpdate = (settings: RoomSettingsUpdate) => {
+    const handleSettingsUpdate = (settings: RoomSettingsUpdate & { auctionEnabled?: boolean }) => {
         //console.log("🔧 handleSettingsUpdate called with:", settings);
         //console.log("🔍 Socket state:", socket ? "connected" : "not connected");
         //console.log("👑 Is owner:", isOwner);
@@ -403,6 +423,7 @@ export default function RoomPage() {
             const message = { 
                 type: "update_room_settings", 
                 ...settings,
+                auctionEnabled: settings.auctionEnabled,
                 ownerName: name
             };
             //console.log("📤 Sending message to PartyKit:", message);
@@ -524,7 +545,8 @@ export default function RoomPage() {
                     currentSettings={{
                         votingPreset: roomSettings.votingPreset,
                         timerDuration: roomSettings.timerDuration,
-                        autoReveal: roomSettings.autoReveal
+                        autoReveal: roomSettings.autoReveal,
+                        auctionEnabled: roomSettings.auctionEnabled,
                     }}
                 />
             )}
@@ -646,6 +668,11 @@ export default function RoomPage() {
                             ownerName={roomSettings?.owner}
                             onToggleMute={handleToggleMuteParticipant}
                         />
+
+                        {/* Leaderboard */}
+                        {roomSettings?.auctionEnabled === true && (
+                          <ChipLeaderboard participants={participants} />
+                        )}
                     </aside>
 
                     {/* Right Panel: Voting Area */}
@@ -798,6 +825,28 @@ export default function RoomPage() {
                                           </button>
                                         ))}
                                       </div>
+
+                                      {/* Confidence Auction Wager Slider */}
+                                      {gameState === 'voting' && role === 'participant' && !isMuted && roomSettings?.auctionEnabled === true && roomSettings?.votingPreset !== 'yesno' && selectedVote !== null && (participants.find(p=>p.name===name)?.chips ?? 0) > -10 && (
+                                        <div className="mt-6 flex flex-col items-center gap-2">
+                                            <label htmlFor="wagerRange" className="text-sm text-gray-300">Bahis: {wager} çip</label>
+                                            <input
+                                              id="wagerRange"
+                                              type="range"
+                                              min={0}
+                                              max={Math.min(3, 10 + (participants.find(p=>p.name===name)?.chips ?? 0))}
+                                              value={wager}
+                                              onChange={(e)=>{
+                                                  const val = Number(e.target.value);
+                                                  setWager(val);
+                                                  if(socket){
+                                                    socket.send(JSON.stringify({ type: 'confidence_wager', amount: val }));
+                                                  }
+                                              }}
+                                              className="w-48 accent-yellow-500"
+                                            />
+                                        </div>
+                                      )}
                                       {/* General quote card below voting cards */}
                                       <InlineQuoteCard variant="voting" />
                                     </>

@@ -3,6 +3,13 @@ import React, { useState, useEffect } from 'react';
 // Define the changelog entries
 const changelogEntries = [
     {
+      version: "v1.6.0",
+      title: "Confidence Auction Mini-Game 💰",
+      description: "Artık oy verirken tahmininize 0-3 çip arası bahis koyabilir ve sonuç açıklanınca isabetinize göre çip kazanıp kaybedebilirsiniz. Tam isabet 2×, 1 kart mesafe +1×, 2 kart mesafe 0, aksi hâlde bahis kayıp. Borç limiti −10 çip; oda ayarlarından kapatılabilir.",
+      date: "7 Temmuz 2025",
+      type: "feature"
+    },
+    {
       version: "v1.5.0",
       title: "Katılımcı Susturma & Yönetim Menüsü 🔇",
       description: "Oda sahibi artık katılımcıları susturabilir; susturulan kullanıcılar oy veremez ve satırlarında 🔇 simgesi gösterilir. Kebab menüsü (⋯) ile susturma / suskunluğu bitir seçenekleri eklendi.",

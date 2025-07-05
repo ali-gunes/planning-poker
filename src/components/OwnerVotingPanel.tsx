@@ -5,6 +5,7 @@ interface Participant {
   name: string;
   hasVoted: boolean;
   status?: 'active' | 'inactive';
+  chips?: number;
 }
 
 interface OwnerVote {

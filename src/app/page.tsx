@@ -19,7 +19,9 @@ export default function Home() {
   const [votingPreset, setVotingPreset] = useState("hours");
   const [timerMinutes, setTimerMinutes] = useState(0);
   const [autoReveal, setAutoReveal] = useState(false);
+  const [auctionEnabled, setAuctionEnabled] = useState(false);
   const [role, setRole] = useState<'participant' | 'observer'>('participant');
+  const [showAuctionInfo, setShowAuctionInfo] = useState(false);
 
   const { quoteSystemType } = useQuoteSystem();
 
@@ -70,6 +72,7 @@ export default function Home() {
           votingPreset,
           timerDuration: timerMinutes * 60,
           autoReveal,
+          auctionEnabled,
           quoteSystemType,
           customQuotes: customQuotesString ? JSON.parse(customQuotesString) : null,
         }),
@@ -311,6 +314,43 @@ export default function Home() {
               {/* Quote System Selector */}
               <div className="w-full mt-2">
                 <QuoteSystemSelector />
+              </div>
+
+              {/* Confidence Auction Toggle */}
+              <div className="w-full mt-6">
+                <div className="flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={()=>setShowAuctionInfo(!showAuctionInfo)}
+                    className="text-gray-300 text-sm flex items-center gap-1 focus:outline-none"
+                  >
+                    <span className="underline">Güven Bahsi</span>
+                    <span className="text-blue-400">{showAuctionInfo? '▲':'▼'}</span>
+                  </button>
+                  <label className="relative inline-flex items-center cursor-pointer select-none group">
+                    <input
+                      type="checkbox"
+                      checked={auctionEnabled}
+                      onChange={()=>setAuctionEnabled(!auctionEnabled)}
+                      className="sr-only peer"
+                    />
+                    <div
+                      className="w-11 h-6 bg-gray-600 rounded-full peer-focus:outline-none peer-checked:bg-green-500 transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"
+                    ></div>
+                  </label>
+                </div>
+                {showAuctionInfo && (
+                  <p className="mt-2 text-xs text-gray-400 leading-relaxed">
+                    Efor tahminine güveniyor musun? <br/> Güven Bahsi modu, kart seçiminin yanında 0-3 çip arası bir bahis oynamanı sağlar.
+                    Tur sonunda verilen oyların kırpılmış ortalamasına göre:<br/><br/>
+                    • Tam isabet ⇒ bahsin 2 katı ödül 🎉<br/>
+                    • 1 kart mesafe ⇒ bahsin kadar ödül 👍<br/>
+                    • 2 kart mesafe ⇒ ne kazanır ne kaybedersin 😐<br/>
+                    • Daha uzakta / soru kartı ⇒ bahsini kaybedersin 💸<br/>
+                    • Her oyuncu en fazla 10 çip borçlanabilir. <br/><br />
+                    Özelliği dilediğin gibi açıp kapatabilirsin.
+                  </p>
+                )}
               </div>
 
               <button
