@@ -573,7 +573,7 @@ export default function RoomPage() {
                                     
                                    
                                         <div className="text-sm text-blue-400 mt-1">
-                                            {(!roomSettings.quoteSystemType || roomSettings.quoteSystemType === 'none') && '🚫 Kapalı'}
+                                            {(!roomSettings.quoteSystemType || roomSettings.quoteSystemType === 'none') && '🚫 Alıntılar Kapalı'}
                                             {roomSettings.quoteSystemType === 'ci-team' && '🍔 C&I Hatırası'}
                                             {roomSettings.quoteSystemType === 'custom' && '📁 Özel'}
                                         </div>
