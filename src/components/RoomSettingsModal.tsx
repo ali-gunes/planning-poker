@@ -187,7 +187,7 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
           </div>
           
           {/* Quote System Selector */}
-          <QuoteSystemSelector />
+          {/*<QuoteSystemSelector />*/}
         </div>
 
         {/* Action Buttons */}

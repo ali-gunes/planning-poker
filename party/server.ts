@@ -43,7 +43,7 @@ interface Room {
 // --- END OF TYPES ---
 
 // Time in milliseconds to wait before marking a user as inactive after disconnect
-const DISCONNECT_TIMEOUT = 10000; // 5 seconds for testing (was 10 seconds)
+const DISCONNECT_TIMEOUT = 30000; // 30 seconds grace period for reconnection
 
 // Time in milliseconds for owner grace period
 const OWNER_GRACE_PERIOD = 120000; // 2 minutes
@@ -96,7 +96,7 @@ function selectQuoteType(votes: Vote[], votingPreset: string): string {
   // Check for huge difference
   const min = Math.min(...numericVotes);
   const max = Math.max(...numericVotes);
-  if (min > 0 && max >= min * 3) {
+  if (min > 0 && max >= min * 4) {
     return 'hugeDifference';
   }
   
@@ -281,6 +281,12 @@ export default class PokerServer implements Party.Server {
     try {
       const msg = JSON.parse(message);
       //console.log(`[MESSAGE] Received message type: ${msg.type} from ${sender.id}`);
+
+      // Heartbeat handling
+      if (msg.type === "ping") {
+        sender.send(JSON.stringify({ type: "pong" }));
+        return;
+      }
 
       // Handle join room message
       if (msg.type === "join_room") {

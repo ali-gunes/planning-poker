@@ -82,7 +82,7 @@ export function QuoteSystemSelector() {
                   : 'border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500'
               }`}
             >
-              <div className="font-bold text-lg">👥</div>
+              <div className="font-bold text-lg">🍔</div>
               <div className="text-xs font-medium">C&I Hatırası</div>
             </button>
             
@@ -141,7 +141,7 @@ export function QuoteSystemSelector() {
           
           {quoteSystemType === 'ci-team' && (
             <p className="text-xs text-gray-400 mt-2">
-              C&I ekibinin eğlenceli alıntıları oylama sırasında gösterilecek.
+              Kanal ve Entegrasyon ekibinin eğlenceli alıntıları oylama sırasında gösterilecek. <br /> "In Canberk We Trust."
             </p>
           )}
         </div>

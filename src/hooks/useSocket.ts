@@ -90,6 +90,18 @@ export const useSocket = (roomId: string, name: string, role: 'participant' | 'o
         }
     }, [name, socket, role]);
 
+    // Heartbeat interval
+    useEffect(() => {
+        if (!socket) return;
+
+        const interval = setInterval(() => {
+            if (socket.readyState === socket.OPEN) {
+                socket.send(JSON.stringify({ type: "ping" }));
+            }
+        }, 25000); // 25 seconds keeps Cloudflare edge alive
+
+        return () => clearInterval(interval);
+    }, [socket]);
 
     return socket;
 }; 
