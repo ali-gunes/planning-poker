@@ -31,6 +31,16 @@ export function QuoteSystemSelector() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // File size limit (128 KB)
+    const MAX_FILE_SIZE = 128 * 1024; // bytes
+    if (file.size > MAX_FILE_SIZE) {
+      showToast(`JSON dosyası çok büyük (≥ ${Math.round(MAX_FILE_SIZE/1024)} KB). Daha küçük bir paket yükleyin. Limit 128 KB'dir.`, 'error');
+      setUploadStatus('error');
+      // Reset input value so same file can re-trigger change if needed
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
     setIsUploading(true);
     setUploadStatus('processing');
     try {

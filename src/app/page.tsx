@@ -23,7 +23,7 @@ export default function Home() {
   const [role, setRole] = useState<'participant' | 'observer'>('participant');
   const [showAuctionInfo, setShowAuctionInfo] = useState(false);
 
-  const { quoteSystemType } = useQuoteSystem();
+  const { quoteSystemType, quoteSystem } = useQuoteSystem();
 
   // When timer is selected, automatically set autoReveal to true
   // When timer is set to 0 (no timer), set autoReveal to false
@@ -365,14 +365,14 @@ export default function Home() {
 
               <button
                   onClick={handleCreateRoom}
-                  disabled={!name || isLoading}
+                  disabled={!name || isLoading || (quoteSystemType === 'custom' && !quoteSystem)}
                   className={`w-full mt-4 py-3 px-4 rounded-md font-medium transition-colors ${
-                      !name || isLoading
+                      !name || isLoading || (quoteSystemType === 'custom' && !quoteSystem)
                           ? "bg-gray-700 text-gray-400 cursor-not-allowed"
                           : "bg-blue-600 hover:bg-blue-700 text-white"
                   }`}
               >
-                  {isLoading ? "Oda Oluşturuluyor..." : "Oda Oluştur"}
+                  {quoteSystemType === 'custom' && !quoteSystem ? 'JSON Yüklemelisiniz' : (isLoading ? 'Oda Oluşturuluyor...' : 'Oda Oluştur')}
               </button>
             </div>
 
