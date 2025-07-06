@@ -24,6 +24,7 @@ A real-time planning poker application for agile teams to estimate tasks collabo
   * **Near** – ±2 cards → **0**
   * **Miss** – >2 cards / non-numeric → **− wager**
 * Chip balances persist during the session (can go negative) and are displayed next to each name, plus an optional leaderboard.
+* The current chip leader is spotlighted with a theme-coloured trophy icon and highlight (silver when tied). Hidden automatically when Confidence Auction is disabled.
 * Room owner can toggle Confidence Auction on/off in *Room Settings*.
 
 ### Ownership Transfer

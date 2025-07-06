@@ -13,6 +13,8 @@
     "@types/redis": "^4.0.10",
     "@upstash/redis": "latest",
     "dotenv": "^16.4.5",
+    "canvas-confetti": "^1.6.0",
+    "@heroicons/react": "^2.0.18",
     "nanoid": "^5.1.5",
     "next": "15.3.3",
     "partykit": "^0.0.115",

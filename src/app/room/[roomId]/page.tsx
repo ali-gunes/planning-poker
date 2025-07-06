@@ -666,6 +666,7 @@ export default function RoomPage() {
                             participants={participants} 
                             currentUser={name} 
                             ownerName={roomSettings?.owner}
+                            auctionEnabled={roomSettings?.auctionEnabled === true}
                             onToggleMute={handleToggleMuteParticipant}
                         />
 

@@ -3,8 +3,15 @@ import React, { useState, useEffect } from 'react';
 // Define the changelog entries
 const changelogEntries = [
     {
+      version: "v1.6.1",
+      title: "Çip Lideri Vurgusu & Tema Düzeltmeleri 🏆",
+      description: "Güven Bahsi açıkken en çok çipe sahip katılımcı artık isim yanında altın kupa ikonu ve tema renkli vurguyla öne çıkıyor (beraberlikte gümüş). Retro 90s temadaki dönen hologram katılımcı listesinde kaldırıldı. Özellik, Auction kapalıyken gizleniyor.",
+      date: "8 Temmuz 2025",
+      type: "improvement"
+    },
+    {
       version: "v1.6.0",
-      title: "Confidence Auction Mini-Game 💰",
+      title: "Güven Bahsi Oyunu 💰",
       description: "Artık oy verirken tahmininize 0-3 çip arası bahis koyabilir ve sonuç açıklanınca isabetinize göre çip kazanıp kaybedebilirsiniz. Tam isabet 2×, 1 kart mesafe +1×, 2 kart mesafe 0, aksi hâlde bahis kayıp. Borç limiti −10 çip; oda ayarlarından kapatılabilir.",
       date: "7 Temmuz 2025",
       type: "feature"
