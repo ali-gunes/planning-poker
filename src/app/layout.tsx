@@ -25,8 +25,8 @@ const spaceMono = Space_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Planning Poker',
-  description: 'Real-time Planning Poker for agile teams',
+  title: 'Planlama Pokeri',
+  description: 'Scrum seromonileri için gerçek zamanlı planlama pokeri uygulaması',
   icons: {
     icon: [
       {
