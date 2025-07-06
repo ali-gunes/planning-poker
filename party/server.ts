@@ -107,8 +107,8 @@ function selectQuoteType(votes: Vote[], votingPreset: string): string {
   // Get the voting stack to find the median
   const votingStacks = {
     fibonacci: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
-    days: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    hours: [4, 8, 12, 16, 20, 24, 28, 32, 36, 40],
+    days: [1,2,3,4,5,6,7,8,9,10],
+    hours: [1, 2, 4, 6, 8, 12, 16, 20, 24, 32, 36, 40, 48, 56, 64],
     yesno: ['Evet', 'Hayır']
   };
   
@@ -844,7 +844,7 @@ export default class PokerServer implements Party.Server {
           const deckMap: Record<string, number[]> = {
             fibonacci: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
             days: [1,2,3,4,5,6,7,8,9,10],
-            hours: [4,8,12,16,20,24,28,32,36,40]
+            hours: [1, 2, 4, 6, 8, 12, 16, 20, 24, 32, 36, 40, 48, 56, 64]
           };
 
           const deck = deckMap[roomState.votingPreset] || deckMap['fibonacci'];
