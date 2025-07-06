@@ -15,6 +15,17 @@ A real-time planning poker application for agile teams to estimate tasks collabo
 * Presets: Fibonacci, Days, Hours, Yes/No.
 * Real-time hidden voting with reveal & stats.
 
+### Confidence Auction 💰 *(v1.6+)*
+* Optional chip-based side game that lets players wager on their own estimate confidence.
+* Every participant starts with **5 chips** and can bet **0–3 chips** before votes are revealed (disabled for Yes/No rounds).
+* Payouts after reveal:
+  * **Jackpot** – exact match → **+2× wager**
+  * **Close** – ±1 card → **+ wager**
+  * **Near** – ±2 cards → **0**
+  * **Miss** – >2 cards / non-numeric → **− wager**
+* Chip balances persist during the session (can go negative) and are displayed next to each name, plus an optional leaderboard.
+* Room owner can toggle Confidence Auction on/off in *Room Settings*.
+
 ### Ownership Transfer
 * 2-minute grace timer when the owner leaves.
 * "Kral Düştü" notification + live countdown.
