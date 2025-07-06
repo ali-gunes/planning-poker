@@ -37,6 +37,13 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
     setAuctionEnabled(currentSettings.auctionEnabled ?? false);
   }, [currentSettings]);
 
+  // Ensure auction disabled for yes/no
+  useEffect(() => {
+    if (votingPreset === 'yesno' && auctionEnabled) {
+      setAuctionEnabled(false);
+    }
+  }, [votingPreset]);
+
   // When timer is selected, automatically set autoReveal to true
   // When timer is set to 0 (no timer), set autoReveal to false
   const handleTimerSelect = (minutes: number) => {
@@ -208,12 +215,13 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
               </button>
 
               <label className="relative inline-flex items-center cursor-pointer select-none">
-                <input type="checkbox" checked={auctionEnabled} onChange={()=>setAuctionEnabled(!auctionEnabled)} className="sr-only peer" />
-                <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer-checked:bg-green-500 transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+                <input type="checkbox" checked={auctionEnabled} disabled={votingPreset==='yesno'} onChange={()=>setAuctionEnabled(!auctionEnabled)} className="sr-only peer" />
+                <div className={`w-11 h-6 rounded-full peer-focus:outline-none transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all ${auctionEnabled ? 'bg-green-500 peer-checked:after:translate-x-full' : 'bg-gray-600'} ${votingPreset==='yesno' ? 'opacity-50 cursor-not-allowed' : ''}`}></div>
               </label>
             </div>
             {showAuctionInfo && (
               <p className="mt-2 text-xs text-gray-400 leading-relaxed">
+                {votingPreset === 'yesno' && <><br/><span className="text-red-400">Evet/Hayır oy sisteminde Güven Bahsi devre dışıdır.</span><br /></>}
               Efor tahminine güveniyor musun? <br/> Güven Bahsi modu, kart seçiminin yanında 0-3 çip arası bir bahis oynamanı sağlar.
               Tur sonunda verilen oyların kırpılmış ortalamasına göre:<br/><br/>
               • Tam isabet ⇒ bahsin 2 katı ödül 🎉<br/>

@@ -18,6 +18,7 @@ A real-time planning poker application for agile teams to estimate tasks collabo
 ### Confidence Auction 💰 *(v1.6+)*
 * Optional chip-based side game that lets players wager on their own estimate confidence.
 * Every participant starts with **5 chips** and can bet **0–3 chips** before votes are revealed (disabled for Yes/No rounds).
+* Confidence Auction cannot be enabled when using the **Yes/No** voting preset.
 * Payouts after reveal:
   * **Jackpot** – exact match → **+2× wager**
   * **Close** – ±1 card → **+ wager**
