@@ -1,9 +1,16 @@
 'use client';
 
 import React, { ReactNode } from 'react';
-import { ThemeProvider } from '@/contexts/ThemeContext';
+import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 import { ToastProvider } from '@/contexts/ToastContext';
 import { QuoteProvider } from '@/contexts/QuoteContext';
+import { FeedbackButton } from '@/components/FeedbackButton';
+
+// Wrapper component to access theme context
+const FeedbackButtonWithTheme = () => {
+  const { theme } = useTheme();
+  return <FeedbackButton theme={theme} />;
+};
 
 export function ClientProviders({ children }: { children: ReactNode }) {
   return (
@@ -11,6 +18,7 @@ export function ClientProviders({ children }: { children: ReactNode }) {
       <ToastProvider>
         <QuoteProvider>
           {children}
+          <FeedbackButtonWithTheme />
         </QuoteProvider>
       </ToastProvider>
     </ThemeProvider>

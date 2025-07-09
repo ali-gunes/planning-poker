@@ -1213,6 +1213,33 @@
   animation: retro-blink 0.5s infinite alternate;
 }
 
+/* Feedback button theming */
+/* Synthwave theme feedback button */
+.theme-synthwave button[aria-label="Geri bildirim"] {
+  background: var(--dark-bg) !important;
+  border: 1px solid var(--neon-pink) !important;
+  color: var(--neon-pink) !important;
+  box-shadow: 0 0 10px rgba(255, 0, 255, 0.5) !important;
+}
+
+.theme-synthwave button[aria-label="Geri bildirim"]:hover {
+  box-shadow: 0 0 15px var(--neon-pink) !important;
+}
+
+/* Retro90s theme feedback button */
+.theme-retro90s button[aria-label="Geri bildirim"] {
+  background: #000066 !important;
+  border: 3px solid #00ffff !important;
+  color: #00ffff !important;
+  box-shadow: 3px 3px 0 #000000, 0 0 10px #00ffff !important;
+  transform: none !important;
+}
+
+.theme-retro90s button[aria-label="Geri bildirim"]:hover {
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0 #000000, 0 0 15px #00ffff !important;
+}
+
 /* Synthwave Theme - Theme selector */
 .theme-synthwave .theme-selector-btn {
   background-color: var(--dark-bg) !important;
@@ -1696,5 +1723,57 @@
   box-shadow: 0 0 8px var(--neon-pink) !important;
   width: 12px !important;
   height: 12px !important;
+}
+
+/* Feedback star styling for synthwave theme */
+.theme-synthwave .feedback-star-selected {
+  color: var(--neon-blue) !important;
+  text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue) !important;
+  position: relative !important;
+}
+
+.theme-synthwave .feedback-star-selected span {
+  background-color: var(--neon-pink) !important;
+  box-shadow: 0 0 5px var(--neon-pink) !important;
+  color: var(--dark-bg) !important;
+  font-weight: bold !important;
+}
+
+/* Feedback star styling for retro90s theme */
+.theme-retro90s .feedback-star-selected {
+  color: #ffff00 !important;
+  text-shadow: 2px 2px 0 #ff00ff !important;
+  position: relative !important;
+}
+
+.theme-retro90s .feedback-star-selected span {
+  background-color: #00ffff !important;
+  color: #000066 !important;
+  font-weight: bold !important;
+  border: 1px solid #ffffff !important;
+  box-shadow: 2px 2px 0 #000000 !important;
+}
+
+/* Feedback data info styling for different themes */
+.theme-synthwave .mt-2.p-3.bg-gray-800 {
+  background-color: rgba(30, 15, 40, 0.8) !important;
+  border: 1px solid var(--neon-pink) !important;
+  box-shadow: 0 0 10px var(--neon-blue) !important;
+}
+
+.theme-retro90s .mt-2.p-3.bg-gray-800 {
+  background-color: #000066 !important;
+  border: 2px solid #00ffff !important;
+  box-shadow: 4px 4px 0 #000000 !important;
+}
+
+.theme-retro90s button[class*="text-blue-400"] {
+  color: #00ffff !important;
+  font-weight: bold !important;
+}
+
+.theme-synthwave button[class*="text-blue-400"] {
+  color: var(--neon-blue) !important;
+  text-shadow: 0 0 5px var(--neon-blue) !important;
 }
 
