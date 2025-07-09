@@ -3,6 +3,13 @@ import React, { useState, useEffect } from 'react';
 // Define the changelog entries
 const changelogEntries = [
     {
+      version: "v1.7.0",
+      title: "Geri Bildirim Sistemi & UI İyileştirmeleri 📝",
+      description: "Kullanıcılardan geri bildirim toplamak için yeni bir sistem eklendi. Ayrıca, kart seçimi görsel olarak iyileştirildi, mobil uyumluluk artırıldı ve synthwave temasında seçilen kartlar için neon efekti eklendi.",
+      date: "10 Temmuz 2025",
+      type: "feature"
+    },
+    {
       version: "v1.6.1",
       title: "Çip Lideri Vurgusu & Tema Düzeltmeleri 🏆",
       description: "Güven Bahsi açıkken en çok çipe sahip katılımcı artık isim yanında altın kupa ikonu ve tema renkli vurguyla öne çıkıyor (beraberlikte gümüş). Retro 90s temadaki dönen hologram katılımcı listesinde kaldırıldı. Özellik, Auction kapalıyken gizleniyor.",

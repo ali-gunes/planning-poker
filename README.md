@@ -14,6 +14,15 @@ A real-time planning poker application for agile teams to estimate tasks collabo
 ### Voting System
 * Presets: Fibonacci, Days, Hours, Yes/No.
 * Real-time hidden voting with reveal & stats.
+* Responsive card design optimized for all devices.
+* Theme-specific visual indicators for selected cards.
+
+### User Feedback System 📝 *(v1.7+)*
+* Integrated feedback collection via floating button.
+* 5-star rating system with optional comments.
+* Theme-aware design that matches the current visual style.
+* Transparent data collection with user consent.
+* Redis-based storage with analytics capabilities.
 
 ### Confidence Auction 💰 *(v1.6+)*
 * Optional chip-based side game that lets players wager on their own estimate confidence.
@@ -55,8 +64,10 @@ A real-time planning poker application for agile teams to estimate tasks collabo
 
 ### Themes & Audio
 * Built-in themes: **Modern**, **Retro 90s**, **Synthwave** (toggle via palette icon).
-* Theme-aware components (buttons, cards, toasts, etc.).
+* Theme-aware components (buttons, cards, toasts, modals, etc.).
 * Optional background music per theme with a tiny Visualizer.
+* Responsive design for all screen sizes (mobile, tablet, desktop).
+* Theme-specific visual effects (neon glow for Synthwave, pixel shadows for Retro 90s).
 
 ### Reliability
 * WebSocket heartbeat (25 s ping/pong) to survive Cloudflare idle timeouts.
