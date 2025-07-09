@@ -981,10 +981,12 @@
 
 @keyframes blink {
   0% {
-    opacity: 0.5;
+    opacity: 0.4;
+    text-shadow: 0 0 5px #00ffff;
   }
   100% {
     opacity: 1;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
   }
 }
 
@@ -1000,62 +1002,87 @@
 }
 
 /* Add cyberpunk-style selection indicator */
+.theme-synthwave .ring-2,
+.theme-synthwave .ring-4 {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width)
+    var(--tw-ring-offset-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000) !important;
+  border: 2px solid transparent;
+  /* animation: borderPulse 2s infinite; */ /* General pulse removed */
+}
+
 .theme-synthwave .ring-2::before,
-.theme-synthwave .ring-4::before,
-.theme-synthwave [class*="ring"]::before {
+.theme-synthwave .ring-4::before {
   content: "";
   position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border: 2px solid var(--neon-pink);
-  border-radius: 4px;
-  clip-path: polygon(
-    0% 0%, 
-    15% 0%, 
-    15% 2px, 
-    2px 2px, 
-    2px 15%, 
-    0% 15%,
-    0% 0%,
-    0% 100%,
-    0% 85%,
-    2px 85%,
-    2px 98%,
-    15% 98%,
-    15% 100%,
-    0% 100%,
-    100% 100%,
-    85% 100%,
-    85% 98%,
-    98% 98%,
-    98% 85%,
-    100% 85%,
-    100% 100%,
-    100% 0%,
-    100% 15%,
-    98% 15%,
-    98% 2px,
-    85% 2px,
-    85% 0%
-  );
-  box-shadow: 0 0 10px var(--neon-pink);
-  animation: borderPulse 2s infinite alternate;
-  pointer-events: none;
+  inset: -4px;
+  border-radius: 12px;
+  border: 2px solid #ff00ff; /* Base neon pink for unselected */
+  filter: blur(8px);
+  z-index: -1;
+  opacity: 0.75;
+  animation: borderPulsePink 2s infinite;
 }
 
-@keyframes borderPulse {
+/* Make selected card glow blue using a hyper-specific selector */
+.theme-synthwave button.voting-card.synthwave-selected-card {
+  color: var(--neon-blue) !important;
+  border-color: var(--neon-blue) !important;
+  text-shadow: 0 0 5px var(--neon-blue) !important;
+  box-shadow: 0 0 10px var(--neon-blue), 0 0 25px var(--neon-blue), 0 0 50px var(--neon-blue) !important;
+  animation: selectedCardPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes selectedCardPulse {
   0% {
-    box-shadow: 0 0 5px var(--neon-pink);
+    box-shadow: 0 0 10px var(--neon-blue), 0 0 25px var(--neon-blue), 0 0 50px var(--neon-blue) !important;
+  }
+  50% {
+    box-shadow: 0 0 15px var(--neon-blue), 0 0 35px var(--neon-blue), 0 0 70px var(--neon-blue) !important;
   }
   100% {
-    box-shadow: 0 0 15px var(--neon-pink);
+    box-shadow: 0 0 10px var(--neon-blue), 0 0 25px var(--neon-blue), 0 0 50px var(--neon-blue) !important;
   }
 }
 
-/* Enhanced Selected card state */
+@keyframes borderPulsePink {
+  0% {
+    border-color: rgba(255, 0, 255, 0.7);
+    filter: blur(8px);
+    opacity: 0.7;
+  }
+  50% {
+    border-color: rgb(255, 0, 255);
+    filter: blur(10px);
+    opacity: 1;
+  }
+  100% {
+    border-color: rgba(255, 0, 255, 0.7);
+    filter: blur(8px);
+    opacity: 0.7;
+  }
+}
+
+@keyframes borderPulseBlue {
+  0% {
+    border-color: rgba(0, 192, 255, 0.7);
+    filter: blur(10px);
+    opacity: 0.7;
+  }
+  50% {
+    border-color: rgb(0, 192, 255);
+    filter: blur(16px);
+    opacity: 1;
+  }
+  100% {
+    border-color: rgba(0, 192, 255, 0.7);
+    filter: blur(10px);
+    opacity: 0.7;
+  }
+}
+
 .theme-synthwave button[class*="Kartını Oyna"].ring,
+.theme-synthwave button[class*="Deniz Kartını Oyna"].ring,
 .theme-synthwave button[class*="Kartını Oyna"].ring-2,
 .theme-synthwave button[class*="Kartını Oyna"].ring-white,
 .theme-synthwave button[class*="Kartını Oyna"][class*="ring"] {
@@ -1159,6 +1186,31 @@
   border: 1px solid var(--neon-blue) !important;
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.3) !important;
   transform: skewX(-5deg) !important;
+}
+
+/* Override for voting cards to remove global skew in Synthwave */
+.theme-synthwave .voting-card {
+  transform: none !important;
+}
+
+/* Show selection indicators for synthwave theme */
+.theme-synthwave .theme-indicator-left,
+.theme-synthwave .theme-indicator-right {
+  display: block !important;
+  color: var(--neon-pink) !important;
+  font-size: 16px !important;
+  text-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink) !important;
+  animation: blink 0.7s infinite alternate;
+}
+
+/* Show selection indicators for retro90s theme */
+.theme-retro90s .theme-indicator-left,
+.theme-retro90s .theme-indicator-right {
+  display: block !important;
+  color: #00ffff !important;
+  font-size: 16px !important;
+  text-shadow: 2px 2px 0 #ff00ff !important;
+  animation: retro-blink 0.5s infinite alternate;
 }
 
 /* Synthwave Theme - Theme selector */

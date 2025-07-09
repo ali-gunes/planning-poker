@@ -20,6 +20,7 @@ import { useToast } from '@/contexts/ToastContext';
 import { useQuoteSystem } from '@/contexts/QuoteContext';
 import { InlineQuoteCard } from '@/components/InlineQuoteCard';
 import { ChipLeaderboard } from "@/components/ChipLeaderboard";
+import { VotingCardBar } from "@/components/VotingCardBar";
 
 const votingStacks = {
     fibonacci: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
@@ -86,10 +87,14 @@ export default function RoomPage() {
     const [requiredVotes, setRequiredVotes] = useState(0);
     const [wager, setWager] = useState<number>(0);
 
+    // Mobile sidebar visibility
+    const [isSidebarVisible, setSidebarVisible] = useState(false);
+
     // Computed helper: is the current user the room owner?
     const isOwner = roomSettings?.owner === name;
     const isPreviousOwner = roomSettings?.previousOwner === name;
-    const votingCards = roomSettings ? votingStacks[roomSettings.votingPreset] : [];
+    const coffeeCard: string = '☕️';
+    const votingCards = roomSettings ? [coffeeCard, ...votingStacks[roomSettings.votingPreset]] : [];
     const isMuted = participants.find(p=>p.name===name)?.muted;
 
     const { showToast } = useToast();
@@ -583,10 +588,18 @@ export default function RoomPage() {
                     </div>
                 </header>
 
+                {/* Mobile toggle for participants sidebar */}
+                <button
+                    onClick={() => setSidebarVisible(prev => !prev)}
+                    className="lg:hidden mb-4 px-4 py-2 bg-gray-800 text-white rounded-md shadow-md w-full"
+                >
+                    {isSidebarVisible ? 'Oda Bilgilerini Gizle' : 'Oda Bilgilerini Göster'}
+                </button>
+
                 <main className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
                     
                     {/* Left Panel: Participants & Controls */}
-                    <aside className="lg:col-span-1 bg-gray-800/50 rounded-lg p-6 h-fit shadow-2xl">
+                    <aside className={`${isSidebarVisible ? 'block' : 'hidden'} lg:block lg:col-span-1 bg-gray-800/50 rounded-lg p-6 h-fit shadow-2xl`}>
                         {/* Voting System Info */}
                         {roomSettings && (
                             <div className="mb-6 p-3 bg-gray-700/50 rounded-lg border border-gray-600">
@@ -806,27 +819,6 @@ export default function RoomPage() {
                                 ) : (
                                 /* Voting State */
                                     <>
-                                      <div className="flex flex-wrap justify-center gap-4">
-                                        {votingCards.map((value) => (
-                                          <button
-                                            key={value}
-                                            onClick={() => handleVote(value)}
-                                            disabled={gameState !== 'voting' || role === 'observer' || isMuted}
-                                            className={`w-28 h-40 rounded-xl flex items-center justify-center text-4xl font-bold transition-all duration-200 shadow-lg
-                                                ${ gameState !== 'voting'
-                                                    ? "bg-gray-700 cursor-not-allowed text-gray-500"
-                                                    : role === 'observer'
-                                                    ? "bg-gray-700 cursor-not-allowed text-gray-500"
-                                                    : selectedVote === value
-                                                    ? "bg-blue-600 text-white ring-4 ring-blue-400 transform -translate-y-2"
-                                                    : "bg-gray-800 text-blue-400 hover:bg-gray-700 hover:-translate-y-1"
-                                                }`}
-                                          >
-                                            {value}
-                                          </button>
-                                        ))}
-                                      </div>
-
                                       {/* Confidence Auction Wager Slider */}
                                       {gameState === 'voting' && role === 'participant' && !isMuted && roomSettings?.auctionEnabled === true && roomSettings?.votingPreset !== 'yesno' && selectedVote !== null && (participants.find(p=>p.name===name)?.chips ?? 0) > -10 && (
                                         <div className="mt-6 flex flex-col items-center gap-2">
@@ -868,6 +860,14 @@ export default function RoomPage() {
                     </section>
                 </main>
             </div>
+            {gameState !== 'revealed' && (
+                <VotingCardBar
+                    cards={votingCards}
+                    selected={selectedVote}
+                    disabled={gameState !== 'voting' || role === 'observer' || !!isMuted}
+                    onSelect={handleVote}
+                />
+            )}
         </>
     );
 } 

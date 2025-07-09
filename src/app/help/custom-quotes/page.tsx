@@ -66,7 +66,7 @@ export default function CustomQuotesGuidePage() {
           <img
             src={`/gifs/${JSON.parse(exampleQuoteSnippet).animation}`}
             alt={JSON.parse(exampleQuoteSnippet).name}
-            className="rounded-lg shadow-md w-[160px] h-[120px] object-cover mb-3"
+            className="rounded-lg shadow-md w-[320px] h-[240px] object-cover mb-3"
           />
           <h3 className="text-lg font-bold text-white mb-1">{JSON.parse(exampleQuoteSnippet).name} Diyor Ki:</h3>
           <p className="bg-white/90 text-gray-800 rounded-md px-3 py-2 text-sm font-medium italic mb-2">

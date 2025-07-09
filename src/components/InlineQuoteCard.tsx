@@ -23,7 +23,7 @@ export function InlineQuoteCard({ variant }: InlineQuoteCardProps) {
         <img
           src={`/gifs/${currentQuote.animation}`}
           alt={currentQuote.name}
-          className="rounded-lg shadow-md w-[160px] h-[120px] object-cover mb-3"
+          className="rounded-lg shadow-md w-[320px] h-[240px] object-cover mb-3"
         />
         <h3 className="text-lg font-bold text-white mb-1">{currentQuote.name} diyor ki</h3>
         {/* {currentQuote.phrase && (
