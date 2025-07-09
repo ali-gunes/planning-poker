@@ -1777,3 +1777,152 @@
   text-shadow: 0 0 5px var(--neon-blue) !important;
 }
 
+/* Tic-Tac-Toe theme-specific styles */
+.theme-synthwave .text-neon-blue {
+  color: var(--neon-blue) !important;
+  text-shadow: 0 0 10px var(--neon-blue) !important;
+}
+
+.theme-synthwave .text-neon-pink {
+  color: var(--neon-pink) !important;
+  text-shadow: 0 0 10px var(--neon-pink) !important;
+}
+
+.theme-synthwave .border-neon-blue {
+  border-color: var(--neon-blue) !important;
+  box-shadow: 0 0 10px var(--neon-blue) !important;
+}
+
+.theme-retro90s .grid.grid-cols-3 {
+  box-shadow: 4px 4px 0 #000000 !important;
+}
+
+.theme-retro90s .grid.grid-cols-3 button {
+  transition: all 0.1s ease-in-out !important;
+}
+
+.theme-retro90s .grid.grid-cols-3 button:hover:not(:disabled) {
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 2px 2px 0 #000000 !important;
+}
+
+/* Fix for TicTacToe buttons in synthwave theme */
+.theme-synthwave .grid.grid-cols-3 button::before,
+.theme-synthwave .grid.grid-cols-3 button::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* TicTacToe specific button styling */
+.theme-synthwave .tictactoe-button::before,
+.theme-synthwave .tictactoe-button::after {
+  content: none !important;
+  display: none !important;
+}
+
+.theme-synthwave .tictactoe-button {
+  transform: none !important;
+  border: 1px solid var(--neon-blue) !important;
+  color: white !important;
+  text-shadow: none !important;
+  box-shadow: 0 0 5px rgba(0, 255, 255, 0.3) !important;
+}
+
+.theme-synthwave .tictactoe-button:hover:not(:disabled) {
+  transform: none !important;
+  background-color: rgba(0, 255, 255, 0.1) !important;
+}
+
+/* Only show indicators for buttons with explicit indicator spans */
+.theme-synthwave .tictactoe-button span.absolute {
+  display: block !important;
+}
+
+/* Synthwave Theme - Theme selector */
+.theme-synthwave .theme-selector-btn {
+  background-color: var(--dark-bg) !important;
+  border: 1px solid var(--neon-purple) !important;
+  color: var(--neon-purple) !important;
+  text-shadow: 0 0 5px var(--neon-purple) !important;
+  box-shadow: 0 0 10px rgba(153, 0, 255, 0.3) !important;
+}
+
+.theme-synthwave .theme-selector-dropdown {
+  background-color: rgba(18, 18, 18, 0.95) !important;
+  border: 1px solid var(--neon-blue) !important;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3) !important;
+}
+
+.theme-synthwave .theme-selector-option {
+  color: #ffffff !important;
+}
+
+.theme-synthwave .theme-selector-option:hover {
+  background-color: rgba(0, 255, 255, 0.1) !important;
+}
+
+.theme-synthwave .theme-selector-option-active {
+  background-color: rgba(153, 0, 255, 0.2) !important;
+  border-left-color: var(--neon-purple) !important;
+}
+
+/* TicTacToe toggle button styling */
+.theme-synthwave button[class*="px-3 py-2 bg-gray-700"] {
+  background-color: rgba(30, 15, 40, 0.8) !important;
+  border: 1px solid var(--neon-pink) !important;
+  color: var(--neon-blue) !important;
+  text-shadow: 0 0 5px var(--neon-blue) !important;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3) !important;
+  transform: none !important;
+}
+
+.theme-synthwave button[class*="px-3 py-2 bg-gray-700"]:hover {
+  background-color: rgba(40, 20, 60, 0.8) !important;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5) !important;
+  transform: none !important;
+}
+
+.theme-synthwave button[class*="px-3 py-2 bg-gray-700"]::before,
+.theme-synthwave button[class*="px-3 py-2 bg-gray-700"]::after {
+  content: none !important;
+}
+
+.theme-retro90s button[class*="px-3 py-2 bg-gray-700"] {
+  background-color: #000066 !important;
+  border: 2px solid #00ffff !important;
+  color: #ffffff !important;
+  font-weight: bold !important;
+  box-shadow: 3px 3px 0 #000000 !important;
+}
+
+.theme-retro90s button[class*="px-3 py-2 bg-gray-700"]:hover {
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 5px 5px 0 #000000 !important;
+}
+
+/* Restore indicators for voting cards */
+.theme-synthwave button.voting-card.synthwave-selected-card::before,
+.theme-synthwave button.voting-card.synthwave-selected-card::after {
+  content: "▶" !important;
+  position: absolute !important;
+  display: block !important;
+  color: var(--neon-blue) !important;
+  font-size: 14px !important;
+  text-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue) !important;
+  animation: blink 1s infinite alternate !important;
+}
+
+.theme-synthwave button.voting-card.synthwave-selected-card::before {
+  left: -20px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+.theme-synthwave button.voting-card.synthwave-selected-card::after {
+  right: -20px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+/* TicTacToe toggle button styling */
+

@@ -25,6 +25,35 @@ interface QuoteContextType {
 
 const QuoteContext = createContext<QuoteContextType | undefined>(undefined);
 
+// Track used quotes for each category to avoid repetition
+interface UsedQuotesTracker {
+  general: string[];
+  medianLow: string[];
+  medianHigh: string[];
+  consensus: string[];
+  hugeDifference: string[];
+}
+
+// Initialize the used quotes tracker
+const usedQuotes: UsedQuotesTracker = {
+  general: [],
+  medianLow: [],
+  medianHigh: [],
+  consensus: [],
+  hugeDifference: [],
+};
+
+// Add a type definition for Quote
+interface Quote {
+  id?: string;
+  name: string;
+  role: string;
+  quote: string;
+  phrase?: string;
+  animation: string;
+  color: string;
+}
+
 export function QuoteProvider({ children }: { children: ReactNode }) {
   const [quoteSystemType, setQuoteSystemTypeState] = useState<QuoteSystemType>('none');
   const [quoteSystem, setQuoteSystem] = useState<QuoteSystem | null>(null);
@@ -144,6 +173,37 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Helper function to get a quote that hasn't been used recently
+  const getSmartRandomQuote = (quotes: Quote[], quoteType: QuoteType) => {
+    // If no quotes available, return null
+    if (!quotes || quotes.length === 0) return null;
+    
+    // Filter out recently used quotes
+    const usedQuotesForType = usedQuotes[quoteType];
+    let availableQuotes = quotes.filter(q => !usedQuotesForType.includes(q.quote));
+    
+    // If all quotes have been used or there are no available quotes, reset the used quotes array
+    if (availableQuotes.length === 0) {
+      usedQuotes[quoteType] = [];
+      availableQuotes = quotes;
+    }
+    
+    // Select a random quote from available quotes
+    const randomIndex = Math.floor(Math.random() * availableQuotes.length);
+    const selectedQuote = availableQuotes[randomIndex];
+    
+    // Add to used quotes (keep track of the last 50% of quotes to avoid repetition)
+    const maxTrackedQuotes = Math.ceil(quotes.length * 0.5);
+    usedQuotes[quoteType].push(selectedQuote.quote);
+    
+    // Trim the used quotes array if it gets too large
+    if (usedQuotes[quoteType].length > maxTrackedQuotes) {
+      usedQuotes[quoteType].shift(); // Remove the oldest quote
+    }
+    
+    return selectedQuote;
+  };
+
   const showQuoteForType = (quoteType: QuoteType) => {
     if (!quoteSystem || quoteSystemType === 'none') return;
     
@@ -177,21 +237,23 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     
     // Check probability
     if (shouldShow && quotes.length > 0 && Math.random() <= settings.quoteProbability) {
-      // Select a random quote
-      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-      setCurrentQuote({
-        quote: randomQuote.quote,
-        name: randomQuote.name,
-        role: randomQuote.role,
-        phrase: randomQuote.phrase,
-        animation: randomQuote.animation,
-        color: randomQuote.color
-      });
-      setLastQuoteType(quoteType);
+      // Select a smart random quote
+      const randomQuote = getSmartRandomQuote(quotes, quoteType);
+      if (randomQuote) {
+        setCurrentQuote({
+          quote: randomQuote.quote,
+          name: randomQuote.name,
+          role: randomQuote.role,
+          phrase: randomQuote.phrase,
+          animation: randomQuote.animation,
+          color: randomQuote.color
+        });
+        setLastQuoteType(quoteType);
 
-      // We previously used a top overlay for general quotes; now we display them inline
-      // below the voting cards, so no modal is needed. Ensure modal is closed.
-      setIsModalOpen(false);
+        // We previously used a top overlay for general quotes; now we display them inline
+        // below the voting cards, so no modal is needed. Ensure modal is closed.
+        setIsModalOpen(false);
+      }
     }
   };
 

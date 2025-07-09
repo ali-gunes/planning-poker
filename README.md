@@ -16,6 +16,14 @@ A real-time planning poker application for agile teams to estimate tasks collabo
 * Real-time hidden voting with reveal & stats.
 * Responsive card design optimized for all devices.
 * Theme-specific visual indicators for selected cards.
+* Collapsible voting card bar for better screen space utilization.
+
+### TicTacToe Mini-Game 🎮 *(v1.8+)*
+* Built-in Tic-Tac-Toe game to play while waiting for teammates to vote.
+* Three difficulty levels: Easy, Medium, and Hard.
+* Theme-aware design that matches the current visual style.
+* Persistent scores stored in localStorage.
+* Toggle between quotes and game during voting rounds.
 
 ### User Feedback System 📝 *(v1.7+)*
 * Integrated feedback collection via floating button.

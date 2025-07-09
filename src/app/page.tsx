@@ -53,7 +53,7 @@ export default function Home() {
     if (votingPreset === 'yesno' && auctionEnabled) {
       setAuctionEnabled(false);
     }
-  }, [votingPreset]);
+  }, [votingPreset, auctionEnabled]);
 
   const handleCreateRoom = async () => {
     if (!name.trim()) {

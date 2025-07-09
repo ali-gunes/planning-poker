@@ -27,46 +27,43 @@ export function QuoteSystemSelector() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { showToast } = useToast();
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file) return;
-
-    // File size limit (128 KB)
-    const MAX_FILE_SIZE = 128 * 1024; // bytes
-    if (file.size > MAX_FILE_SIZE) {
-      showToast(`JSON dosyası çok büyük (≥ ${Math.round(MAX_FILE_SIZE/1024)} KB). Daha küçük bir paket yükleyin. Limit 128 KB'dir.`, 'error');
-      setUploadStatus('error');
-      // Reset input value so same file can re-trigger change if needed
-      if (fileInputRef.current) fileInputRef.current.value = '';
-      return;
-    }
 
     setIsUploading(true);
     setUploadStatus('processing');
+
     try {
-      const fileContent = await file.text();
-      const success = await uploadCustomQuotes(fileContent);
+      const text = await file.text();
+      const success = await uploadCustomQuotes(text);
       
       if (success) {
         setUploadStatus('success');
-        showToast('Özel alıntılar başarıyla yüklendi', 'success');
+        showToast(
+          'Özel alıntılar yüklendi!',
+          'success'
+        );
       } else {
         setUploadStatus('error');
+        showToast(
+          'Alıntı dosyası geçerli değil',
+          'error'
+        );
       }
     } catch (error) {
-      console.error('Error uploading file:', error);
-      showToast('Dosya yüklenirken hata oluştu', 'error');
       setUploadStatus('error');
+      showToast(
+        'Dosya yüklenirken bir hata oluştu',
+        'error'
+      );
+      console.error('Error uploading file:', error);
     } finally {
       setIsUploading(false);
-      // Reset file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      // Reset the file input
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
-
-
 
   return (
     <div className="w-full bg-gray-800/50 rounded-lg p-4 shadow-md border border-gray-700">
@@ -92,12 +89,19 @@ export function QuoteSystemSelector() {
             <button
               type="button"
               onClick={() => setQuoteSystemType('none')}
-              className={`p-3 rounded-lg border-2 transition-all text-center ${
+              className={`p-3 rounded-lg border-2 transition-all text-center relative ${
                 quoteSystemType === 'none'
                   ? 'border-blue-500 bg-blue-500/20 text-blue-300'
                   : 'border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500'
               }`}
+              data-selected={quoteSystemType === 'none' ? "true" : "false"}
             >
+              {quoteSystemType === 'none' && (
+                <>
+                  <span className="absolute -left-3 top-1/2 -translate-y-1/2 text-pink-500 theme-indicator-left hidden">▶</span>
+                  <span className="absolute -right-3 top-1/2 -translate-y-1/2 text-pink-500 theme-indicator-right hidden">◀</span>
+                </>
+              )}
               <div className="font-bold text-lg">🚫</div>
               <div className="text-xs font-medium">Alıntı Yok</div>
             </button>
@@ -105,12 +109,19 @@ export function QuoteSystemSelector() {
             <button
               type="button"
               onClick={() => setQuoteSystemType('ci-team')}
-              className={`p-3 rounded-lg border-2 transition-all text-center ${
+              className={`p-3 rounded-lg border-2 transition-all text-center relative ${
                 quoteSystemType === 'ci-team'
                   ? 'border-blue-500 bg-blue-500/20 text-blue-300'
                   : 'border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500'
               }`}
+              data-selected={quoteSystemType === 'ci-team' ? "true" : "false"}
             >
+              {quoteSystemType === 'ci-team' && (
+                <>
+                  <span className="absolute -left-3 top-1/2 -translate-y-1/2 text-pink-500 theme-indicator-left hidden">▶</span>
+                  <span className="absolute -right-3 top-1/2 -translate-y-1/2 text-pink-500 theme-indicator-right hidden">◀</span>
+                </>
+              )}
               <div className="font-bold text-lg">🍔</div>
               <div className="text-xs font-medium">C&I Hatırası</div>
             </button>
@@ -118,12 +129,19 @@ export function QuoteSystemSelector() {
             <button
               type="button"
               onClick={() => setQuoteSystemType('custom')}
-              className={`p-3 rounded-lg border-2 transition-all text-center ${
+              className={`p-3 rounded-lg border-2 transition-all text-center relative ${
                 quoteSystemType === 'custom'
                   ? 'border-blue-500 bg-blue-500/20 text-blue-300'
                   : 'border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500'
               }`}
+              data-selected={quoteSystemType === 'custom' ? "true" : "false"}
             >
+              {quoteSystemType === 'custom' && (
+                <>
+                  <span className="absolute -left-3 top-1/2 -translate-y-1/2 text-pink-500 theme-indicator-left hidden">▶</span>
+                  <span className="absolute -right-3 top-1/2 -translate-y-1/2 text-pink-500 theme-indicator-right hidden">◀</span>
+                </>
+              )}
               <div className="font-bold text-lg">📁</div>
               <div className="text-xs font-medium">Özel</div>
             </button>
@@ -165,49 +183,28 @@ export function QuoteSystemSelector() {
                 
                 {/* Upload status indicator */}
                 {uploadStatus !== 'idle' && (
-                  <div className="text-xs font-medium mt-1">
-                    {uploadStatus === 'processing' && (
-                      <span className="text-blue-400">Yükleniyor...</span>
-                    )}
-                    {uploadStatus === 'success' && (
-                      <span className="text-green-400">✅ Başarılı bir şekilde yüklendi</span>
-                    )}
-                    {uploadStatus === 'error' && (
-                      <span className="text-red-400">❌ Yükleme sırasında hata oluştu, JSON dosyanızı lütfen kontrol ediniz.</span>
-                    )}
+                  <div className={`text-xs font-medium text-center ${
+                    uploadStatus === 'processing' ? 'text-yellow-300' :
+                    uploadStatus === 'success' ? 'text-green-400' : 'text-red-400'
+                  }`}>
+                    {uploadStatus === 'processing' && 'İşleniyor...'}
+                    {uploadStatus === 'success' && 'Başarıyla yüklendi!'}
+                    {uploadStatus === 'error' && 'Yükleme başarısız!'}
                   </div>
                 )}
-
               </div>
-
-              {/* Available GIFs showcase */}
-              {/* <div>
-                <h4 className="text-gray-200 text-xs mb-2">Mevcut GIF dosyaları:</h4>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-64 overflow-y-auto pr-1">
-                  {availableGifs.map((gif) => (
-                    <div key={gif} className="flex flex-col items-center text-center">
-                      <img
-                        src={`/gifs/${gif}`}
-                        alt={gif}
-                        className="w-20 h-20 object-cover rounded"
-                      />
-                      <span className="text-[10px] text-gray-400 mt-1 break-all">{gif}</span>
-                    </div>
-                  ))}
-                </div>
-              </div> */}
             </div>
-          )}
-          
-          {quoteSystemType === 'none' && (
-            <p className="text-xs text-gray-400 mt-2">
-              Alıntı sistemi devre dışı bırakıldı. Oylama sırasında alıntılar gösterilmeyecek.
-            </p>
           )}
           
           {quoteSystemType === 'ci-team' && (
             <p className="text-xs text-gray-400 mt-2">
               Kanal ve Entegrasyon ekibinin eğlenceli alıntıları oylama sırasında gösterilecek. <br /> &quot;In Canberk We Trust.&quot;
+            </p>
+          )}
+
+          {quoteSystemType === 'none' && (
+            <p className="text-xs text-gray-400 mt-2">
+              Alıntı sistemi devre dışı bırakıldı. Oylama sırasında alıntılar gösterilmeyecek.
             </p>
           )}
         </div>

@@ -21,6 +21,8 @@ import { useQuoteSystem } from '@/contexts/QuoteContext';
 import { InlineQuoteCard } from '@/components/InlineQuoteCard';
 import { ChipLeaderboard } from "@/components/ChipLeaderboard";
 import { VotingCardBar } from "@/components/VotingCardBar";
+import { TicTacToe } from "@/components/TicTacToe";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const votingStacks = {
     fibonacci: [1, 2, 3, 5, 8, 13, 21, 34, 55, 89],
@@ -99,6 +101,9 @@ export default function RoomPage() {
 
     const { showToast } = useToast();
     const { showQuoteForType, setQuoteSystemType, uploadCustomQuotes } = useQuoteSystem();
+
+    // Move useTheme hook call to the top level
+    const { theme } = useTheme();
 
     useEffect(() => {
         const storedName = sessionStorage.getItem("username");
@@ -365,7 +370,7 @@ export default function RoomPage() {
         return () => {
           socket.removeEventListener("message", handleMessage);
         }
-    }, [socket, roomSettings, router, showQuoteForType, setQuoteSystemType, uploadCustomQuotes]);
+    }, [socket, roomSettings, router, showQuoteForType, setQuoteSystemType, uploadCustomQuotes, showToast]);
   
     const handleNameSubmit = (submittedName: string, submittedRole: 'participant' | 'observer') => {
         const trimmedName = submittedName.trim();
@@ -530,6 +535,15 @@ export default function RoomPage() {
         const secs = (seconds % 60).toString().padStart(2, '0');
         return `${mins}:${secs}`;
     };
+
+    const [showTicTacToe, setShowTicTacToe] = useState<boolean>(false);
+    
+    // Reset TicTacToe visibility when a new round starts
+    useEffect(() => {
+        if (gameState === 'voting') {
+            setShowTicTacToe(false);
+        }
+    }, [gameState]);
 
     return (
         <>
@@ -840,8 +854,50 @@ export default function RoomPage() {
                                             />
                                         </div>
                                       )}
-                                      {/* General quote card below voting cards */}
-                                      <InlineQuoteCard variant="voting" />
+                                      
+                                      {/* Show TicTacToe when quotes are disabled */}
+                                      {gameState === 'voting' && (!roomSettings?.quoteSystemType || roomSettings?.quoteSystemType === 'none') ? (
+                                        <div className="mt-8">
+                                          <TicTacToe theme={theme} />
+                                        </div>
+                                      ) : gameState === 'voting' ? (
+                                        /* Show quotes with TicTacToe toggle button */
+                                        <>
+                                          {/* General quote card below voting cards */}
+                                          {!showTicTacToe && <InlineQuoteCard variant="voting" />}
+                                          
+                                          {/* TicTacToe toggle button */}
+                                          <div className="mt-4 flex justify-center">
+                                            <button
+                                              onClick={() => setShowTicTacToe(!showTicTacToe)}
+                                              className="px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-sm flex items-center gap-2 transition-all"
+                                            >
+                                              {showTicTacToe ? (
+                                                <>
+                                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <polyline points="18 15 12 9 6 15"></polyline>
+                                                  </svg>
+                                                  Alıntıları Göster
+                                                </>
+                                              ) : (
+                                                <>
+                                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                                  </svg>
+                                                  Tic-Tac-Toe Oyna
+                                                </>
+                                              )}
+                                            </button>
+                                          </div>
+                                          
+                                          {/* TicTacToe game when toggled */}
+                                          {showTicTacToe && (
+                                            <div className="mt-4 border-t border-gray-700 pt-4">
+                                              <TicTacToe theme={theme} />
+                                            </div>
+                                          )}
+                                        </>
+                                      ) : null}
                                     </>
                                 )}
                                 {(role === 'observer' || isMuted) && (

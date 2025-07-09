@@ -20,6 +20,7 @@ export const VotingCardBar: React.FC<VotingCardBarProps> = ({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Update arrow visibility based on scroll position
   const updateScrollButtons = () => {
@@ -39,6 +40,10 @@ export const VotingCardBar: React.FC<VotingCardBarProps> = ({
     });
   };
 
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   // Evaluate arrows whenever component renders
   React.useEffect(() => {
     updateScrollButtons();
@@ -54,7 +59,12 @@ export const VotingCardBar: React.FC<VotingCardBarProps> = ({
 
   return (
     <div className="fixed inset-x-2 md:inset-x-4 bottom-4 z-40 pointer-events-none">
-      <div className="relative max-w-5xl mx-auto bg-gray-900/80 backdrop-blur-md rounded-2xl px-2 py-4 md:px-6 md:py-6 flex items-center shadow-2xl pointer-events-auto">
+      {/* Card bar - conditionally shown based on collapsed state */}
+      <div 
+        className={`relative max-w-5xl mx-auto bg-gray-900/80 backdrop-blur-md rounded-2xl px-2 py-4 md:px-6 md:py-6 flex items-center shadow-2xl pointer-events-auto transition-all duration-300 ${
+          isCollapsed ? 'opacity-0 translate-y-20 pointer-events-none' : 'opacity-100'
+        }`}
+      >
         
         {/* Left arrow */}
         {scrollable && canScrollLeft && (
@@ -114,7 +124,27 @@ export const VotingCardBar: React.FC<VotingCardBarProps> = ({
             ▶
           </button>
         )}
+
+        {/* Collapse button inside the card bar */}
+        <button
+          onClick={toggleCollapse}
+          className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900/80 backdrop-blur-md text-blue-400 hover:bg-gray-800 rounded-t-lg px-4 py-1 shadow-lg pointer-events-auto transition-colors"
+        >
+          <span className="mr-1">▼</span> Kartları Gizle
+        </button>
       </div>
+
+      {/* Expand button - shown only when collapsed */}
+      {isCollapsed && (
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full flex justify-center">
+          <button
+            onClick={toggleCollapse}
+            className="bg-gray-900/80 backdrop-blur-md text-blue-400 hover:bg-gray-800 rounded-t-lg px-4 py-1 shadow-lg pointer-events-auto transition-colors"
+          >
+            <span className="mr-1">▲</span> Kartları Göster
+          </button>
+        </div>
+      )}
     </div>
   );
 }; 

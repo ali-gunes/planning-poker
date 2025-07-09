@@ -3,6 +3,13 @@ import React, { useState, useEffect } from 'react';
 // Define the changelog entries
 const changelogEntries = [
     {
+      version: "v1.8.0",
+      title: "Eğlenceli Bekleyiş & UI İyileştirmeleri 🎮",
+      description: "Oylama sırasında arkadaşlarınızı beklerken oynayabileceğiniz Tic-Tac-Toe oyunu eklendi. Oy kartları artık gizlenebilir, alıntı sistemi tekrar gösterilen alıntıları akıllıca önleyecek şekilde geliştirildi.",
+      date: "15 Temmuz 2025",
+      type: "feature"
+    },
+    {
       version: "v1.7.0",
       title: "Geri Bildirim Sistemi & UI İyileştirmeleri 📝",
       description: "Kullanıcılardan geri bildirim toplamak için yeni bir sistem eklendi. Ayrıca, kart seçimi görsel olarak iyileştirildi, mobil uyumluluk artırıldı ve synthwave temasında seçilen kartlar için neon efekti eklendi.",

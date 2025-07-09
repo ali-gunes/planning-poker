@@ -37,12 +37,12 @@ export function RoomSettingsModal({ isOpen, onClose, onSave, currentSettings }: 
     setAuctionEnabled(currentSettings.auctionEnabled ?? false);
   }, [currentSettings]);
 
-  // Ensure auction disabled for yes/no
+  // Ensure auction is off for Yes/No preset
   useEffect(() => {
     if (votingPreset === 'yesno' && auctionEnabled) {
       setAuctionEnabled(false);
     }
-  }, [votingPreset]);
+  }, [votingPreset, auctionEnabled]);
 
   // When timer is selected, automatically set autoReveal to true
   // When timer is set to 0 (no timer), set autoReveal to false

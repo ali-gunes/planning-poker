@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { TrophyIcon } from '@heroicons/react/24/solid';
 import { useTheme, ThemeType } from "../contexts/ThemeContext";
 
@@ -41,9 +41,12 @@ export function ParticipantsList({ participants, currentUser, ownerName, onToggl
         synthwave: 'ring-fuchsia-400/60',
     };
 
-    // Determine chip leader(s)
-    const maxChips = auctionEnabled ? Math.max(...participants.map(p => p.chips ?? 0)) : -Infinity;
-    const leaders = auctionEnabled ? participants.filter(p => (p.role !== 'observer') && ((p.chips ?? 0) === maxChips)) : [];
+    // Determine chip leader(s) - wrapped in useMemo to avoid dependency changes on every render
+    const leaders = useMemo(() => {
+        if (!auctionEnabled) return [];
+        const maxChips = Math.max(...participants.map(p => p.chips ?? 0));
+        return participants.filter(p => (p.role !== 'observer') && ((p.chips ?? 0) === maxChips));
+    }, [participants, auctionEnabled]);
 
     // Confetti on lead change (unique leader only)
     const prevLeadersRef = useRef<string[]>([]);
