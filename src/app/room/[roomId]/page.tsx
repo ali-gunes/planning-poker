@@ -610,10 +610,10 @@ export default function RoomPage() {
                     {isSidebarVisible ? 'Oda Bilgilerini Gizle' : 'Oda Bilgilerini Göster'}
                 </button>
 
-                <main className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <main className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 items-start">
                     
                     {/* Left Panel: Participants & Controls */}
-                    <aside className={`${isSidebarVisible ? 'block' : 'hidden'} lg:block lg:col-span-1 bg-gray-800/50 rounded-lg p-6 h-fit shadow-2xl`}>
+                    <aside className={`${isSidebarVisible ? 'flex' : 'hidden'} lg:flex flex-col flex-shrink-0 lg:w-1/4 bg-gray-800/50 rounded-lg p-6 self-start shadow-2xl`}>
                         {/* Voting System Info */}
                         {roomSettings && (
                             <div className="mb-6 p-3 bg-gray-700/50 rounded-lg border border-gray-600">
@@ -704,7 +704,7 @@ export default function RoomPage() {
                     </aside>
 
                     {/* Right Panel: Voting Area */}
-                    <section className="lg:col-span-3 bg-gray-800/50 rounded-lg p-6 md:p-8 flex flex-col items-center justify-center min-h-[50vh] shadow-2xl">
+                    <section className="flex-grow bg-gray-800/50 rounded-lg p-6 md:p-8 flex flex-col items-center justify-center min-h-[50vh] shadow-2xl self-start">
                         {/* Debug log */}
                         {(() => { 
                             //console.log("🔴 Rendering voting area, roomSettings:", JSON.stringify(roomSettings, null, 2));
@@ -807,7 +807,7 @@ export default function RoomPage() {
                                                     unoptimized={true}
                                                 />
                                                 <div className="text-blue-300 font-bold text-sm md:text-base">
-                                                    Çoğunluk &quot;{voteCounts.majorityValue}&quot; oyunu verdi!
+                                                    Çoğunluk &quot;{voteCounts.majorityValue == 'null' ? 'boş' : voteCounts.majorityValue}&quot; oyunu verdi!
                                                 </div>
                                             </div>
                                         )}

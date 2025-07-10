@@ -1,0 +1,11 @@
+                <main className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+                <main className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 items-start">
+
+
+                    <aside className={`${isSidebarVisible ? 'flex' : 'hidden'} lg:flex flex-col flex-shrink-0 lg:w-1/4 bg-gray-800/50 rounded-lg p-6 h-fit shadow-2xl`}>
+                    <aside className={`${isSidebarVisible ? 'flex' : 'hidden'} lg:flex flex-col flex-shrink-0 lg:w-1/4 bg-gray-800/50 rounded-lg p-6 self-start shadow-2xl`}>
+@room page
+
+                    <section className="flex-grow bg-gray-800/50 rounded-lg p-6 md:p-8 flex flex-col items-center justify-center min-h-[50vh] shadow-2xl">
+                    <section className="flex-grow bg-gray-800/50 rounded-lg p-6 md:p-8 flex flex-col items-center justify-center min-h-[50vh] shadow-2xl self-start">
+@room page
