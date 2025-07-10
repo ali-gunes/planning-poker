@@ -1,10 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 interface VotingCardBarProps {
   cards: (number | string)[];
   selected: number | string | null;
   disabled: boolean;
   onSelect: (card: number | string) => void;
+  roomId: string; // Add roomId prop to create unique localStorage keys
+  gameState?: string; // Optional game state to conditionally show/hide the component
 }
 
 /**
@@ -16,11 +18,26 @@ export const VotingCardBar: React.FC<VotingCardBarProps> = ({
   selected,
   disabled,
   onSelect,
+  roomId,
+  gameState,
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Load collapsed state from localStorage on mount
+  useEffect(() => {
+    const savedState = localStorage.getItem(`voting-cards-collapsed-${roomId}`);
+    if (savedState !== null) {
+      setIsCollapsed(savedState === 'true');
+    }
+  }, [roomId]);
+
+  // Save collapsed state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(`voting-cards-collapsed-${roomId}`, isCollapsed.toString());
+  }, [isCollapsed, roomId]);
 
   // Update arrow visibility based on scroll position
   const updateScrollButtons = () => {
@@ -45,23 +62,28 @@ export const VotingCardBar: React.FC<VotingCardBarProps> = ({
   };
 
   // Evaluate arrows whenever component renders
-  React.useEffect(() => {
+  useEffect(() => {
     updateScrollButtons();
-  });
+  }, [cards]); // Add cards dependency to update when cards change
 
   // Also update on window resize
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener('resize', updateScrollButtons);
     return () => window.removeEventListener('resize', updateScrollButtons);
   }, []);
 
   const scrollable = canScrollLeft || canScrollRight;
 
+  // Don't render anything if we're in the revealed state
+  if (gameState === 'revealed') {
+    return null;
+  }
+
   return (
     <div className="fixed inset-x-2 md:inset-x-4 bottom-4 z-40 pointer-events-none">
       {/* Card bar - conditionally shown based on collapsed state */}
       <div 
-        className={`relative max-w-5xl mx-auto bg-gray-900/80 backdrop-blur-md rounded-2xl px-2 py-4 md:px-6 md:py-6 flex items-center shadow-2xl pointer-events-auto transition-all duration-300 ${
+        className={`relative max-w-5xl mx-auto bg-gray-900/80 backdrop-blur-md rounded-2xl px-2 py-2 md:px-4 md:py-3 flex items-center shadow-2xl pointer-events-auto transition-all duration-300 ${
           isCollapsed ? 'opacity-0 translate-y-20 pointer-events-none' : 'opacity-100'
         }`}
       >
@@ -70,7 +92,7 @@ export const VotingCardBar: React.FC<VotingCardBarProps> = ({
         {scrollable && canScrollLeft && (
           <button
             onClick={() => handleScroll('left')}
-            className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0 bg-gray-800 text-blue-400 hover:bg-gray-700 flex items-center justify-center rounded-lg mr-2"
+            className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 bg-gray-800 text-blue-400 hover:bg-gray-700 flex items-center justify-center rounded-lg mr-2"
           >
             ◀
           </button>
@@ -91,9 +113,9 @@ export const VotingCardBar: React.FC<VotingCardBarProps> = ({
                 onClick={() => onSelect(value)}
                 className={`
                   relative
-                  w-16 h-24 md:w-24 md:h-36 lg:w-28 lg:h-40 
+                  w-12 h-16 md:w-16 md:h-24 lg:w-20 lg:h-28 
                   flex-shrink-0 flex items-center justify-center 
-                  text-2xl md:text-4xl lg:text-5xl font-bold 
+                  text-lg md:text-2xl lg:text-3xl font-bold 
                   rounded-lg md:rounded-xl m-1 md:m-2
                   transition-colors duration-200
                   ${disabled ? 'bg-gray-700 cursor-not-allowed text-gray-500' : 
@@ -119,7 +141,7 @@ export const VotingCardBar: React.FC<VotingCardBarProps> = ({
         {scrollable && canScrollRight && (
           <button
             onClick={() => handleScroll('right')}
-            className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0 bg-gray-800 text-blue-400 hover:bg-gray-700 flex items-center justify-center rounded-lg ml-2"
+            className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 bg-gray-800 text-blue-400 hover:bg-gray-700 flex items-center justify-center rounded-lg ml-2"
           >
             ▶
           </button>

@@ -759,29 +759,29 @@ export default function RoomPage() {
                                 {/* Revealed State */}
                                 {gameState === 'revealed' ? (
                                     <div className="flex flex-col items-center gap-6 w-full">
-                                        <div className="flex flex-wrap justify-center gap-4">
+                                        <div className="flex flex-wrap justify-center gap-2 md:gap-3">
                                             {votes.map((vote, i) => (
                                                 <div key={i} className="flex flex-col items-center text-center">
-                                                    <div className="w-24 h-36 bg-white text-gray-900 rounded-lg flex items-center justify-center text-4xl font-bold shadow-lg transform transition-transform hover:scale-105">{vote.vote}</div>
-                                                    <span className="mt-2 text-lg font-medium">{vote.name}</span>
+                                                    <div className="w-16 h-24 md:w-20 md:h-28 bg-white text-gray-900 rounded-lg flex items-center justify-center text-2xl md:text-3xl font-bold shadow-lg transform transition-transform hover:scale-105">{vote.vote}</div>
+                                                    <span className="mt-1 text-sm md:text-base font-medium">{vote.name}</span>
                                                 </div>
                                             ))}
                                         </div>
                                         {!voteCounts.isYesNo && (
-                                            <div className="mt-6 text-xl w-full flex justify-around items-center bg-gray-900/50 p-4 rounded-lg">
+                                            <div className="mt-4 text-base md:text-lg w-full flex justify-around items-center bg-gray-900/50 p-2 md:p-3 rounded-lg">
                                                 <span>Min: <span className="font-bold text-blue-400">{voteCounts.min}</span></span>
-                                                <span className="font-bold text-2xl">Ortalama: {voteCounts.average}</span>
+                                                <span className="font-bold text-lg md:text-xl">Ortalama: {voteCounts.average}</span>
                                                 <span>Max: <span className="font-bold text-blue-400">{voteCounts.max}</span></span>
                                             </div>
                                         )}
                                         {voteCounts.isYesNo && (
-                                            <div className="mt-6 text-xl w-full flex justify-center items-center bg-gray-900/50 p-4 rounded-lg">
-                                                <span className="font-bold text-2xl">Evet/Hayır Oylaması</span>
+                                            <div className="mt-4 text-base md:text-lg w-full flex justify-center items-center bg-gray-900/50 p-2 md:p-3 rounded-lg">
+                                                <span className="font-bold text-lg md:text-xl">Evet/Hayır Oylaması</span>
                                             </div>
                                         )}
                                         {voteCounts.consensus && (
-                                            <div className="mt-6 flex flex-col items-center gap-4">
-                                                <div className="text-green-400 font-bold text-2xl animate-pulse">OY BİRLİĞİ!</div>
+                                            <div className="mt-4 flex flex-col items-center gap-3">
+                                                <div className="text-green-400 font-bold text-xl md:text-2xl animate-pulse">OY BİRLİĞİ!</div>
                                                 <Image 
                                                     src="/gifs/mark-dancing.gif" 
                                                     //src="/gifs/dicaprio-clapping.gif" 
@@ -791,13 +791,13 @@ export default function RoomPage() {
                                                     className="rounded-lg shadow-lg"
                                                     unoptimized={true}
                                                 />
-                                                <div className="text-yellow-400 font-bold text-lg">🎉 Mükemmel uyum! 🎉</div>
+                                                <div className="text-yellow-400 font-bold text-sm md:text-base">🎉 Mükemmel uyum! 🎉</div>
                                             </div>
                                         )}
                                         
                                         {voteCounts.majority && !voteCounts.consensus && (
-                                            <div className="mt-6 flex flex-col items-center gap-4">
-                                                <div className="text-blue-400 font-bold text-2xl animate-pulse">ÇOĞUNLUK KARARI!</div>
+                                            <div className="mt-4 flex flex-col items-center gap-3">
+                                                <div className="text-blue-400 font-bold text-xl md:text-2xl animate-pulse">ÇOĞUNLUK KARARI!</div>
                                                 <Image 
                                                     src="/gifs/pillow-man.gif" 
                                                     alt="Majority Vote" 
@@ -806,15 +806,15 @@ export default function RoomPage() {
                                                     className="rounded-lg shadow-lg"
                                                     unoptimized={true}
                                                 />
-                                                <div className="text-blue-300 font-bold text-lg">
+                                                <div className="text-blue-300 font-bold text-sm md:text-base">
                                                     Çoğunluk &quot;{voteCounts.majorityValue}&quot; oyunu verdi!
                                                 </div>
                                             </div>
                                         )}
                                         
                                         {voteCounts.hugeDifference && !voteCounts.consensus && !voteCounts.majority && (
-                                            <div className="mt-6 flex flex-col items-center gap-4">
-                                                <div className="text-red-400 font-bold text-2xl animate-pulse">BÜYÜK FARK!</div>
+                                            <div className="mt-4 flex flex-col items-center gap-3">
+                                                <div className="text-red-400 font-bold text-xl md:text-2xl animate-pulse">BÜYÜK FARK!</div>
                                                 <Image 
                                                     src="/gifs/surprised-pikachu.gif" 
                                                     alt="Surprised Pikachu" 
@@ -823,7 +823,7 @@ export default function RoomPage() {
                                                     className="rounded-lg shadow-lg"
                                                     unoptimized={true}
                                                 />
-                                                <div className="text-orange-400 font-bold text-lg">Bu kadar fark olur mu?</div>
+                                                <div className="text-orange-400 font-bold text-sm md:text-base">Bu kadar fark olur mu?</div>
                                             </div>
                                         )}
                                         
@@ -916,14 +916,16 @@ export default function RoomPage() {
                     </section>
                 </main>
             </div>
-            {gameState !== 'revealed' && (
-                <VotingCardBar
-                    cards={votingCards}
-                    selected={selectedVote}
-                    disabled={gameState !== 'voting' || role === 'observer' || !!isMuted}
-                    onSelect={handleVote}
-                />
-            )}
+            {/* Use a stable key to prevent remounting between rounds */}
+            <VotingCardBar
+                key={`voting-cards-${roomId}`}
+                cards={votingCards}
+                selected={selectedVote}
+                disabled={gameState !== 'voting' || role === 'observer' || !!isMuted}
+                onSelect={handleVote}
+                roomId={roomId}
+                gameState={gameState}
+            />
         </>
     );
 } 

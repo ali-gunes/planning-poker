@@ -66,12 +66,12 @@ export function QuoteSystemSelector() {
   };
 
   return (
-    <div className="w-full bg-gray-800/50 rounded-lg p-4 shadow-md border border-gray-700">
+    <div className="w-full bg-gray-800/50 rounded-lg p-3 shadow-md border border-gray-700">
       <div 
         className="flex justify-between items-center cursor-pointer"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+        <h3 className="text-base font-semibold text-white flex items-center gap-1">
         Alıntı Sistemi
         </h3>
         <button className="text-gray-400 hover:text-white transition-colors">
@@ -80,16 +80,16 @@ export function QuoteSystemSelector() {
       </div>
       
       {isExpanded && (
-        <div className="mt-4 space-y-4">
-          <p className="text-gray-300 text-sm">
+        <div className="mt-3 space-y-3">
+          <p className="text-gray-300 text-xs">
             Oylama sonuçlarına göre gösterilecek alıntı sistemini seçin:
           </p>
           
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
               onClick={() => setQuoteSystemType('none')}
-              className={`p-3 rounded-lg border-2 transition-all text-center relative ${
+              className={`p-2 rounded-lg border-2 transition-all text-center relative ${
                 quoteSystemType === 'none'
                   ? 'border-blue-500 bg-blue-500/20 text-blue-300'
                   : 'border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500'
@@ -102,14 +102,14 @@ export function QuoteSystemSelector() {
                   <span className="absolute -right-3 top-1/2 -translate-y-1/2 text-pink-500 theme-indicator-right hidden">◀</span>
                 </>
               )}
-              <div className="font-bold text-lg">🚫</div>
+              <div className="font-bold text-base">🚫</div>
               <div className="text-xs font-medium">Alıntı Yok</div>
             </button>
             
             <button
               type="button"
               onClick={() => setQuoteSystemType('ci-team')}
-              className={`p-3 rounded-lg border-2 transition-all text-center relative ${
+              className={`p-2 rounded-lg border-2 transition-all text-center relative ${
                 quoteSystemType === 'ci-team'
                   ? 'border-blue-500 bg-blue-500/20 text-blue-300'
                   : 'border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500'
@@ -122,14 +122,14 @@ export function QuoteSystemSelector() {
                   <span className="absolute -right-3 top-1/2 -translate-y-1/2 text-pink-500 theme-indicator-right hidden">◀</span>
                 </>
               )}
-              <div className="font-bold text-lg">🍔</div>
+              <div className="font-bold text-base">🍔</div>
               <div className="text-xs font-medium">C&I Hatırası</div>
             </button>
             
             <button
               type="button"
               onClick={() => setQuoteSystemType('custom')}
-              className={`p-3 rounded-lg border-2 transition-all text-center relative ${
+              className={`p-2 rounded-lg border-2 transition-all text-center relative ${
                 quoteSystemType === 'custom'
                   ? 'border-blue-500 bg-blue-500/20 text-blue-300'
                   : 'border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500'
@@ -142,7 +142,7 @@ export function QuoteSystemSelector() {
                   <span className="absolute -right-3 top-1/2 -translate-y-1/2 text-pink-500 theme-indicator-right hidden">◀</span>
                 </>
               )}
-              <div className="font-bold text-lg">📁</div>
+              <div className="font-bold text-base">📁</div>
               <div className="text-xs font-medium">Özel</div>
             </button>
           </div>
@@ -156,7 +156,7 @@ export function QuoteSystemSelector() {
           />
           
           {quoteSystemType === 'custom' && (
-            <div className="flex flex-col gap-4 mt-2">
+            <div className="flex flex-col gap-3 mt-2">
               {/* Description paragraph */}
               <p className="text-xs text-gray-400 leading-snug">
                 Eğer ekibinize ait özel bir alıntı paketi yüklemek isterseniz lütfen oluşturduğunuz JSON
@@ -168,14 +168,14 @@ export function QuoteSystemSelector() {
               <button
                   type="button"
                   onClick={() => window.open('/help/custom-quotes', '_blank')}
-                  className="flex items-center justify-center gap-2 text-xs font-semibold px-3 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-100 transition-colors w-full"
+                  className="flex items-center justify-center gap-2 text-xs font-semibold px-2 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-100 transition-colors w-full"
                 >
                   <span>Kılavuz</span>
                 </button>
 
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex flex-col items-center justify-center text-xs px-2 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-100 disabled:opacity-50 transition-colors w-full"
+                  className="flex flex-col items-center justify-center text-xs px-2 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-100 disabled:opacity-50 transition-colors w-full"
                   disabled={isUploading}
                 >
                   {isUploading ? 'Yükleniyor...' : 'JSON Yükle'}
