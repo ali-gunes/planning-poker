@@ -699,7 +699,7 @@ export default function RoomPage() {
 
                         {/* Leaderboard */}
                         {roomSettings?.auctionEnabled === true && (
-                          <ChipLeaderboard participants={participants} />
+                          <ChipLeaderboard participants={participants} roomId={roomId} />
                         )}
                     </aside>
 
