@@ -2320,3 +2320,16 @@
   box-shadow: 0 0 0 2px rgba(180,227,176,0.6) !important;
 }
 
+/* --- GLOBAL BG OVERRIDES FOR LAYOUT CONTAINERS --- */
+.theme-macos .bg-gray-900,
+.theme-macos .bg-gray-900\/50,
+.theme-macos [class*="bg-gray-900"] {
+  background-color: var(--macos-bg, #F8F6F1) !important;
+}
+
+/* Text light gray to dark for readability */
+.theme-macos .text-gray-100,
+.theme-macos .text-gray-200 {
+  color: #333333 !important;
+}
+
