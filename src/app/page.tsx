@@ -7,6 +7,7 @@ import { Changelog } from "@/components/Changelog";
 import { ThemeSelector } from "@/components/ThemeSelector";
 import { QuoteSystemSelector } from '@/components/QuoteSystemSelector';
 import { useQuoteSystem } from '@/contexts/QuoteContext';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function Home() {
   const [name, setName] = useState("");
@@ -24,6 +25,7 @@ export default function Home() {
   const [showAuctionInfo, setShowAuctionInfo] = useState(false);
 
   const { quoteSystemType, quoteSystem } = useQuoteSystem();
+  const { theme } = useTheme();
 
   // When timer is selected, automatically set autoReveal to true
   // When timer is set to 0 (no timer), set autoReveal to false
@@ -82,6 +84,7 @@ export default function Home() {
           auctionEnabled,
           quoteSystemType,
           customQuotes: customQuotesString ? JSON.parse(customQuotesString) : null,
+          theme,
         }),
       });
 

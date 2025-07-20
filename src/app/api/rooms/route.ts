@@ -12,6 +12,7 @@ interface CreateRoomRequest {
     auctionEnabled?: boolean;
     quoteSystemType: 'none' | 'ci-team' | 'custom';
     customQuotes?: Record<string, unknown>;
+    theme?: 'macos' | 'default';
 }
 
 // Generate a secure random token
@@ -22,7 +23,7 @@ const generateToken = (): string => {
 
 export async function POST(request: Request) {
     try {
-        const { name, role = 'participant', votingPreset, timerDuration, autoReveal, auctionEnabled = false, quoteSystemType = 'ci-team', customQuotes } = (await request.json()) as CreateRoomRequest;
+        const { name, role = 'participant', votingPreset, timerDuration, autoReveal, auctionEnabled = false, quoteSystemType = 'ci-team', customQuotes, theme } = (await request.json()) as CreateRoomRequest;
 
         if (!name) {
             return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -58,6 +59,32 @@ export async function POST(request: Request) {
 
         // Use redis.set with JSON.stringify to match the format in socket.ts
         await redis.set(`room:${roomId}`, JSON.stringify(room), { ex: REDIS_TTL.ROOM });
+
+        // Update statistics hash in Redis
+        const themeKey = theme === 'macos' ? 'macosLightThemeCount' : 'modernDarkThemeCount';
+        
+        // Determine voting system key based on votingPreset
+        let votingSystemKey: string;
+        switch (votingPreset) {
+            case 'hours':
+                votingSystemKey = 'hourSystemCount';
+                break;
+            case 'days':
+                votingSystemKey = 'daySystemCount';
+                break;
+            case 'fibonacci':
+                votingSystemKey = 'fibonacciSystemCount';
+                break;
+            case 'yesno':
+                votingSystemKey = 'yesNoSystemCount';
+                break;
+            default:
+                votingSystemKey = 'hourSystemCount'; // fallback to hours
+        }
+        
+        await redis.hincrby('statistics', 'totalCreatedRooms', 1);
+        await redis.hincrby('statistics', themeKey, 1);
+        await redis.hincrby('statistics', votingSystemKey, 1);
 
         // Return both the roomId and the ownerToken
         return NextResponse.json({ roomId, ownerToken });

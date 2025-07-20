@@ -325,6 +325,9 @@ export default class PokerServer implements Party.Server {
             ownerParticipant.role = role;
             await setRoom(this.room.id, roomState);
             
+            // Increment totalJoins statistic
+            await redis.hincrby('statistics','totalJoins',1);
+
             // Send initial state
             sender.send(JSON.stringify({ 
               type: "initial_state", 
@@ -406,6 +409,9 @@ export default class PokerServer implements Party.Server {
           }
         }
         
+        // Increment totalJoins statistic
+        await redis.hincrby('statistics','totalJoins',1);
+
         // Send initial state
         sender.send(JSON.stringify({ 
           type: "initial_state", 
