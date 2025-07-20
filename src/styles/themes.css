@@ -1933,12 +1933,12 @@
 
 /* Body & background */
 .theme-macos body {
-  background-color: #F8F6F1 !important; /* Warm off-white */
+  background-color: var(--macos-bg, #F8F6F1) !important;
   color: #333333 !important; /* Dark gray */
 }
 
 .theme-macos div.bg-gradient-to-br {
-  background: #F8F6F1 !important;
+  background: var(--macos-bg, #F8F6F1) !important;
 }
 
 /* Main containers */
@@ -2294,5 +2294,29 @@
 /* --- ABSOLUTE LAST OVERRIDE to keep hover green --- */
 .theme-macos button:not(.theme-selector-btn):not(.theme-selector-option):not([class*="border-blue-500"]):hover {
   background-color: #A4D8A5 !important;
+}
+
+/* --- CONFIDENCE AUCTION: TUNE YELLOW/AMBER TEXT FOR READABILITY IN LIGHT THEME --- */
+.theme-macos .text-yellow-300,
+.theme-macos .text-yellow-400,
+.theme-macos .text-yellow-500,
+.theme-macos .text-yellow-200,
+.theme-macos .text-amber-400,
+.theme-macos .text-amber-500 {
+  color: #b08800 !important; /* muted ochre for legibility */
+}
+
+/* --- PARTICIPANT ROW STYLE IN MACOS LIGHT --- */
+.theme-macos .bg-gray-800\/50,
+.theme-macos .bg-gray-900\/50 {
+  background-color: rgba(255,255,255,0.95) !important;
+}
+
+.theme-macos .border-blue-500\/50 {
+  border-color: #e5e7eb !important;
+}
+
+.theme-macos .ring-blue-500\/60 {
+  box-shadow: 0 0 0 2px rgba(180,227,176,0.6) !important;
 }
 
