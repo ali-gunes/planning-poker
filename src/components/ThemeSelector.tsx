@@ -17,15 +17,15 @@ const themeOptions: ThemeOption[] = [
   {
     id: 'macos',
     name: 'MacOS Light',
-    icon: '💡',
+    icon: '🍎',
     description: 'MacOS ilhamlı açık tema',
     audioDescription: 'Chopin Nocturne Op. 9 No. 2'
   },
   {
     id: 'default',
-    name: 'Modern koyu',
+    name: 'Modern Koyu',
     icon: '🌑',
-    description: 'Modern koyu tema',
+    description: 'Modern Koyu tema',
     audioDescription: 'Chopin Nocturne Op. 9 No. 2'
   }
   /*,

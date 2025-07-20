@@ -104,6 +104,7 @@ export default function RoomPage() {
 
     // Move useTheme hook call to the top level
     const { theme } = useTheme();
+    const { showManualQuote } = useQuoteSystem();
 
     useEffect(() => {
         const storedName = sessionStorage.getItem("username");
@@ -594,8 +595,12 @@ export default function RoomPage() {
                             Oda: <span className="font-mono text-blue-400">{roomId}</span>
                         </div>
                         
-                        <button onClick={handleCopyToClipboard} className="px-4 py-1 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition-all transform hover:scale-105">
-                            Davet Et
+                        <button onClick={handleCopyToClipboard} className="px-4 py-1 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition-all transform hover:scale-105">Davet Et</button>
+                        <button
+                          className="px-4 py-1 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600 transition-all transform hover:scale-105"
+                          onClick={() => router.push('/')}
+                        >
+                          Çıkış
                         </button>
                         
                         <ThemeSelector />
@@ -637,7 +642,7 @@ export default function RoomPage() {
                                     
                                    
                                         <div className="text-sm text-blue-400 mt-1">
-                                            {(!roomSettings.quoteSystemType || roomSettings.quoteSystemType === 'none') && '🚫 Alıntılar Kapalı'}
+                                            {(!roomSettings.quoteSystemType || roomSettings.quoteSystemType === 'none') && '🚫 Takım Yorumular Kapalı'}
                                             {roomSettings.quoteSystemType === 'ci-team' && '🍔 C&I Hatırası'}
                                             {roomSettings.quoteSystemType === 'custom' && '📁 Özel'}
                                         </div>
@@ -827,8 +832,7 @@ export default function RoomPage() {
                                             </div>
                                         )}
                                         
-                                        {/* Inline quote card below result GIFs */}
-                                        <InlineQuoteCard variant="revealed" />
+                                        {/* Quotes shown only during voting phase */}
                                     </div>
                                 ) : (
                                 /* Voting State */
@@ -866,8 +870,16 @@ export default function RoomPage() {
                                           {/* General quote card below voting cards */}
                                           {!showTicTacToe && <InlineQuoteCard variant="voting" />}
                                           
-                                          {/* TicTacToe toggle button */}
-                                          <div className="mt-4 flex justify-center">
+                                          {/* Quote & TicTacToe buttons */}
+                                          <div className="mt-4 flex justify-center gap-3 flex-wrap">
+                                            {!showTicTacToe && (
+                                              <button
+                                                onClick={showManualQuote}
+                                                className="px-3 py-2 bg-green-500 hover:bg-green-600 text-black font-semibold rounded-md transition-all transform hover:scale-105"
+                                              >
+                                                💬 Takım Yorumu
+                                              </button>
+                                            )}
                                             <button
                                               onClick={() => setShowTicTacToe(!showTicTacToe)}
                                               className="px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-sm flex items-center gap-2 transition-all"
@@ -877,14 +889,14 @@ export default function RoomPage() {
                                                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                     <polyline points="18 15 12 9 6 15"></polyline>
                                                   </svg>
-                                                  Alıntıları Göster
+                                                  Kapat
                                                 </>
                                               ) : (
                                                 <>
                                                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                     <polyline points="6 9 12 15 18 9"></polyline>
                                                   </svg>
-                                                  Tic-Tac-Toe Oyna
+                                                  Tic-Tac-Toe
                                                 </>
                                               )}
                                             </button>

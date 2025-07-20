@@ -41,13 +41,13 @@ export function QuoteSystemSelector() {
       if (success) {
         setUploadStatus('success');
         showToast(
-          'Özel alıntılar yüklendi!',
+          'Özel takım yorumular yüklendi!',
           'success'
         );
       } else {
         setUploadStatus('error');
         showToast(
-          'Alıntı dosyası geçerli değil',
+          'Takım Yorumu dosyası geçerli değil',
           'error'
         );
       }
@@ -72,7 +72,7 @@ export function QuoteSystemSelector() {
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <h3 className="text-base font-semibold text-white flex items-center gap-1">
-        Alıntı Sistemi
+        Takım Yorumu Sistemi
         </h3>
         <button className="text-gray-400 hover:text-white transition-colors">
           {isExpanded ? '▲' : '▼'}
@@ -82,7 +82,7 @@ export function QuoteSystemSelector() {
       {isExpanded && (
         <div className="mt-3 space-y-3">
           <p className="text-gray-300 text-xs">
-            Oylama sonuçlarına göre gösterilecek alıntı sistemini seçin:
+            Oylama sonuçlarına göre gösterilecek takım yorumu sistemini seçin:
           </p>
           
           <div className="grid grid-cols-3 gap-2">
@@ -103,7 +103,7 @@ export function QuoteSystemSelector() {
                 </>
               )}
               <div className="font-bold text-base">🚫</div>
-              <div className="text-xs font-medium">Alıntı Yok</div>
+              <div className="text-xs font-medium">Takım Yorumu Yok</div>
             </button>
             
             <button
@@ -159,7 +159,7 @@ export function QuoteSystemSelector() {
             <div className="flex flex-col gap-3 mt-2">
               {/* Description paragraph */}
               <p className="text-xs text-gray-400 leading-snug">
-                Eğer ekibinize ait özel bir alıntı paketi yüklemek isterseniz lütfen oluşturduğunuz JSON
+                Eğer ekibinize ait özel bir takım yorumu paketi yüklemek isterseniz lütfen oluşturduğunuz JSON
                 şablonunu yükleyiniz. Nasıl yapılacağını öğrenmek ve JSON şablonuna ulaşmak için
                 <span className="font-medium text-yellow-300"> Kılavuz</span>&apos;dan yararlanabilirsiniz.
               </p>
@@ -198,13 +198,13 @@ export function QuoteSystemSelector() {
           
           {quoteSystemType === 'ci-team' && (
             <p className="text-xs text-gray-400 mt-2">
-              Kanal ve Entegrasyon ekibinin eğlenceli alıntıları oylama sırasında gösterilecek. <br /> &quot;In Canberk We Trust.&quot;
+              Kanal ve Entegrasyon ekibinin eğlenceli takım yorumları oylama sırasında gösterilecek. <br /> &quot;In Canberk We Trust.&quot;
             </p>
           )}
 
           {quoteSystemType === 'none' && (
             <p className="text-xs text-gray-400 mt-2">
-              Alıntı sistemi devre dışı bırakıldı. Oylama sırasında alıntılar gösterilmeyecek.
+              Takım Yorumu sistemi devre dışı bırakıldı. Oylama sırasında takım yorumular gösterilmeyecek.
             </p>
           )}
         </div>

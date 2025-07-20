@@ -5,7 +5,7 @@ const changelogEntries = [
     {
       version: "v1.8.0",
       title: "Eğlenceli Bekleyiş & UI İyileştirmeleri 🎮",
-      description: "Oylama sırasında arkadaşlarınızı beklerken oynayabileceğiniz Tic-Tac-Toe oyunu eklendi. Oy kartları artık gizlenebilir, alıntı sistemi tekrar gösterilen alıntıları akıllıca önleyecek şekilde geliştirildi.",
+      description: "Oylama sırasında arkadaşlarınızı beklerken oynayabileceğiniz Tic-Tac-Toe oyunu eklendi. Oy kartları artık gizlenebilir, takım yorumu sistemi tekrar gösterilen takım yorumları akıllıca önleyecek şekilde geliştirildi.",
       date: "15 Temmuz 2025",
       type: "feature"
     },
@@ -39,8 +39,8 @@ const changelogEntries = [
     },
     {
       version: "v1.4.0",
-      title: "Dinamik Alıntı Sistemi 💬",
-      description: "Genel tur başlangıcı ve oylama sonuçlarına göre durum bağlı alıntılar eklendi. C&I Hatırası veya özel JSON yükleme desteğiyle ekip anıları oylama ekranına geliyor.",
+      title: "Dinamik Takım Yorumu Sistemi 💬",
+      description: "Genel tur başlangıcı ve oylama sonuçlarına göre durum bağlı takım yorumular eklendi. C&I Hatırası veya özel JSON yükleme desteğiyle ekip anıları oylama ekranına geliyor.",
       date: "5 Temmuz 2025",
       type: "feature"
     },

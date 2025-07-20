@@ -52,7 +52,7 @@ A real-time planning poker application for agile teams to estimate tasks collabo
 * Animated coronation for the new owner.
 
 ### Quote System 💬 *(v1.4+)*
-* Three modes selectable via *Alıntı Sistemi* panel:
+* Three modes selectable via *Takım Yorumu Sistemi* panel:
   * **Yok** – disabled.
   * **C&I Hatırası** – built-in nostalgia pack.
   * **Özel** – upload your own JSON pack.

@@ -11,19 +11,42 @@ export async function validateQuoteSystem(jsonData: unknown): Promise<{ isValid:
 
     const json = jsonData as Record<string, unknown>;
 
-    // Basic structure validation
     const errors: string[] = [];
-    
-    // Required top-level properties
-    const requiredProps = ['teamName', 'teamDescription', 'settings', 'medianLowQuotes', 
-                          'medianHighQuotes', 'generalQuotes', 'consensusQuotes', 'hugeDifferenceQuotes'];
-    
-    for (const prop of requiredProps) {
-      if (!(prop in json)) {
-        errors.push(`Missing required property: ${prop}`);
+
+    const validateQuoteArray = (arr: any[], label: string) => {
+      if (arr.length === 0) errors.push(`${label} array cannot be empty`);
+      arr.forEach((quote: any, index: number) => {
+        if (!quote.id) errors.push(`Quote ${index} in ${label} is missing id`);
+        if (!quote.name) errors.push(`Quote ${index} in ${label} is missing name`);
+        if (!quote.role) errors.push(`Quote ${index} in ${label} is missing role`);
+        if (!quote.quote) errors.push(`Quote ${index} in ${label} is missing quote text`);
+        if (quote.phrase !== undefined && typeof quote.phrase !== 'string') errors.push(`Invalid phrase in ${label}[${index}]`);
+        if (!quote.animation) errors.push(`Quote ${index} in ${label} is missing animation`);
+        if (!quote.color) errors.push(`Quote ${index} in ${label} is missing color`);
+        if (quote.animation && typeof quote.animation === 'string' && !quote.animation.match(/^[a-zA-Z0-9_-]+\.gif$/)) errors.push(`Invalid animation format in ${label}[${index}]: ${quote.animation}`);
+        if (quote.color && typeof quote.color === 'string' && !quote.color.match(/^from-[a-z]+-[0-9]+ to-[a-z]+-[0-9]+$/)) errors.push(`Invalid color format in ${label}[${index}]: ${quote.color}`);
+      });
+    };
+
+    // New v2 structure: single quotes array
+    if ('quotes' in json) {
+      const arr = (json as any).quotes;
+      if (!Array.isArray(arr) || arr.length === 0) {
+        errors.push('quotes must be a non-empty array');
+      } else {
+        validateQuoteArray(arr, 'quotes');
       }
+      // early return with new schema results
+      return { isValid: errors.length === 0, errors: errors.length ? errors : undefined };
     }
-    
+
+    // Legacy structure fallback below
+
+    const requiredProps = ['teamName','teamDescription','settings','medianLowQuotes','medianHighQuotes','generalQuotes','consensusQuotes','hugeDifferenceQuotes'];
+    for (const prop of requiredProps) {
+      if (!(prop in json)) errors.push(`Missing required property: ${prop}`);
+    }
+
     // Settings validation
     const settings: Record<string, unknown> | undefined = (json as any).settings;
     if (settings) {
@@ -51,39 +74,8 @@ export async function validateQuoteSystem(jsonData: unknown): Promise<{ isValid:
     for (const arrayName of quoteArrays) {
       const arr = (json as any)[arrayName];
       if (Array.isArray(arr)) {
-        if (arr.length === 0) {
-          errors.push(`${arrayName} array cannot be empty`);
-        }
-        
-        // Validate each quote item
-        for (const [index, quote] of arr.entries()) {
-          if (!quote.id) errors.push(`Quote ${index} in ${arrayName} is missing id`);
-          if (!quote.name) errors.push(`Quote ${index} in ${arrayName} is missing name`);
-          if (!quote.role) errors.push(`Quote ${index} in ${arrayName} is missing role`);
-          if (!quote.quote) errors.push(`Quote ${index} in ${arrayName} is missing quote text`);
-          if (quote.phrase !== undefined && typeof quote.phrase !== 'string') {
-            errors.push(`Invalid phrase in ${arrayName}[${index}]`);
-          }
-          if (!quote.animation) errors.push(`Quote ${index} in ${arrayName} is missing animation`);
-          if (!quote.color) errors.push(`Quote ${index} in ${arrayName} is missing color`);
-          
-          // Validate animation format
-          if (quote.animation && typeof quote.animation === 'string') {
-            if (!quote.animation.match(/^[a-zA-Z0-9_-]+\.gif$/)) {
-              errors.push(`Invalid animation format in ${arrayName}[${index}]: ${quote.animation}`);
-            }
-          }
-          
-          // Validate color format
-          if (quote.color && typeof quote.color === 'string') {
-            if (!quote.color.match(/^from-[a-z]+-[0-9]+ to-[a-z]+-[0-9]+$/)) {
-              errors.push(`Invalid color format in ${arrayName}[${index}]: ${quote.color}`);
-            }
-          }
-        }
-      } else if (arr !== undefined) {
-        errors.push(`${arrayName} must be an array`);
-      }
+        validateQuoteArray(arr, arrayName);
+      } else if (arr !== undefined) errors.push(`${arrayName} must be an array`);
     }
     
     return { 

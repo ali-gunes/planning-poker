@@ -4,7 +4,7 @@ import React from 'react';
 import DownloadJSONButton from '@/components/DownloadJSONButton';
 
 export const metadata = {
-  title: 'Alıntı Sistemi Kılavuzu'
+  title: 'Takım Yorumu Sistemi Kılavuzu'
 };
 
 const exampleQuoteSnippet = `{
@@ -28,11 +28,11 @@ export default function CustomQuotesGuidePage() {
 
   return (
     <div className="max-w-5xl mx-auto py-10 px-4">
-      <h1 className="text-3xl font-bold text-white mb-6">Alıntı Sistemi Kılavuzu</h1>
+      <h1 className="text-3xl font-bold text-white mb-6">Takım Yorumu Sistemi Kılavuzu</h1>
 
       <p className="text-gray-300 mb-8">
-        Aşağıdaki GIF&apos;leri ve alıntı JSON şablonunu kullanarak ekibinize özel eğlenceli bir alıntı paketi oluşturabilirsiniz. JSON dosyasını aşağıdaki buton yardımıyla indirip
-        düzenledikten sonra oda yaratırken alıntı sistemi butonlarından &quot;Özel&quot; seçeneği ile yükleyebilirsiniz.
+        Aşağıdaki GIF&apos;leri ve takım yorumu JSON şablonunu kullanarak ekibinize özel eğlenceli bir takım yorumu paketi oluşturabilirsiniz. JSON dosyasını aşağıdaki buton yardımıyla indirip
+        düzenledikten sonra oda yaratırken takım yorumu sistemi butonlarından &quot;Özel&quot; seçeneği ile yükleyebilirsiniz.
       </p>
 
       <h2 className="text-2xl font-semibold text-white mb-4">Mevcut GIF&apos;ler</h2>
@@ -50,7 +50,7 @@ export default function CustomQuotesGuidePage() {
         ))}
       </div>
 
-      <h2 className="text-2xl font-semibold text-white mb-4">Alıntı Sistemi JSON Örneği</h2>
+      <h2 className="text-2xl font-semibold text-white mb-4">Takım Yorumu Sistemi JSON Örneği</h2>
       <pre className="bg-gray-900 text-gray-100 p-4 overflow-x-auto rounded-md text-xs whitespace-pre-wrap mb-6">
         {exampleQuoteSnippet}
       </pre>

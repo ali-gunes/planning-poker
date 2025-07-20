@@ -12,6 +12,7 @@ interface QuoteContextType {
   quoteSystem: QuoteSystem | null;
   uploadCustomQuotes: (jsonData: string) => Promise<boolean>;
   showQuoteForType: (quoteType: QuoteType) => void;
+  showManualQuote: () => void;
   currentQuote: {
     quote: string;
     name: string;
@@ -105,13 +106,13 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
             setQuoteSystem(customQuotes);
           } catch (error) {
             console.error('Failed to parse custom quotes:', error);
-            showToast('Özel alıntılar yüklenemedi', 'error');
+            showToast('Özel takım yorumular yüklenemedi', 'error');
             setQuoteSystem(null);
           }
         }
       } catch (error) {
         console.error('Error loading quote system:', error);
-        showToast('Alıntı sistemi yüklenemedi', 'error');
+        showToast('Takım Yorumu sistemi yüklenemedi', 'error');
         setQuoteSystemType('none');
       }
     };
@@ -152,7 +153,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
       const validationResult = await validateQuoteSystem(parsedData);
       
       if (!validationResult.isValid) {
-        showToast('Geçersiz alıntı formatı', 'error');
+        showToast('Geçersiz takım yorumu formatı', 'error');
         console.error('Invalid quote format:', validationResult.errors);
         return false;
       }
@@ -164,11 +165,11 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
       setQuoteSystem(parsedData);
       setQuoteSystemType('custom');
       
-      showToast('Özel alıntılar yüklendi', 'success');
+      showToast('Özel takım yorumular yüklendi', 'success');
       return true;
     } catch (error) {
       console.error('Failed to upload custom quotes:', error);
-      showToast('Özel alıntılar yüklenemedi', 'error');
+      showToast('Özel takım yorumular yüklenemedi', 'error');
       return false;
     }
   };
@@ -212,27 +213,20 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     let shouldShow = false;
     let quotes = [];
     
-    switch (quoteType) {
-      case 'general':
-        shouldShow = settings.showOnGeneral;
-        quotes = quoteSystem.generalQuotes;
-        break;
-      case 'medianLow':
-        shouldShow = settings.showOnMedianLow;
-        quotes = quoteSystem.medianLowQuotes;
-        break;
-      case 'medianHigh':
-        shouldShow = settings.showOnMedianHigh;
-        quotes = quoteSystem.medianHighQuotes;
-        break;
-      case 'consensus':
-        shouldShow = settings.showOnConsensus;
-        quotes = quoteSystem.consensusQuotes;
-        break;
-      case 'hugeDifference':
-        shouldShow = settings.showOnHugeDifference;
-        quotes = quoteSystem.hugeDifferenceQuotes;
-        break;
+    // Simplified: single quotes array; show only during voting phase (general)
+    if ('quotes' in quoteSystem && Array.isArray((quoteSystem as any).quotes)) {
+      quotes = (quoteSystem as any).quotes;
+      shouldShow = true;
+    } else {
+      // Fallback to legacy structure
+      switch (quoteType) {
+        case 'general':
+          shouldShow = settings?.showOnGeneral ?? true;
+          quotes = (quoteSystem as any).generalQuotes ?? [];
+          break;
+        default:
+          shouldShow = false;
+      }
     }
     
     // Check probability
@@ -257,6 +251,27 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const showManualQuote = () => {
+    if (!quoteSystem || quoteSystemType === 'none') return;
+    const quotes: Quote[] = ('quotes' in quoteSystem && Array.isArray((quoteSystem as any).quotes))
+      ? (quoteSystem as any).quotes
+      : (quoteSystem as any).generalQuotes ?? [];
+    if (quotes.length === 0) return;
+    const selectedQuote = getSmartRandomQuote(quotes, 'general');
+    if (!selectedQuote) return;
+    setCurrentQuote({
+      quote: selectedQuote.quote,
+      name: selectedQuote.name,
+      role: selectedQuote.role,
+      phrase: selectedQuote.phrase,
+      animation: selectedQuote.animation,
+      color: selectedQuote.color,
+    });
+    setLastQuoteType('general');
+    setIsModalOpen(false); // keep inline, no fullscreen modal
+    // No auto-dismiss; user can click again for a new quote
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setCurrentQuote(null);
@@ -273,6 +288,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
       quoteSystem, 
       uploadCustomQuotes,
       showQuoteForType,
+      showManualQuote,
       currentQuote,
       lastQuoteType
     }}>

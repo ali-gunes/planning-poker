@@ -2,14 +2,45 @@
   "teamName": "C&I Ekibi",
   "teamDescription": "Kanal ve Entegrasyon",
   "settings": {
-    "showOnGeneral": true,
-    "showOnMedianLow": true,
-    "showOnMedianHigh": true,
-    "showOnConsensus": false,
-    "showOnHugeDifference": false,
     "quoteProbability": 1
   },
-  "medianLowQuotes": [
+  "quotes": [
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Arkadaşlar bilirsiniz ben eforlara karışan biri değilim normalde ama...",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "Product Owner",
+      "quote": "Arkadaşlar test eforunu ayrı alacağız",
+      "phrase": "Titre ve özüne dön C&I! 🚨",
+      "animation": "attack.gif",
+      "color": "from-orange-500 to-red-600"
+    },
+    {
+      "id": "onur",
+      "name": "Onur",
+      "role": "Developer",
+      "quote": "Arkadaşlar bende her şeyin kaydı var sakin olun.",
+      "phrase": "Developer gerçekleri! 💻",
+      "animation": "cool-spongebob.gif",
+      "color": "from-purple-500 to-indigo-600"
+    },
+    {
+      "id": "onur",
+      "name": "Onur",
+      "role": "Developer",
+      "quote": "Ayrı ayrı maddeler açalım abi böyle olmaz!",
+      "phrase": "Developer gerçekleri! 💻",
+      "animation": "cool-spongebob.gif",
+      "color": "from-purple-500 to-indigo-600"
+    },
     {
       "id": "deniz",
       "name": "Deniz",
@@ -108,47 +139,7 @@
       "phrase": "DevOps tecrübesi! 🚀",
       "animation": "gandalf.gif",
       "color": "from-blue-600 to-cyan-500"
-    }
-  ],
-  "medianHighQuotes": [
-    {
-      "id": "deniz",
-      "name": "Deniz",
-      "role": "Product Owner",
-      "quote": "Arkadaşlar bilirsiniz ben eforlara karışan biri değilim normalde ama...",
-      "phrase": "Titre ve özüne dön C&I! 🚨",
-      "animation": "attack.gif",
-      "color": "from-orange-500 to-red-600"
     },
-    {
-      "id": "deniz",
-      "name": "Deniz",
-      "role": "Product Owner",
-      "quote": "Arkadaşlar test eforunu ayrı alacağız",
-      "phrase": "Titre ve özüne dön C&I! 🚨",
-      "animation": "attack.gif",
-      "color": "from-orange-500 to-red-600"
-    },
-    {
-      "id": "onur",
-      "name": "Onur",
-      "role": "Developer",
-      "quote": "Arkadaşlar bende her şeyin kaydı var sakin olun.",
-      "phrase": "Developer gerçekleri! 💻",
-      "animation": "cool-spongebob.gif",
-      "color": "from-purple-500 to-indigo-600"
-    },
-    {
-      "id": "onur",
-      "name": "Onur",
-      "role": "Developer",
-      "quote": "Ayrı ayrı maddeler açalım abi böyle olmaz!",
-      "phrase": "Developer gerçekleri! 💻",
-      "animation": "cool-spongebob.gif",
-      "color": "from-purple-500 to-indigo-600"
-    }
-  ],
-  "generalQuotes": [
     {
       "id": "elif",
       "name": "Elif",
@@ -425,82 +416,6 @@
       "role": "DevOps",
       "quote": "2015'ten kalan bi Workflow var zaten bu işi yapan.",
       "phrase": "DevOps tecrübesi! 🚀",
-      "animation": "gandalf.gif",
-      "color": "from-blue-600 to-cyan-500"
-    }
-  ],
-  "consensusQuotes": [
-    {
-      "id": "ezgi",
-      "name": "Ezgi",
-      "role": "Tester",
-      "quote": "Hepimiz aynı fikirde miyiz? Bu bir ilk olabilir!",
-      "phrase": "Sprint 42",
-      "animation": "cat.gif",
-      "color": "from-purple-500 to-pink-600"
-    },
-    {
-      "id": "onur",
-      "name": "Onur",
-      "role": "Developer",
-      "quote": "Herkes aynı oy vermiş, bu bir mucize!",
-      "phrase": "Sprint 42",
-      "animation": "typing.gif",
-      "color": "from-blue-500 to-cyan-600"
-    },
-    {
-      "id": "deniz",
-      "name": "Deniz",
-      "role": "Product Owner",
-      "quote": "Hayret... Ezgi eforlara itiraz etmedi!",
-      "phrase": "Sprint 42",
-      "animation": "attack.gif",
-      "color": "from-orange-500 to-red-600"
-    },
-    {
-      "id": "kubilay",
-      "name": "Kubilay",
-      "role": "DevOps",
-      "quote": "Herkes anlaşmış, dünya tersine mi dönüyor?",
-      "phrase": "Sprint 42",
-      "animation": "gandalf.gif",
-      "color": "from-blue-600 to-cyan-500"
-    }
-  ],
-  "hugeDifferenceQuotes": [
-    {
-      "id": "ezgi",
-      "name": "Ezgi",
-      "role": "Tester",
-      "quote": "Bu kadar fark olması normal mi?",
-      "phrase": "Sprint 42",
-      "animation": "cat.gif",
-      "color": "from-purple-500 to-pink-600"
-    },
-    {
-      "id": "onur",
-      "name": "Onur",
-      "role": "Developer",
-      "quote": "Sanırım task'ı farklı anlamışız.",
-      "phrase": "Sprint 42",
-      "animation": "typing.gif",
-      "color": "from-blue-500 to-cyan-600"
-    },
-    {
-      "id": "deniz",
-      "name": "Deniz",
-      "role": "Product Owner",
-      "quote": "Bunun Acceptance Criteria'si niye boş kalmış?",
-      "phrase": "Sprint 42",
-      "animation": "attack.gif",
-      "color": "from-orange-500 to-red-600"
-    },
-    {
-      "id": "kubilay",
-      "name": "Kubilay",
-      "role": "DevOps",
-      "quote": "PR'lar complete edilmemiş daha...",
-      "phrase": "Sprint 42",
       "animation": "gandalf.gif",
       "color": "from-blue-600 to-cyan-500"
     }

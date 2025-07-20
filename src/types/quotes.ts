@@ -34,4 +34,4 @@ export interface QuoteSystem {
   hugeDifferenceQuotes: QuoteItem[];
 }
 
-export type QuoteSystemType = 'none' | 'ci-team' | 'custom'; 
+export type QuoteSystemType = 'none' | 'ci-team' | 'custom';

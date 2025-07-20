@@ -1,108 +1,14 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Planning Poker Quotes",
-  "description": "Schema for team quotes in Planning Poker application",
+  "title": "Planning Poker Quotes (v2)",
+  "description": "Simplified schema – a single quotes array shown while votes are being cast.",
   "type": "object",
-  "required": [
-    "teamName",
-    "teamDescription",
-    "settings",
-    "medianLowQuotes",
-    "medianHighQuotes",
-    "generalQuotes",
-    "consensusQuotes",
-    "hugeDifferenceQuotes"
-  ],
+  "required": ["quotes"],
   "properties": {
-    "teamName": {
-      "type": "string",
-      "description": "Name of the team",
-      "minLength": 1,
-      "maxLength": 50
-    },
-    "teamDescription": {
-      "type": "string",
-      "description": "Description of the team",
-      "maxLength": 200
-    },
-    "settings": {
-      "type": "object",
-      "description": "Quote display settings",
-      "required": [
-        "showOnGeneral",
-        "showOnMedianLow",
-        "showOnMedianHigh",
-        "showOnConsensus",
-        "showOnHugeDifference",
-        "quoteProbability"
-      ],
-      "properties": {
-        "showOnGeneral": {
-          "type": "boolean",
-          "description": "Whether to show quotes in general cases"
-        },
-        "showOnMedianLow": {
-          "type": "boolean",
-          "description": "Whether to show quotes when average is below median"
-        },
-        "showOnMedianHigh": {
-          "type": "boolean",
-          "description": "Whether to show quotes when average is above median"
-        },
-        "showOnConsensus": {
-          "type": "boolean",
-          "description": "Whether to show quotes when there's consensus"
-        },
-        "showOnHugeDifference": {
-          "type": "boolean",
-          "description": "Whether to show quotes when there's a huge difference in votes"
-        },
-        "quoteProbability": {
-          "type": "number",
-          "description": "Probability of showing a quote (0.0-1.0)",
-          "minimum": 0,
-          "maximum": 1
-        }
-      }
-    },
-    "medianLowQuotes": {
+    "quotes": {
       "type": "array",
-      "description": "Quotes to show when average is below median",
-      "items": {
-        "$ref": "#/definitions/quote"
-      },
-      "minItems": 1
-    },
-    "medianHighQuotes": {
-      "type": "array",
-      "description": "Quotes to show when average is above median",
-      "items": {
-        "$ref": "#/definitions/quote"
-      },
-      "minItems": 1
-    },
-    "generalQuotes": {
-      "type": "array",
-      "description": "Quotes to show in general cases",
-      "items": {
-        "$ref": "#/definitions/quote"
-      },
-      "minItems": 1
-    },
-    "consensusQuotes": {
-      "type": "array",
-      "description": "Quotes to show when there's consensus",
-      "items": {
-        "$ref": "#/definitions/quote"
-      },
-      "minItems": 1
-    },
-    "hugeDifferenceQuotes": {
-      "type": "array",
-      "description": "Quotes to show when there's a huge difference in votes",
-      "items": {
-        "$ref": "#/definitions/quote"
-      },
+      "description": "All available quotes (randomly shown during voting phase)",
+      "items": { "$ref": "#/definitions/quote" },
       "minItems": 1
     }
   },
@@ -153,7 +59,8 @@
           "pattern": "^from-[a-z]+-[0-9]+ to-[a-z]+-[0-9]+$"
         },
         "phrase": {
-          "type": "string"
+          "type": "string",
+          "description": "Optional catchphrase shown under the quote"
         }
       }
     }
