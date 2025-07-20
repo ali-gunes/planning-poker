@@ -12,14 +12,23 @@ interface ThemeOption {
   audioDescription: string;
 }
 
+// Hide every theme except macos light and modern dark
 const themeOptions: ThemeOption[] = [
   {
+    id: 'macos',
+    name: 'MacOS Light',
+    icon: '💡',
+    description: 'MacOS ilhamlı açık tema',
+    audioDescription: 'Chopin Nocturne Op. 9 No. 2'
+  },
+  {
     id: 'default',
-    name: 'Modern',
+    name: 'Modern koyu',
     icon: '🌑',
     description: 'Modern koyu tema',
     audioDescription: 'Chopin Nocturne Op. 9 No. 2'
-  },
+  }
+  /*,
   {
     id: 'synthwave',
     name: 'Synthwave',
@@ -34,14 +43,8 @@ const themeOptions: ThemeOption[] = [
     description: '90\'ların nostaljik teknoloji teması',
     audioDescription: 'Midnight Run'
   },
+  ,
   {
-    id: 'macos',
-    name: 'MacOS Light',
-    icon: '💡',
-    description: 'MacOS ilhamlı açık tema',
-    audioDescription: 'Light ambience'
-  },
-  /*{
     id: 'nordic',
     name: 'Nordic',
     icon: '❄️',

@@ -32,6 +32,7 @@ export function AudioPlayer({ isMainPlayer = false }: AudioPlayerProps) {
 
   // Map themes to audio files using useMemo to prevent recreation on every render
   const themeAudioMap = useMemo(() => ({
+    macos: '/sounds/chopin-nocturne-op-9-no-2.mp3',
     default: '/sounds/chopin-nocturne-op-9-no-2.mp3',
     retro90s: '/sounds/midnight-run.mp3',
     nordic: '/sounds/nordic-ambient.mp3',
