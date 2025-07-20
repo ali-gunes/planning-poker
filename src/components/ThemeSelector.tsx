@@ -34,6 +34,13 @@ const themeOptions: ThemeOption[] = [
     description: '90\'ların nostaljik teknoloji teması',
     audioDescription: 'Midnight Run'
   },
+  {
+    id: 'macos',
+    name: 'MacOS Light',
+    icon: '💡',
+    description: 'MacOS ilhamlı açık tema',
+    audioDescription: 'Light ambience'
+  },
   /*{
     id: 'nordic',
     name: 'Nordic',

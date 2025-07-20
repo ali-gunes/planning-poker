@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 // Define theme types
-export type ThemeType = 'default' | 'retro90s' | 'nordic' | 'synthwave';
+export type ThemeType = 'default' | 'retro90s' | 'nordic' | 'synthwave' | 'macos';
 
 // Define the context shape
 interface ThemeContextType {
@@ -47,11 +47,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         // We intentionally don't load audio preference here
         // Audio will always start disabled for better user experience
         
-        if (savedTheme && (savedTheme === 'default' || savedTheme === 'retro90s' || savedTheme === 'nordic' || savedTheme === 'synthwave')) {
+        if (savedTheme && (savedTheme === 'default' || savedTheme === 'retro90s' || savedTheme === 'nordic' || savedTheme === 'synthwave' || savedTheme === 'macos')) {
           setThemeState(savedTheme);
           
           // Apply theme class to document body
-          document.body.classList.remove('theme-retro90s', 'theme-nordic', 'nordic-text-fix', 'theme-synthwave');
+          document.body.classList.remove('theme-retro90s', 'theme-nordic', 'nordic-text-fix', 'theme-synthwave', 'theme-macos');
           if (savedTheme === 'retro90s') {
             //console.log('Applying retro90s theme from localStorage');
             document.body.classList.add('theme-retro90s');
@@ -64,6 +64,9 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
             //console.log('Applying synthwave theme from localStorage');
             document.body.classList.add('theme-synthwave');
             document.documentElement.style.setProperty('--theme-background', 'linear-gradient(135deg, #121212, #1a0033)');
+          } else if (savedTheme === 'macos') {
+            document.body.classList.add('theme-macos');
+            document.documentElement.style.removeProperty('--theme-background');
           } else {
             document.documentElement.style.removeProperty('--theme-background');
           }
@@ -117,7 +120,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     }
     
     // Apply theme class to document body
-    document.body.classList.remove('theme-retro90s', 'theme-nordic', 'nordic-text-fix', 'theme-synthwave');
+    document.body.classList.remove('theme-retro90s', 'theme-nordic', 'nordic-text-fix', 'theme-synthwave', 'theme-macos');
     
     if (newTheme === 'retro90s') {
       //console.log('Adding theme-retro90s class to body');
@@ -131,6 +134,9 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       //console.log('Adding theme-synthwave class to body');
       document.body.classList.add('theme-synthwave');
       document.documentElement.style.setProperty('--theme-background', 'linear-gradient(135deg, #121212, #1a0033)');
+    } else if (newTheme === 'macos') {
+      document.body.classList.add('theme-macos');
+      document.documentElement.style.removeProperty('--theme-background');
     } else {
       //console.log('Removing theme classes from body');
       document.documentElement.style.removeProperty('--theme-background');

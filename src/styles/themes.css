@@ -1926,3 +1926,373 @@
 
 /* TicTacToe toggle button styling */
 
+/* MacOS Light Theme */
+.theme-macos {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+/* Body & background */
+.theme-macos body {
+  background-color: #F8F6F1 !important; /* Warm off-white */
+  color: #333333 !important; /* Dark gray */
+}
+
+.theme-macos div.bg-gradient-to-br {
+  background: #F8F6F1 !important;
+}
+
+/* Main containers */
+.theme-macos .bg-gray-800\/50,
+.theme-macos .bg-gray-900\/50,
+.theme-macos .bg-gray-700\/30,
+.theme-macos .bg-gray-800,
+.theme-macos .bg-gray-900,
+.theme-macos .bg-gray-700 {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid #e5e7eb !important; /* Gray-200 */
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06) !important;
+  border-radius: 10px !important;
+}
+
+/* Headings */
+.theme-macos h1,
+.theme-macos h2,
+.theme-macos h3 {
+  color: #333333 !important; /* Dark gray */
+  font-weight: 600 !important;
+}
+
+/* Buttons */
+.theme-macos button:not(.theme-selector-btn):not(.theme-selector-option) {
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important; /* Gray-300 */
+  color: #111827 !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease-in-out !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+}
+
+.theme-macos button:not(.theme-selector-btn):not(.theme-selector-option):hover {
+  background-color: #f1f1f3 !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08) !important;
+}
+
+.theme-macos button:not(.theme-selector-btn):not(.theme-selector-option):active {
+  background-color: #e5e7eb !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1) !important;
+}
+
+/* Selected / accent buttons (voting etc.) */
+.theme-macos button[class*="border-blue-500"] {
+  background-color: #A3C9F1 !important; /* Pastel blue accent */
+  border: none !important;
+  color: #ffffff !important;
+}
+
+/* Inputs */
+.theme-macos input[type="text"],
+.theme-macos input[type="number"],
+.theme-macos input[type="email"] {
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  color: #111827 !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+}
+
+.theme-macos input[type="text"]:focus,
+.theme-macos input[type="number"]:focus,
+.theme-macos input[type="email"]:focus {
+  border-color: #A3C9F1 !important;
+  box-shadow: 0 0 0 3px rgba(163,201,241,0.4) !important;
+  outline: none !important;
+}
+
+/* Voting cards */
+.theme-macos .bg-white {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+}
+
+/* Theme selector */
+.theme-macos .theme-selector-btn {
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  color: #111827 !important;
+}
+
+.theme-macos .theme-selector-dropdown {
+  background-color: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
+}
+
+.theme-macos .theme-selector-option {
+  color: #111827 !important;
+}
+
+.theme-macos .theme-selector-option:hover {
+  background-color: #f1f1f3 !important;
+}
+
+.theme-macos .theme-selector-option-active {
+  background-color: rgba(163,201,241,0.25) !important;
+  border-left-color: #A3C9F1 !important;
+}
+
+/* Mac window control inspired indicators */
+.theme-macos .bg-green-500,
+.theme-macos .bg-green-600 {
+  background-color: #B4E3B0 !important; /* pastel green for playful indicator */
+  color: #ffffff !important;
+}
+
+.theme-macos .bg-yellow-500,
+.theme-macos .bg-yellow-600 {
+  background-color: #F5B5FC !important; /* pastel pink for playful indicator */
+  color: #ffffff !important;
+}
+
+.theme-macos .bg-red-500,
+.theme-macos .bg-red-600,
+.theme-macos .bg-red-800 {
+  background-color: #F6A6A6 !important; /* pastel red for playful indicator */
+  color: #ffffff !important;
+}
+
+/* Text color fixes for better contrast */
+.theme-macos .text-gray-400,
+.theme-macos .text-gray-300 {
+  color: #555555 !important; /* medium-dark gray for readability */
+}
+
+.theme-macos .text-gray-500,
+.theme-macos .text-gray-600 {
+  color: #444444 !important; /* slightly darker for emphasis */
+}
+
+.theme-macos .text-gray-200 {
+  color: #6b6b6b !important;
+}
+
+/* Broader background overrides for gray utility classes */
+.theme-macos [class*="bg-gray-700"],
+.theme-macos [class*="bg-gray-800"],
+.theme-macos [class*="bg-gray-900"] {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(2px);
+}
+
+/* Border colour overrides for dark-gray borders appearing in light mode */
+.theme-macos .border-gray-600,
+.theme-macos .border-gray-700,
+.theme-macos .border-gray-800,
+.theme-macos .border-gray-900 {
+  border-color: #e5e7eb !important; /* Light gray border */
+}
+
+/* Update default buttons to pastel green */
+.theme-macos button:not(.theme-selector-btn):not(.theme-selector-option):not([class*="border-blue-500"]) {
+  background-color: #B4E3B0 !important; /* Pastel green */
+  border: 1px solid #9ad49a !important;
+  color: #333333 !important;
+}
+
+.theme-macos button:not(.theme-selector-btn):not(.theme-selector-option):not([class*="border-blue-500"]):hover {
+  background-color: #A4D8A5 !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12) !important;
+}
+
+.theme-macos button:not(.theme-selector-btn):not(.theme-selector-option):not([class*="border-blue-500"]):active {
+  background-color: #86c686 !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.15) !important;
+}
+
+/* --- TEXT READABILITY ENHANCEMENTS --- */
+/* Force any gray text utilities to dark gray for sufficient contrast */
+.theme-macos [class*="text-gray-"] {
+  color: #333333 !important;
+}
+
+/* --- BUTTON CONTRAST FIXES --- */
+/* General buttons */
+.theme-macos button:not(.theme-selector-btn):not(.theme-selector-option):not([class*="border-blue-500"]) {
+  background-color: #A3C9F1 !important; /* Pastel blue */
+  border: 1px solid #7FB0E9 !important; /* Slightly darker border */
+  color: #333333 !important; /* Dark text for contrast */
+}
+
+.theme-macos button:not(.theme-selector-btn):not(.theme-selector-option):not([class*="border-blue-500"]):hover {
+  background-color: #93BDF0 !important;
+}
+
+.theme-macos button:not(.theme-selector-btn):not(.theme-selector-option):not([class*="border-blue-500"]):active {
+  background-color: #7FB0E9 !important;
+}
+
+/* Selected / accent buttons (voting etc.) */
+.theme-macos button[class*="border-blue-500"] {
+  background-color: #F5B5FC !important; /* Pastel pink accent */
+  border: 1px solid #E09DE9 !important;
+  color: #333333 !important;
+}
+
+/* --- GENERAL TEXT COLOR OVERRIDE --- */
+.theme-macos .text-white { color: #333333 !important; }
+
+/* --- VOTING CARD / SELECTED RING COLORS --- */
+.theme-macos .ring-2,
+.theme-macos .ring-4,
+.theme-macos [class*="ring"] {
+  background-color: #B4E3B0 !important; /* Pastel green */
+  border-color: #9ad49a !important;
+  color: #333333 !important;
+}
+
+/* Ensure bg-white inside MacOS theme is slightly tinted */
+.theme-macos .bg-white {
+  background-color: #FAFAFA !important;
+  color: #333333 !important;
+}
+
+/* --- AUDIO PLAYER OVERRIDES --- */
+.theme-macos .audio-player-container {
+  background-color: rgba(255,255,255,0.9) !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+}
+
+.theme-macos .audio-control-btn {
+  color: #A3C9F1 !important;
+}
+
+.theme-macos .volume-slider-container {
+  background-color: #E5ECF8 !important;
+  border-radius: 6px !important;
+}
+
+.theme-macos .volume-slider {
+  accent-color: #A3C9F1 !important;
+}
+
+/* --- SELECTED BUTTON & BLUE UTILITY OVERRIDES --- */
+.theme-macos button[class*="border-blue-"],
+.theme-macos button[class*="bg-blue-"],
+.theme-macos .bg-blue-600,
+.theme-macos .bg-blue-500,
+.theme-macos .bg-blue-400 {
+  background-color: #B4E3B0 !important; /* Pastel green for selection */
+  border-color: #9ad49a !important;
+  color: #333333 !important;
+}
+
+.theme-macos button[class*="border-blue-"]:hover {
+  background-color: #A4D8A5 !important;
+}
+
+/* --- HIGH-SPECIFICITY SELECTED STATES --- */
+.theme-macos button[data-selected="true"],
+.theme-macos button.selected,
+.theme-macos button[aria-pressed="true"] {
+  background-color: #B4E3B0 !important;
+  border-color: #9ad49a !important;
+  color: #333333 !important;
+  box-shadow: 0 0 0 3px rgba(180,227,176,0.6) !important;
+}
+
+/* ensure specific bg-blue-600 class inside buttons also transformed */
+.theme-macos button.bg-blue-600,
+.theme-macos button.bg-blue-500,
+.theme-macos button.bg-blue-400 {
+  background-color: #B4E3B0 !important;
+  color: #333333 !important;
+}
+
+/* Fix semi-transparent blue backgrounds used for selection */
+.theme-macos [class*="bg-blue-500/20"],
+.theme-macos .bg-blue-500\/20 { /* match utility class */
+  background-color: #B4E3B0 !important;
+}
+
+.theme-macos [class*="text-blue-300"] {
+  color: #333333 !important;
+}
+
+/* --- EXTREME OVERRIDES FOR SELECTED BUTTON ISSUE --- */
+.theme-macos button.border-blue-500,
+.theme-macos button.border-blue-500.bg-blue-500\/20,
+.theme-macos button.bg-blue-500\/20.border-blue-500 {
+  background-color: #B4E3B0 !important;
+  border-color: #9ad49a !important;
+  color: #333333 !important;
+}
+
+.theme-macos .border-blue-500.bg-blue-500\/20 {
+  background-color: #B4E3B0 !important;
+  border-color: #9ad49a !important;
+  color: #333333 !important;
+}
+
+/* --- HOVER STABILITY FOR SELECTED BUTTONS --- */
+.theme-macos button.border-blue-500.bg-blue-500\/20:hover,
+.theme-macos button.bg-blue-500\/20.border-blue-500:hover,
+.theme-macos button[data-selected="true"]:hover {
+  background-color: #A4D8A5 !important; /* slightly darker pastel green */
+  border-color: #86c686 !important;
+}
+
+/* --- ADD DISTINCT BORDER / SHADOW FOR SELECTED STATE --- */
+.theme-macos button[data-selected="true"] {
+  box-shadow: 0 0 0 3px rgba(144, 196, 144, 0.7) !important; /* subtle green glow */
+}
+
+/* --- VOTING CARD SELECTED OVERRIDES --- */
+.theme-macos button.border-blue-400.border-4,
+.theme-macos button.bg-blue-600.border-blue-400,
+.theme-macos button[data-selected="true"].border-blue-400 {
+  background-color: #B4E3B0 !important;
+  border-color: #86c686 !important;
+  color: #333333 !important;
+  box-shadow: 0 0 0 3px rgba(144,196,144,0.6) !important;
+}
+
+.theme-macos button.bg-blue-600.border-blue-400:hover {
+  background-color: #A4D8A5 !important;
+}
+
+/* --- GLOBAL SELECTED BUTTON COLOR OVERRIDE --- */
+.theme-macos button[data-selected="true"] {
+  background-color: #B4E3B0 !important;
+  border-color: #86c686 !important;
+  color: #333333 !important;
+}
+
+.theme-macos button[data-selected="true"].bg-blue-600,
+.theme-macos button[data-selected="true"].bg-blue-600.text-white,
+.theme-macos button[data-selected="true"].bg-blue-600.border-blue-400 {
+  background-color: #B4E3B0 !important;
+  color: #333333 !important;
+}
+
+/* --- FINAL OVERRIDE: SELECTED BUTTON HOVER STAYS GREEN --- */
+.theme-macos button[data-selected="true"]:hover,
+.theme-macos button[data-selected="true"].bg-blue-600:hover {
+  background-color: #A4D8A5 !important;
+  border-color: #86c686 !important;
+  color: #333333 !important;
+}
+
+/* Hover for non-selected buttons only */
+.theme-macos button:not(.theme-selector-btn):not(.theme-selector-option):not([class*="border-blue-500"]):not([data-selected="true"]):hover {
+  background-color: #A4D8A5 !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12) !important;
+}
+
+/* --- ABSOLUTE LAST OVERRIDE to keep hover green --- */
+.theme-macos button:not(.theme-selector-btn):not(.theme-selector-option):not([class*="border-blue-500"]):hover {
+  background-color: #A4D8A5 !important;
+}
+

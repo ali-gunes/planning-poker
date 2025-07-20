@@ -32,6 +32,7 @@ export function ParticipantsList({ participants, currentUser, ownerName, onToggl
         retro90s: 'text-yellow-300',
         nordic: 'text-sky-400',
         synthwave: 'text-fuchsia-400',
+        macos: 'text-blue-500',
     };
 
     const ringColors: Record<ThemeType, string> = {
@@ -39,6 +40,7 @@ export function ParticipantsList({ participants, currentUser, ownerName, onToggl
         retro90s: 'ring-yellow-300/60',
         nordic: 'ring-sky-400/60',
         synthwave: 'ring-fuchsia-400/60',
+        macos: 'ring-blue-500/60',
     };
 
     // Determine chip leader(s) - wrapped in useMemo to avoid dependency changes on every render
