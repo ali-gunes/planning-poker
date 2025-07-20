@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
@@ -211,7 +211,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
     // Check if quotes should be shown for this type
     const { settings } = quoteSystem;
     let shouldShow = false;
-    let quotes = [];
+    let quotes: Quote[] = [];
     
     // Simplified: single quotes array; show only during voting phase (general)
     if ('quotes' in quoteSystem && Array.isArray((quoteSystem as any).quotes)) {
