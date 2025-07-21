@@ -859,11 +859,40 @@ export default function RoomPage() {
                                         </div>
                                       )}
                                       
-                                      {/* Show TicTacToe when quotes are disabled */}
+                                      {/* Show TicTacToe toggle button when quotes are disabled */}
                                       {gameState === 'voting' && (!roomSettings?.quoteSystemType || roomSettings?.quoteSystemType === 'none') ? (
-                                        <div className="mt-8">
-                                          <TicTacToe theme={theme} />
-                                        </div>
+                                        <>
+                                          {/* TicTacToe toggle button */}
+                                          <div className="mt-4 flex justify-center">
+                                            <button
+                                              onClick={() => setShowTicTacToe(!showTicTacToe)}
+                                              className="px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-sm flex items-center gap-2 transition-all"
+                                            >
+                                              {showTicTacToe ? (
+                                                <>
+                                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <polyline points="18 15 12 9 6 15"></polyline>
+                                                  </svg>
+                                                  Kapat
+                                                </>
+                                              ) : (
+                                                <>
+                                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                                  </svg>
+                                                  Tic-Tac-Toe
+                                                </>
+                                              )}
+                                            </button>
+                                          </div>
+                                          
+                                          {/* TicTacToe game when toggled */}
+                                          {showTicTacToe && (
+                                            <div className="mt-4 border-t border-gray-700 pt-4">
+                                              <TicTacToe theme={theme} />
+                                            </div>
+                                          )}
+                                        </>
                                       ) : gameState === 'voting' ? (
                                         /* Show quotes with TicTacToe toggle button */
                                         <>
