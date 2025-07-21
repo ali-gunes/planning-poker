@@ -26,6 +26,7 @@ export default function Home() {
 
   const { quoteSystemType, quoteSystem } = useQuoteSystem();
   const { theme } = useTheme();
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
   // When timer is selected, automatically set autoReveal to true
   // When timer is set to 0 (no timer), set autoReveal to false
@@ -144,6 +145,27 @@ export default function Home() {
           <p className="text-lg text-gray-400 mt-4 max-w-2xl mx-auto">
             Bir oda oluşturun ve ekibinizi görevleri gerçek zamanlı olarak tahmin etmeye davet edin.
           </p>
+          
+          {/* Privacy Badge */}
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={() => setShowPrivacyModal(true)}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm transition-all hover:scale-105 ${
+                theme === 'macos' 
+                  ? 'bg-green-100/80 border border-green-300 text-green-700 hover:bg-green-200/80' 
+                  : 'bg-green-900/30 border border-green-500/50 text-green-300 hover:bg-green-800/40'
+              }`}
+            >
+              <div className="flex items-center gap-1">
+                <span className={theme === 'macos' ? 'text-green-600' : 'text-green-400'}>🔒</span>
+                <span>Çerez Yok</span>
+                <span className={theme === 'macos' ? 'text-green-600' : 'text-green-400'}>•</span>
+                <span>Takip Yok</span>
+                <span className={theme === 'macos' ? 'text-green-600' : 'text-green-400'}>•</span>
+                <span>Saçmalık Yok</span>
+              </div>
+            </button>
+          </div>
         </div>
 
         <div className="bg-gray-800/50 rounded-lg p-6 md:p-8 shadow-2xl">
@@ -412,7 +434,136 @@ export default function Home() {
         
         {/* Add the Changelog component */}
         <Changelog />
-    </div>
+      </div>
+      
+      {/* Privacy Modal */}
+      {showPrivacyModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className={`max-w-2xl w-full max-h-[90vh] overflow-y-auto rounded-lg shadow-2xl ${
+            theme === 'macos' 
+              ? 'bg-white text-gray-800' 
+              : 'bg-gray-800 text-white'
+          }`}>
+            {/* Header */}
+            <div className={`p-6 border-b ${
+              theme === 'macos' ? 'border-gray-200' : 'border-gray-700'
+            }`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Image
+                    src={theme === 'macos' ? '/standard_nocookies_nobs.png' : '/cyberpunk_nocookiesnobs.png'}
+                    alt="No Cookies Badge"
+                    width={60}
+                    height={30}
+                  />
+                  <h2 className="text-xl font-bold">Gizlilik Politikamız</h2>
+                </div>
+                <button
+                  onClick={() => setShowPrivacyModal(false)}
+                  className={`p-2 rounded-full hover:bg-gray-100 transition-colors ${
+                    theme === 'macos' ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-gray-700'
+                  }`}
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            {/* Content */}
+            <div className="p-6 space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-3 text-green-600">🛡️ Kullanıcı Gizliliğinizi Önemsiyoruz</h3>
+                <p className="text-sm leading-relaxed">
+                  Planlama Pokeri uygulamasında kullanıcı gizliliği en önemli önceliğimizdir. 
+                  Modern web standartlarını takip ederek, kişisel verilerinizi korumak için 
+                  geleneksel çerez sistemlerini kullanmıyoruz.
+                </p>
+              </div>
+              
+              <div>
+                <h3 className="text-lg font-semibold mb-3 text-blue-600">🍪 Çerez Kullanmıyoruz</h3>
+                <p className="text-sm leading-relaxed mb-3">
+                  Uygulamamızda hiçbir çerez kullanılmamaktadır. Bu sayede:
+                </p>
+                <ul className="text-sm space-y-2 ml-4">
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-500 mt-1">✓</span>
+                    <span>Tarayıcınızda takip edilmezsiniz</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-500 mt-1">✓</span>
+                    <span>Çerez onayı istememize gerek yok</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-500 mt-1">✓</span>
+                    <span>Gizlilik ayarlarınızı değiştirmenize gerek yok</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div>
+                <h3 className="text-lg font-semibold mb-3 text-purple-600">💾 Ne Saklıyoruz?</h3>
+                <p className="text-sm leading-relaxed mb-3">
+                  Sadece uygulamanın çalışması için gerekli minimum veriyi saklıyoruz:
+                </p>
+                <ul className="text-sm space-y-2 ml-4">
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 mt-1">•</span>
+                    <span><strong>localStorage:</strong> Tema tercihleri, ses ayarları, oyun skorları</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 mt-1">•</span>
+                    <span><strong>sessionStorage:</strong> Oturum süresince kullanıcı adı ve rol</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 mt-1">•</span>
+                    <span><strong>Redis:</strong> Oda verileri (6 saat sonra otomatik silinir)</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div>
+                <h3 className="text-lg font-semibold mb-3 text-orange-600">📊 İstatistikler</h3>
+                <p className="text-sm leading-relaxed">
+                  Anonim istatistikler sadece uygulama geliştirmek için kullanılır. 
+                  Kişisel verileriniz asla toplanmaz veya üçüncü taraflarla paylaşılmaz.
+                </p>
+              </div>
+              
+              <div className={`p-4 rounded-lg ${
+                theme === 'macos' 
+                  ? 'bg-green-50 border border-green-200' 
+                  : 'bg-green-900/20 border border-green-500/30'
+              }`}>
+                <p className={`text-sm font-medium ${
+                  theme === 'macos' ? 'text-green-800' : 'text-green-300'
+                }`}>
+                  💚 Bu yaklaşımımız sayesinde, kullanıcılarımız güvenle ve endişe duymadan 
+                  uygulamamızı kullanabilirler. Gizliliğiniz bizim için kutsaldır.
+                </p>
+              </div>
+            </div>
+            
+            {/* Footer */}
+            <div className={`p-6 border-t ${
+              theme === 'macos' ? 'border-gray-200' : 'border-gray-700'
+            }`}>
+              <button
+                onClick={() => setShowPrivacyModal(false)}
+                className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${
+                  theme === 'macos'
+                    ? 'bg-green-600 hover:bg-green-700 text-white'
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
+              >
+                Anladım, Teşekkürler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
