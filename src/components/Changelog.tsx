@@ -3,6 +3,13 @@ import React, { useState, useEffect } from 'react';
 // Define the changelog entries
 const changelogEntries = [
     {
+      version: "v1.9.0",
+      title: "macOS Light Tema & İstatistik Takibi 📊",
+      description: "Yeni macOS Light tema eklendi - pastel renkler ve modern tasarım. Oda oluşturma istatistikleri artık tema ve oylama sistemi bazında takip ediliyor. Tema seçimi API'ye doğru şekilde gönderiliyor.",
+      date: "21 Temmuz 2025",
+      type: "feature"
+    },
+    {
       version: "v1.8.0",
       title: "Eğlenceli Bekleyiş & UI İyileştirmeleri 🎮",
       description: "Oylama sırasında arkadaşlarınızı beklerken oynayabileceğiniz Tic-Tac-Toe oyunu eklendi. Oy kartları artık gizlenebilir, takım yorumu sistemi tekrar gösterilen takım yorumları akıllıca önleyecek şekilde geliştirildi.",

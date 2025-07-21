@@ -82,9 +82,13 @@ export async function POST(request: Request) {
                 votingSystemKey = 'hourSystemCount'; // fallback to hours
         }
         
+        // Get current UTC epoch timestamp
+        const currentEpoch = Math.floor(Date.now() / 1000);
+        
         await redis.hincrby('statistics', 'totalCreatedRooms', 1);
         await redis.hincrby('statistics', themeKey, 1);
         await redis.hincrby('statistics', votingSystemKey, 1);
+        await redis.hset('statistics', { lastRoomCreatedAt: currentEpoch.toString() });
 
         // Return both the roomId and the ownerToken
         return NextResponse.json({ roomId, ownerToken });

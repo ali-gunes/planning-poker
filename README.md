@@ -71,15 +71,23 @@ A real-time planning poker application for agile teams to estimate tasks collabo
 * Mute status is persisted in Redis, so refresh / reconnect does not bypass it.
 
 ### Themes & Audio
-* Built-in themes: **Modern**, **Retro 90s**, **Synthwave** (toggle via palette icon).
+* Built-in themes: **macOS Light**, **Modern Dark**, **Retro 90s**, **Synthwave** (toggle via palette icon).
 * Theme-aware components (buttons, cards, toasts, modals, etc.).
 * Optional background music per theme with a tiny Visualizer.
 * Responsive design for all screen sizes (mobile, tablet, desktop).
 * Theme-specific visual effects (neon glow for Synthwave, pixel shadows for Retro 90s).
+* macOS Light theme features pastel colors and modern design inspired by macOS interface.
 
 ### Reliability
 * WebSocket heartbeat (25 s ping/pong) to survive Cloudflare idle timeouts.
 * Optional `lightningcss-linux-x64-gnu` dependency fixes Vercel builds on ARM.
+
+### Analytics & Statistics 📊
+* Room creation statistics tracked in Redis:
+  * Total rooms created (`totalCreatedRooms`)
+  * Theme usage: `macosLightThemeCount`, `modernDarkThemeCount`
+  * Voting system usage: `hourSystemCount`, `daySystemCount`, `fibonacciSystemCount`, `yesNoSystemCount`
+* Statistics help understand user preferences and feature adoption.
 
 ### Developer UX
 * Custom toast system & changelog component.
