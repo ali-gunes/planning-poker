@@ -541,7 +541,7 @@ export default function Home() {
                   theme === 'macos' ? 'text-green-800' : 'text-green-300'
                 }`}>
                   💚 Bu yaklaşımımız sayesinde, kullanıcılarımız güvenle ve endişe duymadan 
-                  uygulamamızı kullanabilirler. Gizliliğiniz bizim için kutsaldır.
+                  uygulamamızı özgürce kullanın; bizimleyken verileriniz size karşı kullanılmaz.
                 </p>
               </div>
             </div>
