@@ -9,15 +9,6 @@
       "id": "deniz",
       "name": "Deniz",
       "role": "Product Owner",
-      "quote": "Arkadaşlar bilirsiniz ben eforlara karışan biri değilim normalde ama...",
-      "phrase": "Titre ve özüne dön C&I! 🚨",
-      "animation": "attack.gif",
-      "color": "from-orange-500 to-red-600"
-    },
-    {
-      "id": "deniz",
-      "name": "Deniz",
-      "role": "Product Owner",
       "quote": "Arkadaşlar test eforunu ayrı alacağız",
       "phrase": "Titre ve özüne dön C&I! 🚨",
       "animation": "attack.gif",
@@ -45,15 +36,6 @@
       "id": "deniz",
       "name": "Deniz",
       "role": "Product Owner",
-      "quote": "Hayret... Ezgi eforlara itiraz etmedi!",
-      "phrase": "Titre ve özüne dön C&I! 🚨",
-      "animation": "attack.gif",
-      "color": "from-orange-500 to-red-600"
-    },
-    {
-      "id": "deniz",
-      "name": "Deniz",
-      "role": "Product Owner",
       "quote": "2'şer saat yazıyorum o zaman...",
       "phrase": "Titre ve özüne dön C&I! 🚨",
       "animation": "attack.gif",
@@ -76,24 +58,6 @@
       "phrase": "Titre ve özüne dön C&I! 🚨",
       "animation": "attack.gif",
       "color": "from-orange-500 to-red-600"
-    },
-    {
-      "id": "ezgi",
-      "name": "Ezgi",
-      "role": "Tester",
-      "quote": "Bu kadar az olamaz Deniz ya, minimum 3 gün!",
-      "phrase": "Kalite için yeterli zaman! 🛡️",
-      "animation": "dodge.gif",
-      "color": "from-green-500 to-emerald-600"
-    },
-    {
-      "id": "ezgi",
-      "name": "Ezgi",
-      "role": "Tester",
-      "quote": "Bence 2 katına çıkaralım eforları.",
-      "phrase": "Kalite için yeterli zaman! 🛡️",
-      "animation": "dodge.gif",
-      "color": "from-green-500 to-emerald-600"
     },
     {
       "id": "ezgi",
@@ -234,24 +198,6 @@
       "id": "deniz",
       "name": "Deniz",
       "role": "Product Owner",
-      "quote": "Arkadaşlar biliyorsunuz ben ırkçı değilim, ama...",
-      "phrase": "Titre ve özüne dön C&I! 🚨",
-      "animation": "attack.gif",
-      "color": "from-orange-500 to-red-600"
-    },
-    {
-      "id": "deniz",
-      "name": "Deniz",
-      "role": "Product Owner",
-      "quote": "Arkadaşlar biliyorsunuz ben cinsiyetçi değilim, ama...",
-      "phrase": "Titre ve özüne dön C&I! 🚨",
-      "animation": "attack.gif",
-      "color": "from-orange-500 to-red-600"
-    },
-    {
-      "id": "deniz",
-      "name": "Deniz",
-      "role": "Product Owner",
       "quote": "İlhan bana bi şey demedi arkadaşlar.",
       "phrase": "Titre ve özüne dön C&I! 🚨",
       "animation": "attack.gif",
@@ -306,15 +252,6 @@
       "id": "onur",
       "name": "Onur",
       "role": "Developer",
-      "quote": "Ya ben bi rapor alıp geleyim...",
-      "phrase": "Developer gerçekleri! 💻",
-      "animation": "cool-spongebob.gif",
-      "color": "from-purple-500 to-indigo-600"
-    },
-    {
-      "id": "onur",
-      "name": "Onur",
-      "role": "Developer",
       "quote": "Ah Rize'm canım Rize'm...",
       "phrase": "Developer gerçekleri! 💻",
       "animation": "cool-spongebob.gif",
@@ -325,15 +262,6 @@
       "name": "Onur",
       "role": "Developer",
       "quote": "Bu uygulamayı bi refactor edelim bence.",
-      "phrase": "Developer gerçekleri! 💻",
-      "animation": "cool-spongebob.gif",
-      "color": "from-purple-500 to-indigo-600"
-    },
-    {
-      "id": "onur",
-      "name": "Onur",
-      "role": "Developer",
-      "quote": "Aklımdayken bi izin gireyim ben...",
       "phrase": "Developer gerçekleri! 💻",
       "animation": "cool-spongebob.gif",
       "color": "from-purple-500 to-indigo-600"
